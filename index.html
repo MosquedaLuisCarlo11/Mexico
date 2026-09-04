@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a México</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header" id="top">
+    <div class="header-left">
+        <div class="options-dropdown">
+            <button class="options-btn" aria-label="Toggle Language">
+                <img src="images/language.png" class="nav-icon" alt="Language Selector" />
+            </button>
+            <div class="options">
+                <a href="#" class="lang-switch" data-lang="es">Español</a>
+                <a href="#" class="lang-switch" data-lang="fr">Français</a>
+                <a href="#" class="lang-switch" data-lang="en">English</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="#top" class="logo">BIENVENIDO A MEXICO</a>
+        <nav class="nav-links">
+            <a href="#" id="nav-fundamentals">MAPS</a>
+            <a href="#" id="nav-stats">TECTONICS</a>
+            <a href="#" id="nav-real-cases">EROSION</a>
+            <a href="#" id="nav-real-cases">ABOUT</a>
+            <a href="#" id="nav-take-action">OCEANS</a>
+            <a href="#" id="nav-donations">CLIMATE</a>
+            <a href="#" id="nav-contact">REFERENCES</a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <div class="cta-buttons">
+            <button class="icon-action-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <img src="images/dark.png" class="nav-icon" id="theme-icon" alt="Toggle Theme Layout" />
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="scroll-container">
+    <section class="hero-scroll-section">
+        <div class="grid-overlay"></div>
+        <div class="mask-wrapper">
+            <div class="phase-2-bg"></div> 
+            <div class="hero-content">
+                <div class="phase phase-1">
+                    <h1 id="hero-title-1">Experience Mexico’s breathtaking nature, rich geology, and stunning tectonic wonders!</h1>
+                </div>
+                <div class="phase phase-2">
+                    <h1 class="large-title" id="hero-title-2">Bienvenido!</h1>
+                    <div class="phase-2-text">
+                        <p id="hero-desc">Welcome to our exploration of la tierra of Mexico! From its majestic mountains and active volcanes to its vibrant coastlines, Mexico is a country defined by extraordinary natural forces, rich history, and deep cultural roots. Whether you are curious about its powerful seismic activity, unique biomas, or historic trade routes, this site offers a complete guide to the dynamic earth processes that shape this incredible nación.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<section class="mountain-parallax-section" id="stats">
+    <div class="stats-content">
+        <h2 class="stats-heading" id="stats-title">Three Impactful Facts</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label" id="stat-1-label">VIBRANT HUMAN LANDSCAPE</span>
+                <span class="stat-number" id="stat-1-num">129+ Million Citizens</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" id="stat-2-label">GLOBAL BIODIVERSITY HOTSPOT</span>
+                <span class="stat-number" id="stat-2-num">Over 200,000 Species</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" id="stat-3-label">INTANGIBLE CULTURAL TREASURE</span>
+                <span class="stat-number" id="stat-3-num">2010 UNESCO Landmark</span>
+            </div>
+        </div>
+    </div>
+    <img src="images/Teoti.png" alt="Mountain Silhouette" class="mountain-mask">
+</section>
+
+<section class="updates-section" id="real-cases">
+    <div class="updates-header">
+        <span class="subheading" id="cases-subheading">Forged Through Time: The Historical Evolution of Mexico</span>
+        <h2 id="cases-desc">Mexico's history is written directly onto its rugged landscape. From the urban engineering of ancient Mesoamerican civilizations to colonial transformations, territorial struggles, and modern political reform, historical events have continuously redefined Mexico's physical boundaries, cultural identity, and societal framework.</h2>
+    </div>
+
+    <div class="updates-list">
+        <a href="#" class="update-item" id="case-1"
+        data-hover="images/teno.jpg"
+        data-hero="images/teno.jpg"
+        data-title='The Foundation of Tenochtitlan'
+        data-author="Tenochtitlan"
+        data-date="1325"
+        data-text="According to historical codices, the Mexica (Aztecs) founded their capital city after wandering for decades in search of a divine sign prophesied by Huitzilopochtli: an eagle perched on a nopal cactus devouring a snake. Finding this sign on a swampy island in Lake Texcoco, they engineered a city of canals, causeways, and raised agricultural fields (chinampas). Tenochtitlan grew into one of the largest and most sophisticated cities in the pre-Columbian world, establishing the Valley of Mexico as the nation's political and economic heartland."
+        data-link="https://www.routedmagazine.com/cocina-de-las-patronas">
+            <div class="update-info">
+                <h3 class="update-title" id="case-1-title">The Foundation of Tenochtitlan</h3>
+                <span class="update-category" id="case-1-cat">Tenochtitlan</span>
+            </div>
+            <span class="update-year" id="case-1-year">1325</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-2"
+        data-hover="images/thefall.jpg"
+        data-hero="images/thefall.jpg"
+        data-title="The Fall of Tenochtitlan & Colonial Era Begins"
+        data-author="Tenochtitlan"
+        data-date="1521"
+        data-text="Following a multi-month siege, Spanish conquistador Hernán Cortés and his indigenous allies (primarily the Tlaxcalans) defeated Aztec forces led by Cuauhtémoc. The victory brought an end to the Aztec Empire and initiated three centuries of Spanish colonial rule under the Viceroyalty of New Spain (Nueva España). During this era, Spanish architects built modern Mexico City over the ruins of Tenochtitlan, introducing Catholicism, Spanish governance, and extensive silver mining networks that transformed global commerce."
+        data-link="https://www.dcpeaceteam.org/unarmed-civilian-protection">
+            <div class="update-info">
+                <h3 class="update-title" id="case-2-title">The Fall of Tenochtitlan & Colonial Era Begins</h3>
+                <span class="update-category" id="case-2-cat">Tenochtitlan</span>
+            </div>
+            <span class="update-year" id="case-2-year">1521</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-3"
+        data-hover="images/inde.jpg"
+        data-hero="images/inde.jpg"
+        data-title="The Mexican Cry for Independence (Grito de Dolores)"
+        data-author="Guanajuato"
+        data-date="1810–1821"
+        data-text="Early on the morning of September 16, 1810, Roman Catholic priest Miguel Hidalgo y Costilla rang his church bell and issued a revolutionary call to arms against Spanish colonial oppression. The Grito de Dolores ignited an 11-year war for independence, uniting rural peasants, indigenous communities, and local leaders. After years of guerrilla warfare, Agustín de Iturbide and Vicente Guerrero formed the Army of the Three Guarantees, entering Mexico City in 1821 to secure official independence from the Spanish Crown."
+        data-link="https://www.youtube.com/watch?v=xr1hapswLd0">
+            <div class="update-info">
+                <h3 class="update-title" id="case-3-title">The Mexican Cry for Independence (Grito de Dolores)</h3>
+                <span class="update-category" id="case-3-cat">Guanajuato</span>
+            </div>
+            <span class="update-year" id="case-3-year">1810–1821</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-4"
+        data-hover="images/Treaty.jpg"
+        data-hero="images/Treaty.jpg"
+        data-title="The Treaty of Guadalupe Hidalgo"
+        data-author="Hidalgo"
+        data-date="1848"
+        data-text="Concluding the two-year Mexican-American War, the Treaty of Guadalupe Hidalgo permanently reshaped the map of North America. Under its terms, a defeated Mexico ceded over 50 percent of its sovereign territorial landmass—spanning present-day California, Nevada, Utah, Arizona, and parts of Colorado, New Mexico, and Wyoming—to the United States in exchange for $15 million. This dramatic loss redefined Mexico's northern frontier, drastically altered regional trade dynamics, and left deep socio-political scars on national identity."
+        data-link="https://www.migrationpolicy.org/publication/educational-and-mental-health-needs-syrian-refugee-children">
+            <div class="update-info">
+                <h3 class="update-title" id="case-4-title">The Treaty of Guadalupe Hidalgo</h3>
+                <span class="update-category" id="case-4-cat">Hidalgo</span>
+            </div>
+            <span class="update-year" id="case-4-year">1848</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-5"
+        data-hover="images/porfiriato.jpg"
+        data-hero="images/porfiriato.jpg"
+        data-title="The Porfiriato & Modernization Phase"
+        data-author="Mexico City"
+        data-date="1876–1911"
+        data-text="General Porfirio Díaz ruled Mexico as president for over three decades, an era known as the Porfiriato. Díaz prioritized order and rapid economic growth, inviting foreign capital to construct thousands of miles of railroad tracks, modern telegraph systems, ports, and industrial facilities. While this period modernized Mexico's infrastructure and integrated its raw materials into global markets, it generated severe economic inequality, concentration of land ownership among elite haciendas, and social unrest among the working class."
+        data-link="https://media.un.org/avlibrary/en/asset/d335/d3358098">
+            <div class="update-info">
+                <h3 class="update-title" id="case-5-title">The Porfiriato & Modernization Phase</h3>
+                <span class="update-category" id="case-5-cat">Mexico City</span>
+            </div>
+            <span class="update-year" id="case-5-year">1876–1911</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-6"
+        data-hover="images/revo.jpg"
+        data-hero="images/revo.jpg"
+        data-title="The Mexican Revolution"
+        data-author="Mexico"
+        data-date="1910–1920"
+        data-text="Sparked by widespread opposition to Porfirio Díaz's authoritarian rule, the Mexican Revolution broke out as a complex social, agrarian, and political conflict led by figures like Francisco Madero, Emiliano Zapata, and Pancho Villa. The decade of conflict led to radical political restructuring and culminated in the ratification of the progressive 1917 Constitution of Mexico. This cornerstone document enshrined worker rights, nationalized subsoil mineral resources, and established sweeping agrarian reforms through the ejido land distribution system."
+        data-link="https://phr.org/our-work/resources/one-year-anniversary-of-the-myanmar-coup-detat/">
+            <div class="update-info">
+                <h3 class="update-title" id="case-6-title">The Mexican Revolution</h3>
+                <span class="update-category" id="case-6-cat">Mexico</span>
+            </div>
+            <span class="update-year" id="case-6-year">1910–1920</span>
+        </a>
+
+        <a href="#" class="update-item" id="case-7"
+        data-hover="images/modern.avif"
+        data-hero="images/modern.avif"
+        data-title="Modern Mexico: Democratic Transition & Contemporary Identity"
+        data-author="Mexico"
+        data-date="2000–Present"
+        data-text="Today, Mexico stands as a federal constitutional republic of over 129 million people, shaped by its history of resilience and adaptation. The year 2000 marked a historical democratic milestone when opposition leadership ended 71 consecutive years of single-party rule. Modern Mexico functions as a major industrial powerhouse and international trade hub, holding crucial trade agreements like the USMCA. The nation reflects a distinct fusion of Mesoamerican indigenous traditions and Spanish colonial heritage, maintaining its position as Latin America's second-largest economy while continuously balancing urban industrial growth with cultural preservation."
+        data-link="https://www.hrw.org/feature/2026/08/03/afghanistan-5-years-under-taliban-rule/a-human-rights-crisis-a-humanitarian">
+            <div class="update-info">
+                <h3 class="update-title" id="case-7-title">Modern Mexico: Democratic Transition & Contemporary Identity</h3>
+                <span class="update-category" id="case-7-cat">Mexico</span>
+            </div>
+            <span class="update-year" id="case-7-year">2000–Present</span>
+        </a>
+
+<div id="article-modal" class="article-modal">
+    <div class="modal-content">
+        <div class="modal-hero">
+            <img id="modal-hero-image" src="" alt="Historical Event Image">
+        </div>
+        <div class="modal-body">
+            <h2 id="modal-title"></h2>
+            <div class="modal-meta">
+                <span id="modal-author"></span> | <span id="modal-date"></span>
+            </div>
+            <p id="modal-text" class="modal-description"></p>
+            <button id="close-modal" class="modal-back-btn">← Back to Timeline</button>
+        </div>
+    </div>
+</div>
+
+    <div id="floating-image-container">
+        <img id="floating-image" src="images/allProdcuts.png" alt="Floating Preview">
+    </div>
+</section>
+
+<section class="vo-section" id="fundamentals">
+    <div class="container-wide">
+    <h2 id="fund-main-title">In order to grasp the fundamental aspects of Mexican culture and society,<br/><em>consider the following four questions:</em></h2>    
+    <div class="v-wrapper bg-primary">
+        <div class="o-wrapper pt-11 pt-4sm">
+            <div class="d-f fd-c ai-s vo-stack-track">
+                
+                <div class="pin-spacer" data-index="1">
+                    <div class="vo-card-content">
+                        <div class="vo-card-left">01</div>
+                        <div class="vo-card-right">
+                            <h3 class="vo-card-title" id="fund-q1-title">How do ancient Mesoamerican traditions and Spanish colonial influences coexist in daily life?</h3>                            
+                            <div class="vo-card-body">
+                                <p class="vo-card-desc" id="fund-q1-desc">Mexican society is defined by mestizaje—a rich synthesis of indigenous heritage and Spanish customs seen in architecture, language, community celebrations, and religious devotion.</p>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pin-spacer" data-index="2">
+                    <div class="vo-card-content">
+                        <div class="vo-card-left">02</div>
+                        <div class="vo-card-right">
+                            <h3 class="vo-card-title" id="fund-q2-title">What role does family (la familia) play in shaping community structure?</h3>                            
+                            <div class="vo-card-body">
+                                <p class="vo-card-desc" id="fund-q2-desc">Family serves as the primary social unit in Mexico, where multi-generational households, deep respect for elders, and close-knit community networks form the backbone of daily life.</p>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pin-spacer" data-index="3">
+                    <div class="vo-card-content">
+                        <div class="vo-card-left">03</div>
+                        <div class="vo-card-right">
+                            <h3 class="vo-card-title" id="fund-q3-title">How does geography influence cultural regionalism across the nation?</h3>                            
+                            <div class="vo-card-body">
+                                <p class="vo-card-desc" id="fund-q3-desc">Distinct landscapes have created diverse regional identities—from northern vaquero traditions in arid plains to rich indigenous traditions and colorful textiles in southern states like Oaxaca and Chiapas.</p>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pin-spacer" data-index="4">
+                    <div class="vo-card-content">
+                        <div class="vo-card-left">04</div>
+                        <div class="vo-card-right">
+                            <h3 class="vo-card-title" id="fund-q4-title">Why are national holidays and public gatherings central to Mexican social unity?</h3>
+                            <div class="vo-card-body">
+                                <p class="vo-card-desc" id="fund-q4-desc">Events such as Día de los Muertos and Día de la Independencia bring communities together to honor memory, shared heritage, and national pride through public arts, traditional music, and food.</p>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="donations" id="donations">
+    <div class="option">
+        <div class="option-flex">
+            <div class="option-title">
+                <h1 id="donations-title">The Economic Architecture of Mexico</h1>
+            </div>
+            <div class="option-paragraph">
+                <p id="donations-desc">Mexico boasts the second-largest economy in Latin America and ranks among the world's major manufacturing hubs. Driven by international trade agreements, mineral wealth, and a dynamic workforce, Mexico plays a critical role in the global supply chain.</p>
+            </div>
+        </div>
+    </div>
+    <section class="cards">
+        <div class="card">
+            <img src="images/mainIncome.jpg" alt="Solar panels">
+            <div class="card-content">
+                <span class="category" id="don-irc-cat">What are the main sources of national income for Mexico?</span>
+                <span class="date" id="don-irc-focus">Answer:</span>
+                <h3 id="don-irc-desc">Mexico's main income sources include advanced industrial manufacturing (automotive, electronics, and aerospace), crude oil exports, silver and mineral extraction, international tourism, and agricultural exports (avocados, berries, and tequila).</h3>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/money.avif" alt="Abstract dots">
+            <div class="card-content">
+                <span class="category" id="don-pf-cat">What is the current daily minimum wage in Mexico?</span>
+                <span class="date" id="don-pf-focus">Answer:</span>
+                <h3 id="don-pf-desc">As of recent economic updates, Mexico’s general daily minimum wage is approximately 278.80 MXN per day (and higher along the Northern Border Free Zone at roughly 419.88 MXN per day to match regional cost conditions).</h3>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/lifeStyle.avif" alt="Logistics center">
+            <div class="card-content">
+                <span class="category" id="don-uni-cat">How does the cost of living compare to other North American economies?</span>
+                <span class="date" id="don-uni-focus">Answer:</span>
+                <h3 id="don-uni-desc">While major metropolitan hubs like Mexico City, Guadalajara, and Monterrey feature rising housing costs, overall essential living costs (groceries, public transit, and health services) remain significantly lower than in the United States or Canada, supporting strong local purchasing power.</h3>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="divider-section">
+    <div class="divider-content">
+        <h2 class="outline-text" id="divider-text">Embark on a geographical journey beneath the surface to discover how tectonic energy, majestic mountain ranges, and active volcanoes continuously sculpt the vibrant nation of Mexico.</h2>
+    </div>
+</section>
+
+<section class="padding-global padding-section-large is-bottom-0" id="take-action">
+    <div class="container-max">
+        <div class="journey_heading">
+            <h2 class="heading-style-h2 text-align-center" id="action-title">Explore Mexico's<br>Earth Processes</h2>
+        </div>
+        <div class="journey_wrapper">
+            
+            <!-- Extended SVG Path -->
+            <div class="journey_path w-embed">
+                <svg class="path-svg" viewBox="0 0 1000 2500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="scroll-line" 
+                            d="M 750 50 
+                            C 750 300, 250 350, 250 600 
+                            C 250 850, 750 900, 750 1150 
+                            C 750 1400, 250 1450, 250 1700 
+                            C 250 1950, 750 2000, 750 2250 
+                            C 750 2400, 250 2450, 250 2500" 
+                            fill="none" stroke="#d4c3b3" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="journey_grid">
+                <!-- Item 1 -->
+                <div class="journey_item is-1 align-right">
+                    <div class="item-content">
+                        <div class="badge">1</div>
+                        <img src="images/mexicoMap.avif" alt="Maps" loading="lazy">
+                        <h3 id="action-1-title"><a href="#">Maps</a></h3>
+                        <p id="action-1-desc">Examine historical trade routes, continental positions, boundary changes, and famous cartographers who mapped New Spain and modern Mexico.</p>
+                    </div>
+                </div>
+                
+                <!-- Item 2 -->
+                <div class="journey_item is-2 align-left">
+                    <div class="item-content">
+                        <div class="badge">2</div>
+                        <img src="images/Tectonics.jpg" alt="Tectonics" loading="lazy">
+                        <h3 id="action-2-title"><a href="#">Tectonics</a></h3>
+                        <p id="action-2-desc">Uncover the active plate boundaries, seismic hazard monitoring, major mountain systems, mineral wealth, and iconic volcanoes like Popocatépetl.</p>
+                    </div>
+                </div>
+                
+                <!-- Item 3 -->
+                <div class="journey_item is-3 align-right">
+                    <div class="item-content">
+                        <div class="badge">3</div>
+                        <img src="images/erosion.jpg" alt="Erosion" loading="lazy">
+                        <h3 id="action-3-title"><a href="#">Erosion</a></h3>
+                        <p id="action-3-desc">Discover physical and chemical weathering processes, the formation of Yucatán cenotes, major river basins, and desertification challenges.</p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="journey_item is-4 align-left">
+                    <div class="item-content">
+                        <div class="badge">4</div>
+                        <img src="images/oceans.avif" alt="Oceans" loading="lazy">
+                        <h3 id="action-4-title"><a href="#">Oceans</a></h3>
+                        <p id="action-4-desc">Analyze coastal formations, ocean trade routes, hurricane patterns, regional islands, and maritime economic impacts.</p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="journey_item is-5 align-right">
+                    <div class="item-content">
+                        <div class="badge">5</div>
+                        <img src="images/climate.avif" alt="Climate" loading="lazy">
+                        <h3 id="action-5-title"><a href="#">Climate</a></h3>
+                        <p id="action-5-desc">Investigate Köppen climate classifications across Mexico, global wind circulation patterns, diverse biomes, and unique native flora and fauna.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="form-section-wrapper" id="contact">
+    <div class="form-wizard-container">
+        
+        <div class="wizard-header">
+            <div class="step-tab active" data-step="1">
+                <span class="step-num">I</span> <span id="tab-1-text">Your Name</span>
+            </div>
+            <div class="step-tab" data-step="2">
+                <span class="step-num">II</span> <span id="tab-2-text">Contact Method</span>
+            </div>
+            <div class="step-tab" data-step="3">
+                <span class="step-num">III</span> <span id="tab-3-text">Note</span>
+            </div>
+        </div>
+
+        <form id="multi-step-form" novalidate>
+        
+        <div class="form-step active" id="step-1">
+            <p class="step-subtitle" id="step-1-sub">Step 1</p>
+            <h2 class="step-title" id="step-1-title">Your Name</h2>
+            <p class="step-description" id="step-1-desc">Please enter your details so we know who we are communicating with.</p>
+
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="first-name" id="lbl-fname">First Name<span class="required">*</span></label>
+                    <input type="text" id="first-name" placeholder="Enter your first name" required>
+                    <span class="error-msg" id="err-fname">First name is required.</span>
+                </div>
+                <div class="input-group">
+                    <label for="last-name" id="lbl-lname">Last Name<span class="required">*</span></label>
+                    <input type="text" id="last-name" placeholder="Enter your last name" required>
+                    <span class="error-msg" id="err-lname">Last name is required.</span>
+                </div>
+                <div class="input-group full-width">
+                    <label for="nickname" id="lbl-nick">Nickname / What should we call you <span class="optional">(Optional)</span></label>
+                    <input type="text" id="nickname" placeholder="What do you prefer us to call you?">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step" id="step-2">
+            <p class="step-subtitle" id="step-2-sub">Step 2</p>
+            <h2 class="step-title" id="step-2-title">Contact Method</h2>
+            <p class="step-description" id="step-2-desc">Select how you prefer our team to contact you.</p>
+
+            <div class="contact-preference-grid">
+                <label class="pref-card">
+                    <input type="radio" name="contact-method" value="email" checked>
+                    <div class="pref-content">
+                        <img src="images/mail.png" alt="Email" class="pref-image-icon">
+                        <span class="pref-label" id="pref-email">Email Address</span>
+                    </div>
+                </label>
+                <label class="pref-card">
+                    <input type="radio" name="contact-method" value="phone">
+                    <div class="pref-content">
+                        <img src="images/phone.png" alt="Phone" class="pref-image-icon">
+                        <span class="pref-label" id="pref-phone">Phone / Mobile</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="form-grid" style="margin-top: 1.5rem;">
+                <div class="input-group full-width" id="email-field-group">
+                    <label for="contact-email" id="lbl-contact-email">Email Address<span class="required">*</span></label>
+                    <input type="email" id="contact-email" placeholder="example@email.com">
+                    <span class="error-msg" id="err-email">Please enter a valid email address.</span>
+                </div>
+                <div class="input-group full-width hidden" id="phone-field-group">
+                    <label id="lbl-contact-phone">Phone Number<span class="required">*</span></label>
+                    <div class="phone-split-container">
+                        <select id="country-code" class="phone-country-select">
+                            <option value="+1">🇺🇸 +1 (US)</option>
+                            <option value="+34" selected>🇪🇸 +34 (ES)</option>
+                            <option value="+52">🇲🇽 +52 (MX)</option>
+                            <option value="+57">🇨🇴 +57 (CO)</option>
+                            <option value="+54">🇦🇷 +54 (AR)</option>
+                            <option value="+56">🇨🇱 +56 (CL)</option>
+                            <option value="+51">🇵🇪 +51 (PE)</option>
+                        </select>
+                        <input type="tel" id="contact-phone" class="phone-local-input" placeholder="600-000000" maxlength="11">
+                    </div>
+                    <span class="error-msg" id="err-phone">Please enter a valid phone number.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step" id="step-3">
+            <p class="step-subtitle" id="step-3-sub">Step 3</p>
+            <h2 class="step-title" id="step-3-title">Note</h2>
+            <p class="step-description" id="step-3-desc">Help us categorize your request and leave your detailed comments below.</p>
+
+            <div class="form-grid">
+                <div class="input-group full-width">
+                    <label id="lbl-category">Select a Category<span class="required">*</span></label>
+                    <div class="category-selector">
+                        <button type="button" class="cat-btn active" data-category="concert" id="cat-btn-1">Make A Suggestion</button>
+                        <button type="button" class="cat-btn" data-category="product" id="cat-btn-2">Concern</button>
+                        <button type="button" class="cat-btn" data-category="touch" id="cat-btn-3">Keep in Touch</button>
+                        <button type="button" class="cat-btn" data-category="other" id="cat-btn-4">Other</button>
+                    </div>
+                    <input type="hidden" id="selected-category" value="concert">
+                </div>
+
+                <div class="input-group full-width" style="margin-top: 0.5rem;">
+                    <label for="contact-reason" id="lbl-reason">Reason for Contact<span class="required">*</span></label>
+                    <textarea id="contact-reason" rows="5" placeholder="Write your questions, concerns, or comments here..." required></textarea>
+                    <span class="error-msg" id="err-reason">Please write the reason for your message.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-message-box hidden" id="success-screen">
+            <span class="success-icon">✓</span>
+            <h2 class="success-title" id="succ-title">Form Submitted!</h2>
+            <p class="success-text" id="succ-desc">Your request has been processed successfully. We will contact you very soon.</p>
+        </div>
+
+        <div class="wizard-footer" id="wizard-footer-nav">
+            <button type="button" id="prev-btn" class="nav-btn btn-secondary invisible">‹ Back</button>
+            <button type="button" id="next-btn" class="nav-btn btn-primary">Next Step ›</button>
+        </div>
+
+        </form>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
