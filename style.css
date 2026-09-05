@@ -199,7 +199,7 @@ body.dark-mode {
 }
 
 .options-dropdown.open .options {
-    max-height: 120px;
+    max-height: 200px;
     padding: 8px 0;
 }
 
