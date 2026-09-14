@@ -440,6 +440,198 @@ if (document.readyState === "loading") {
   initMultiStepForm();
 }
 
+document.querySelectorAll('.lang-switch').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault(); 
+        const selectedLang = this.getAttribute('data-lang'); 
+        changeLanguage(selectedLang);
+    });
+});
+
+function changeLanguage(lang) {
+    const langDict = translations[lang];
+    if (!langDict) return; 
+    
+    for (const id in langDict) {
+        const element = document.getElementById(id);
+        
+        if (element) {
+            const content = langDict[id];
+            
+            if (typeof content === 'string') {
+                element.innerHTML = content;
+            } else if (typeof content === 'object') {
+                for (const attr in content) {
+                    if (attr === 'innerHTML') {
+                        element.innerHTML = content[attr];
+                    } else if (attr === 'placeholder') {
+                        element.placeholder = content[attr];
+                    } else {
+                        element.setAttribute(attr, content[attr]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+// =========================================================
+// Products Page 3D Flip Card Animation - Maps Page
+// =========================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const showcaseCard = document.getElementById("dynamic-showcase-card");
+    const targetSlot = document.getElementById("grid-target-box");
+
+    function animateShowcaseOnScroll() {
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+
+        const startTop = viewportHeight * 0.65;
+        const startLeft = window.innerWidth / 2;
+        const startWidth = 280;
+        const startHeight = 340;
+        const startRotation = 0;
+
+        const targetRect = targetSlot.getBoundingClientRect();
+        
+        const endTop = targetRect.top + (targetRect.height / 2) + scrollY;
+        const endLeft = targetRect.left + (targetRect.width / 2);
+        const endWidth = targetRect.width;
+        const endHeight = targetRect.height;
+        const endRotation = 180; 
+
+        const animationStartScroll = 0;
+        const animationEndScroll = viewportHeight * 0.85; 
+
+        let progress = (scrollY - animationStartScroll) / (animationEndScroll - animationStartScroll);
+        progress = Math.min(Math.max(progress, 0), 1);
+
+        const lerp = (start, end, amt) => start + (end - start) * amt;
+
+        const currentTop = lerp(startTop, endTop, progress);
+        const currentLeft = lerp(startLeft, endLeft, progress);
+        const currentWidth = lerp(startWidth, endWidth, progress);
+        const currentHeight = lerp(startHeight, endHeight, progress);
+        const currentRotation = lerp(startRotation, endRotation, progress);
+
+        showcaseCard.style.setProperty("--img-top", `${currentTop - scrollY}px`); 
+        showcaseCard.style.setProperty("--img-left", `${currentLeft}px`);
+        showcaseCard.style.setProperty("--img-width", `${currentWidth}px`);
+        showcaseCard.style.setProperty("--img-height", `${currentHeight}px`);
+        showcaseCard.style.setProperty("--img-rotate", `${currentRotation}deg`);
+    }
+
+    window.addEventListener("scroll", animateShowcaseOnScroll);
+    window.addEventListener("resize", animateShowcaseOnScroll);
+    
+    animateShowcaseOnScroll();
+});
+
+//=======================================================
+// Animated Hero Section - Maps Page
+//=======================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const rCanvas = document.getElementById("goldRainCanvas");
+    if (!rCanvas) return;
+
+    const rCtx = rCanvas.getContext("2d");
+    let rWidth = rCanvas.width = window.innerWidth;
+    let rHeight = rCanvas.height = window.innerHeight;
+
+    const particles = [];
+    const maxParticles = 90; 
+
+    const rMouse = {
+        x: undefined,
+        y: undefined,
+        radius: 130,
+        force: 0.08
+    };
+
+    window.addEventListener("mousemove", (e) => {
+        rMouse.x = e.clientX;
+        rMouse.y = e.clientY;
+    });
+
+    window.addEventListener("mouseleave", () => {
+        rMouse.x = undefined;
+        rMouse.y = undefined;
+    });
+
+    window.addEventListener("resize", () => {
+        rWidth = rCanvas.width = window.innerWidth;
+        rHeight = rCanvas.height = window.innerHeight;
+    });
+
+    class GoldDrop {
+        constructor() {
+            this.reset();
+            this.y = Math.random() * rHeight;
+        }
+
+        reset() {
+            this.x = Math.random() * rWidth;
+            this.y = -20;
+            this.length = Math.random() * 15 + 10;
+            this.speed = Math.random() * 2 + 1.5; 
+            this.opacity = Math.random() * 0.3 + 0.15; 
+            this.width = Math.random() * 1 + 0.6; 
+            this.vx = 0;
+        }
+
+        update() {
+            this.y += this.speed;
+
+            this.vx *= 0.95; 
+            this.x += this.vx;
+
+            if (rMouse.x !== undefined && rMouse.y !== undefined) {
+                const dx = this.x - rMouse.x;
+                const dy = this.y - rMouse.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < rMouse.radius) {
+                    const forceFactor = (rMouse.radius - distance) / rMouse.radius;
+                    const direction = dx > 0 ? 1 : -1;
+                    this.vx += direction * forceFactor * rMouse.force * 25;
+                }
+            }
+
+            if (this.y > rHeight) {
+                this.reset();
+            }
+        }
+
+        draw() {
+            rCtx.beginPath();
+            rCtx.moveTo(this.x, this.y);
+            rCtx.lineTo(this.x + this.vx, this.y + this.length);
+            
+            rCtx.strokeStyle = `rgba(184, 154, 90, ${this.opacity})`;
+            rCtx.lineWidth = this.width;
+            rCtx.stroke();
+        }
+    }
+
+    for (let i = 0; i < maxParticles; i++) {
+        particles.push(new GoldDrop());
+    }
+
+    function animateRain() {
+        rCtx.clearRect(0, 0, rWidth, rHeight);
+
+        particles.forEach((particle) => {
+            particle.update();
+            particle.draw();
+        });
+
+        requestAnimationFrame(animateRain);
+    }
+
+    animateRain();
+});
+
+
 // ==============================================
 // Language Switcher
 // ==============================================
@@ -850,40 +1042,270 @@ const translations = {
         
         "succ-title": "Formulário Enviado!", "succ-desc": "Sua solicitação foi processada com sucesso. Entraremos em contato muito em breve.",
         "prev-btn": "‹ Voltar", "next-btn": "Próximo Passo ›"
+    },
+
+    // Maps Page Translations
+    en: {
+        "nav-logo": "BIENVENIDO A MEXICO",
+        "nav-fundamentals": "MAPS",
+        "nav-stats": "TECTONICS",
+        "nav-real-cases": "EROSION",
+        "nav-about": "ABOUT",
+        "nav-take-action": "OCEANS",
+        "nav-donations": "CLIMATE",
+        "nav-contact": "REFERENCES",
+
+        "hero-title-part1": "<em>Charting Mexico: </em>",
+        "hero-title-part2": "Ancient Trails and",
+        "hero-title-part3": "Modern Maps",
+
+        "geo-overview-title": "Geographic and Historical Location Overview",
+        "geo-overview-p1": "<strong>Continental Position and Area:</strong> Mexico is situated on the North American continent, occupying the southern portion of the landmass and serving as a geographic bridge connecting North and Central America. It is bounded by the United States to the north, the Gulf of Mexico and the Caribbean Sea to the east, the Pacific Ocean to the west and south, and Guatemala and Belize to the southeast.",
+        "geo-overview-p2": "<strong>Latitudinal Range:</strong> The country spans a latitudinal range from approximately 14°32' N at its southernmost border along the Suchiate River to 32°43' N at its northernmost boundary in Baja California.",
+        "geo-overview-p3": "<strong>Historical Existence and Timeline:</strong> As an independent sovereign nation, Mexico has existed from 1821 to the present, building upon thousands of years of pre-Columbian indigenous civilizations and the 300-year colonial period of the Viceroyalty of New Spain (1521–1821). Today, it operates as a federal constitutional republic supporting over 129 million citizens.",
+
+        "map1-badge-title": "The Foundation of Tenochtitlan (Codex Mendoza)",
+        "map1-badge-sub": "1541–1542 (Depicting events from 1325)",
+        "map1-label": "MAP 01",
+        "map1-title": "Ancient Pre-Columbian Cartography",
+        "map1-desc": "This indigenous pictorial document maps the foundational layout, canal systems, and territorial conquests of the Aztec capital of Tenochtitlan. It provides crucial insight into pre-Hispanic urban planning and spatial organization before European contact.",
+        "map1-tag1": "Aztec Codex",
+        "map1-tag2": "Tenochtitlan",
+        "map1-tag3": "Urban Planning",
+
+        "map2-badge-title": "Carta Geográfica de la República Mexicana (Pre-1848 Extent)",
+        "map2-badge-sub": "1847",
+        "map2-label": "MAP 02",
+        "map2-title": "Historical Boundary Changes",
+        "map2-desc": "This historical map illustrates Mexico's expansive mid-19th-century borders prior to the Mexican-American War and the Treaty of Guadalupe Hidalgo. It outlines the vast northern territories that historically encompassed modern-day California, Nevada, Utah, Arizona, New Mexico, and parts of Colorado and Wyoming.",
+        "map2-tag1": "Boundary Changes",
+        "map2-tag2": "Treaty of Guadalupe Hidalgo",
+        "map2-tag3": "Northern Frontier",
+
+        "map3-badge-title": "Camino Real",
+        "map3-badge-sub": "16TH–19TH CENTURY",
+        "map3-label": "MAP 03",
+        "map3-title": "Colonial Trade & Maritime Routes",
+        "map3-desc": "This archival route map highlights the interior royal roads (<em>Camino Real</em>) and critical transoceanic sea voyage routes established during the Spanish colonial era. It traces the historic flow of global commerce linking the Atlantic port of Veracruz to the Pacific port of Acapulco.",
+        "map3-tag1": "Veracruz",
+        "map3-tag2": "Acapulco",
+        "map3-tag3": "Maritime Trade",
+
+        "map4-badge-title": "Polyconic Projection",
+        "map4-badge-sub": "31 STATES + CDMX",
+        "map4-label": "MAP 04",
+        "map4-title": "Modern Topographic & Political Map",
+        "map4-desc": "Utilizing a standard conformal Polyconic projection, this modern map details Mexico's contemporary political boundaries across 31 states and Mexico City. It illustrates major elevation profiles, mountain ranges, and national transportation networks to serve as an accurate baseline for spatial analysis.",
+        "map4-tag1": "Topography",
+        "map4-tag2": "Polyconic Grid",
+        "map4-tag3": "31 States",
+
+        "cart-badge-title": "Antonio García Cubas",
+        "cart-badge-sub": "1832–1912",
+        "cart-label": "Prominent Influence",
+        "cart-title": "Antonio García Cubas",
+        "cart-bio": "Antonio García Cubas (1832–1912) was Mexico's preeminent 19th-century geographer, historian, and cartographer. Born in Mexico City, he overcame early childhood orphanhood to study geography at the Colegio de San Gregorio and the College of Engineers, graduating with honors as a professional geographer. He became a foundational member of the Mexican Society of Geography and Statistics and revolutionized Latin American mapmaking by introducing rigorous scientific surveying data and advanced chromolithography printing.",
+        "cart-acc-title": "Biggest Cartographic Accomplishments:",
+        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> A groundbreaking national atlas that merged detailed state maps with comprehensive statistical and historical data, establishing a unified cartographic identity for the young republic.",
+        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> A comprehensive general map of the country that corrected widespread topographical inaccuracies found in earlier colonial and foreign maps.",
+        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> An acclaimed chromolithographic masterwork featuring vibrant cultural, historical, and topographical maps that earned widespread acclaim from international geographical societies."
+    },
+
+    es: {
+        "nav-logo": "BIENVENIDO A MEXICO",
+        "nav-fundamentals": "MAPAS",
+        "nav-stats": "TECTÓNICA",
+        "nav-real-cases": "EROSIÓN",
+        "nav-about": "ACERCA DE",
+        "nav-take-action": "OCÉANOS",
+        "nav-donations": "CLIMA",
+        "nav-contact": "REFERENCIAS",
+
+        "hero-title-part1": "<em>Mapeando México: </em>",
+        "hero-title-part2": "Senderos Antiguos y",
+        "hero-title-part3": "Mapas Modernos",
+
+        "geo-overview-title": "Resumen de Ubicación Geográfica e Histórica",
+        "geo-overview-p1": "<strong>Posición Continental y Área:</strong> México se encuentra situado en el continente norteamericano, ocupando la porción sur de la masa terrestre y sirviendo como puente geográfico entre América del Norte y América Central. Limita con los Estados Unidos al norte, el Golfo de México y el Mar Caribe al este, el Océano Pacífico al oeste y sur, y Guatemala y Belice al sureste.",
+        "geo-overview-p2": "<strong>Rango Latitudinal:</strong> El país abarca un rango latitudinal desde aproximadamente 14°32' N en su frontera más meridional a lo largo del Río Suchiate hasta 32°43' N en su límite más septentrional en Baja California.",
+        "geo-overview-p3": "<strong>Existencia Histórica y Cronología:</strong> Como nación soberana independiente, México ha existido desde 1821 hasta el presente, construyendo sobre miles de años de civilizaciones indígenas precolombinas y el período colonial de 300 años del Virreinato de la Nueva España (1521–1821). Hoy opera como una república constitucional federal que alberga a más de 129 millones de ciudadanos.",
+
+        "map1-badge-title": "La Fundación de Tenochtitlan (Códice Mendoza)",
+        "map1-badge-sub": "1541–1542 (Representando eventos de 1325)",
+        "map1-label": "MAPA 01",
+        "map1-title": "Cartografía Precolombina Antigua",
+        "map1-desc": "Este documento pictórico indígena cartografía la distribución fundacional, los sistemas de canales y las conquistas territoriales de la capital azteca de Tenochtitlan. Proporciona información crucial sobre la planificación urbana prehispánica y la organización espacial antes del contacto europeo.",
+        "map1-tag1": "Códice Azteca",
+        "map1-tag2": "Tenochtitlan",
+        "map1-tag3": "Planificación Urbana",
+
+        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extensión pre-1848)",
+        "map2-badge-sub": "1847",
+        "map2-label": "MAPA 02",
+        "map2-title": "Cambios de Límites Históricos",
+        "map2-desc": "Este mapa histórico ilustra las expansivas fronteras de México a mediados del siglo XIX antes de la Intervención Estadounidense y el Tratado de Guadalupe Hidalgo. Describe los vastos territorios del norte que históricamente abarcaban los actuales estados de California, Nevada, Utah, Arizona, Nuevo México y partes de Colorado y Wyoming.",
+        "map2-tag1": "Cambios Fronterizos",
+        "map2-tag2": "Tratado de Guadalupe Hidalgo",
+        "map2-tag3": "Frontera Norte",
+
+        "map3-badge-title": "Camino Real",
+        "map3-badge-sub": "SIGLOS XVI–XIX",
+        "map3-label": "MAPA 03",
+        "map3-title": "Rutas Marítimas y Comerciales Coloniales",
+        "map3-desc": "Este mapa de rutas de archivo destaca los caminos reales interiores (<em>Camino Real</em>) y las rutas de viajes marítimos transoceánicos fundamentales establecidas durante la época colonial española. Rastrea el flujo histórico del comercio global que unía el puerto atlántico de Veracruz con el puerto pacífico de Acapulco.",
+        "map3-tag1": "Veracruz",
+        "map3-tag2": "Acapulco",
+        "map3-tag3": "Comercio Marítimo",
+
+        "map4-badge-title": "Proyección Policónica",
+        "map4-badge-sub": "31 ESTADOS + CDMX",
+        "map4-label": "MAPA 04",
+        "map4-title": "Mapa Topográfico y Político Moderno",
+        "map4-desc": "Utilizando una proyección Policónica conforme estándar, este mapa moderno detalla los límites políticos contemporáneos de México a lo largo de 31 estados y la Ciudad de México. Ilustra los principales perfiles de elevación, cadenas montañosas y redes de transporte nacional para servir como base precisa en el análisis espacial.",
+        "map4-tag1": "Topografía",
+        "map4-tag2": "Red Policónica",
+        "map4-tag3": "31 Estados",
+
+        "cart-badge-title": "Antonio García Cubas",
+        "cart-badge-sub": "1832–1912",
+        "cart-label": "Influencia Prominente",
+        "cart-title": "Antonio García Cubas",
+        "cart-bio": "Antonio García Cubas (1832–1912) fue el geógrafo, historiador y cartógrafo más relevante del siglo XIX en México. Nacido en la Ciudad de México, superó la orfandad a temprana edad para estudiar geografía en el Colegio de San Gregorio y el Colegio de Minería, graduándose con honores como geógrafo profesional. Se convirtió en miembro fundador de la Sociedad Mexicana de Geografía y Estadística y revolucionó la cartografía latinoamericana al introducir datos topográficos científicos rigurosos e impresión cromolitográfica avanzada.",
+        "cart-acc-title": "Mayores Logros Cartográficos:",
+        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Un atlas nacional innovador que fusionó mapas estatales detallados con datos estadísticos e históricos integrales, estableciendo una identidad cartográfica unificada para la joven república.",
+        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> Un mapa general exhaustivo del país que corrigió imprecisiones topográficas generalizadas presentes en mapas coloniales y extranjeros anteriores.",
+        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Una aclamada obra maestra cromolitográfica con vibrantes mapas culturales, históricos y topográficos que obtuvo un reconocimiento generalizado por parte de sociedades geográficas internacionales."
+    },
+
+    fr: {
+        "nav-logo": "BIENVENIDO A MEXICO",
+        "nav-fundamentals": "CARTES",
+        "nav-stats": "TECTONIQUE",
+        "nav-real-cases": "ÉROSION",
+        "nav-about": "À PROPOS",
+        "nav-take-action": "OCÉANS",
+        "nav-donations": "CLIMAT",
+        "nav-contact": "RÉFÉRENCES",
+
+        "hero-title-part1": "<em>Cartographier le Mexique : </em>",
+        "hero-title-part2": "Sentiers Anciens et",
+        "hero-title-part3": "Cartes Modernes",
+
+        "geo-overview-title": "Aperçu de la Situation Géographique et Historique",
+        "geo-overview-p1": "<strong>Position Continentale et Superficie :</strong> Le Mexique est situé sur le continent nord-américain, occupant la partie sud de la masse terrestre et servant de pont géographique reliant l'Amérique du Nord et l'Amérique centrale. Il est bordé par les États-Unis au nord, le golfe du Mexique et la mer des Caraïbes à l'est, l'océan Pacifique à l'ouest et au sud, ainsi que le Guatemala et le Belize au sud-est.",
+        "geo-overview-p2": "<strong>Étendue Latitudinale :</strong> Le pays s'étend sur une plage latitudinale allant d'environ 14°32' N à sa frontière la plus méridionale le long du fleuve Suchiate jusqu'à 32°43' N à sa frontière la plus septentrionale en Basse-Californie.",
+        "geo-overview-p3": "<strong>Existence Historique et Chronologie :</strong> En tant que nation souveraine indépendante, le Mexique existe de 1821 à nos jours, s'appuyant sur des milliers d'années de civilisations indigènes précolombiennes et sur la période coloniale de 300 ans de la vice-royauté de Nouvelle-Espagne (1521-1821). Aujourd'hui, il fonctionne comme une république constitutionnelle fédérale abritant plus de 129 millions de citoyens.",
+
+        "map1-badge-title": "La Fondation de Tenochtitlan (Codex Mendoza)",
+        "map1-badge-sub": "1541–1542 (Représentant des événements de 1325)",
+        "map1-label": "CARTE 01",
+        "map1-title": "Cartographie Ancienne Précolombienne",
+        "map1-desc": "Ce document pictural indigène cartographie l'aménagement fondateur, les systèmes de canaux et les conquêtes territoriales de la capitale aztèque de Tenochtitlan. Il offre un aperçu essentiel de l'urbanisme et de l'organisation spatiale préhispaniques avant le contact européen.",
+        "map1-tag1": "Codex Aztèque",
+        "map1-tag2": "Tenochtitlan",
+        "map1-tag3": "Urbanisme",
+
+        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extension pré-1848)",
+        "map2-badge-sub": "1847",
+        "map2-label": "CARTE 02",
+        "map2-title": "Évolution des Frontières Historiques",
+        "map2-desc": "Cette carte historique illustre les vastes frontières du Mexique au milieu du XIXe siècle avant la guerre américain-mexicaine et le traité de Guadalupe Hidalgo. Elle décrit les immenses territoires du nord qui englobaient historiquement la Californie, le Nevada, l'Utah, l'Arizona, le Nouveau-Mexique modernes ainsi que des parties du Colorado et du Wyoming.",
+        "map2-tag1": "Évolution des Frontières",
+        "map2-tag2": "Traité de Guadalupe Hidalgo",
+        "map2-tag3": "Frontière du Nord",
+
+        "map3-badge-title": "Camino Real",
+        "map3-badge-sub": "XVIe–XIXe SIÈCLE",
+        "map3-label": "CARTE 03",
+        "map3-title": "Routes Commerciales et Maritimes Coloniales",
+        "map3-desc": "Cette carte routière d'archives met en évidence les chemins royaux intérieurs (<em>Camino Real</em>) et les routes de voyages maritimes transocéaniques essentielles établies à l'époque coloniale espagnole. Elle retrace le flux historique du commerce mondial reliant le port atlantique de Veracruz au port pacifique d'Acapulco.",
+        "map3-tag1": "Veracruz",
+        "map3-tag2": "Acapulco",
+        "map3-tag3": "Commerce Maritime",
+
+        "map4-badge-title": "Projection Polyconique",
+        "map4-badge-sub": "31 ÉTATS + CDMX",
+        "map4-label": "CARTE 04",
+        "map4-title": "Carte Topographique et Politique Moderne",
+        "map4-desc": "Utilisant une projection polyconique conforme standard, cette carte moderne détaille les limites politiques contemporaines du Mexique à travers 31 États et la ville de Mexico. Elle illustre les principaux profils d'altitude, les chaînes de montagnes et les réseaux de transport nationaux afin de servir de base précise pour l'analyse spatiale.",
+        "map4-tag1": "Topographie",
+        "map4-tag2": "Grille Polyconique",
+        "map4-tag3": "31 États",
+
+        "cart-badge-title": "Antonio García Cubas",
+        "cart-badge-sub": "1832–1912",
+        "cart-label": "Influence Majeure",
+        "cart-title": "Antonio García Cubas",
+        "cart-bio": "Antonio García Cubas (1832–1912) était le géographe, historien et cartographe mexicain le plus éminent du XIXe siècle. Né à Mexico, il a surmonté son orphelinat précoce pour étudier la géographie au Colegio de San Gregorio et au Collège des Ingénieurs, obtenant son diplôme avec honneurs en tant que géographe professionnel. Il est devenu un membre fondateur de la Société mexicaine de géographie et de statistique et a révolutionné la cartographie sud-américaine en introduisant des données de levé scientifique rigoureuses et l'impression chromolithographique avancée.",
+        "cart-acc-title": "Plus Grandes Réalisations Cartographiques :",
+        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858) :</strong> Un atlas national novateur qui combinait des cartes d'États détaillées avec des données statistiques et historiques complètes, établissant une identité cartographique unifiée pour la jeune république.",
+        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863) :</strong> Une carte générale complète du pays qui a corrigé les inexactitudes topographiques fréquentes dans les cartes coloniales et étrangères antérieures.",
+        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885) :</strong> Chef-d'œuvre chromolithographique salué proposant des cartes culturelles, historiques et topographiques vibrantes qui lui ont valu une reconnaissance internationale auprès des sociétés de géographie."
+    },
+
+    pt: {
+        "nav-logo": "BIENVENIDO A MEXICO",
+        "nav-fundamentals": "MAPAS",
+        "nav-stats": "TECTÔNICA",
+        "nav-real-cases": "EROSÃO",
+        "nav-about": "SOBRE",
+        "nav-take-action": "OCEANOS",
+        "nav-donations": "CLIMA",
+        "nav-contact": "REFERÊNCIAS",
+
+        "hero-title-part1": "<em>Mapeando o México: </em>",
+        "hero-title-part2": "Trilhas Antigas e",
+        "hero-title-part3": "Mapas Modernos",
+
+        "geo-overview-title": "Visão Geral da Localização Geográfica e Histórica",
+        "geo-overview-p1": "<strong>Posição Continental e Área:</strong> O México está situado no continente norte-americano, ocupando a porção sul da massa terrestre e servindo como uma ponte geográfica que conecta a América do Norte e a América Central. É limitado pelos Estados Unidos ao norte, pelo Golfo do México e pelo Mar do Caribe a leste, pelo Oceano Pacífico a oeste e ao sul, e pela Guatemala e Belize ao sudeste.",
+        "geo-overview-p2": "<strong>Alcance Latitudinal:</strong> O país abrange uma faixa latitudinal que vai de aproximadamente 14°32' N em sua fronteira mais ao sul ao longo do Rio Suchiate até 32°43' N em seu limite mais ao norte na Baixa Califórnia.",
+        "geo-overview-p3": "<strong>Existência Histórica e Cronologia:</strong> Como uma nação soberana independente, o México existe de 1821 até o presente, desenvolvendo-se sobre milhares de anos de civilizações indígenas pré-colombianas e o período colonial de 300 anos do Vice-Reino da Nova Espanha (1521–1821). Hoje, opera como uma república constitucional federal com mais de 129 milhões de cidadãos.",
+
+        "map1-badge-title": "A Fundação de Tenochtitlan (Códice Mendoza)",
+        "map1-badge-sub": "1541–1542 (Retratando eventos de 1325)",
+        "map1-label": "MAPA 01",
+        "map1-title": "Cartografia Antiga Pré-Colombiana",
+        "map1-desc": "Este documento pictórico indígena mapeia o layout fundador, os sistemas de canais e as conquistas territoriais da capital asteca de Tenochtitlan. Ele fornece informações cruciais sobre o planejamento urbano pré-hispânico e a organização espacial antes do contato europeu.",
+        "map1-tag1": "Códice Asteca",
+        "map1-tag2": "Tenochtitlan",
+        "map1-tag3": "Planejamento Urbano",
+
+        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extensão pré-1848)",
+        "map2-badge-sub": "1847",
+        "map2-label": "MAPA 02",
+        "map2-title": "Mudanças nas Fronteiras Históricas",
+        "map2-desc": "Este mapa histórico ilustra as expansivas fronteiras do México em meados do século XIX, antes da Guerra Mexicano-Americana e do Tratado de Guadalupe Hidalgo. Ele descreve os vastos territórios do norte que historicamente abrangiam os atuais estados de Califórnia, Nevada, Utah, Arizona, Novo México e partes do Colorado e Wyoming.",
+        "map2-tag1": "Mudanças de Fronteira",
+        "map2-tag2": "Tratado de Guadalupe Hidalgo",
+        "map2-tag3": "Fronteira Norte",
+
+        "map3-badge-title": "Camino Real",
+        "map3-badge-sub": "SÉCULOS XVI–XIX",
+        "map3-label": "MAPA 03",
+        "map3-title": "Rotas Comerciais e Marítimas Coloniais",
+        "map3-desc": "Este mapa de rotas de arquivo destaca as estradas reais interiores (<em>Camino Real</em>) e as rotas de viagens marítimas transoceânicas essenciais estabelecidas durante a era colonial espanhola. Ele traça o fluxo histórico do comércio global ligando o porto atlântico de Veracruz ao porto pacífico de Acapulco.",
+        "map3-tag1": "Veracruz",
+        "map3-tag2": "Acapulco",
+        "map3-tag3": "Comércio Marítimo",
+
+        "map4-badge-title": "Projeção Policônica",
+        "map4-badge-sub": "31 ESTADOS + CDMX",
+        "map4-label": "MAPA 04",
+        "map4-title": "Mapa Topográfico e Político Moderno",
+        "map4-desc": "Utilizando uma projeção Policônica conforme padrão, este mapa moderno detalha as fronteiras políticas contemporâneas do México em 31 estados e na Cidade do México. Ele ilustra os principais perfis de elevação, cadeias de montanhas e redes de transporte nacional para servir como uma base precisa para análise espacial.",
+        "map4-tag1": "Topografia",
+        "map4-tag2": "Grade Policônica",
+        "map4-tag3": "31 Estados",
+
+        "cart-badge-title": "Antonio García Cubas",
+        "cart-badge-sub": "1832–1912",
+        "cart-label": "Influência Proeminente",
+        "cart-title": "Antonio García Cubas",
+        "cart-bio": "Antonio García Cubas (1832–1912) foi o geógrafo, historiador e cartógrafo mais proeminente do México no século XIX. Nascido na Cidade do México, ele superou a orfandade precoce para estudar geografia no Colegio de San Gregorio e na Escola de Engenheiros, graduando-se com honras como geógrafo profissional. Tornou-se membro fundador da Sociedade Mexicana de Geografia e Estatística e revolucionou a cartografia latino-americana ao introduzir dados rigorosos de levantamento científico e impressão cromolitográfica avançada.",
+        "cart-acc-title": "Maiores Realizações Cartográficas:",
+        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Um atlas nacional inovador que fundiu mapas estaduais detalhados com dados estatísticos e históricos abrangentes, estabelecendo uma identidade cartográfica unificada para a jovem república.",
+        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> Um mapa geral abrangente do país que corrigiu imprecisões topográficas amplamente difundidas encontradas em mapas coloniais e estrangeiros anteriores.",
+        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Uma aclamada obra-prima cromolitográfica apresentando mapas culturais, históricos e topográficos vibrantes que conquistaram amplo reconhecimento de sociedades geográficas internacionais."
     }
 };
-
-document.querySelectorAll('.lang-switch').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const selectedLang = this.getAttribute('data-lang'); 
-        changeLanguage(selectedLang);
-    });
-});
-
-function changeLanguage(lang) {
-    const langDict = translations[lang];
-    if (!langDict) return; 
-    
-    for (const id in langDict) {
-        const element = document.getElementById(id);
-        
-        if (element) {
-            const content = langDict[id];
-            
-            if (typeof content === 'string') {
-                element.innerHTML = content;
-            } else if (typeof content === 'object') {
-                for (const attr in content) {
-                    if (attr === 'innerHTML') {
-                        element.innerHTML = content[attr];
-                    } else if (attr === 'placeholder') {
-                        element.placeholder = content[attr];
-                    } else {
-                        element.setAttribute(attr, content[attr]);
-                    }
-                }
-            }
-        }
-    }
-}

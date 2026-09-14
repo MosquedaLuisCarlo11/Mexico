@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a México</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header" id="top">
+    <div class="header-left">
+        <div class="options-dropdown">
+            <button class="options-btn" aria-label="Toggle Language">
+                <img src="images/language.png" class="nav-icon" alt="Language Selector" />
+            </button>
+            <div class="options">
+                <a href="#" class="lang-switch" data-lang="en">English</a>
+                <a href="#" class="lang-switch" data-lang="es">Español</a>
+                <a href="#" class="lang-switch" data-lang="fr">Français</a>
+                <a href="#" class="lang-switch" data-lang="pt">Português</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="index.html" class="logo" id="nav-logo">BIENVENIDO A MEXICO</a>
+        <nav class="nav-links">
+            <a href="maps.html" id="nav-fundamentals">MAPS</a>
+            <a href="#" id="nav-stats">TECTONICS</a>
+            <a href="#" id="nav-real-cases">EROSION</a>
+            <a href="#" id="nav-about">ABOUT</a>
+            <a href="#" id="nav-take-action">OCEANS</a>
+            <a href="#" id="nav-donations">CLIMATE</a>
+            <a href="#" id="nav-contact">REFERENCES</a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <div class="cta-buttons">
+            <button class="icon-action-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <img src="images/dark.png" class="nav-icon" id="theme-icon" alt="Toggle Theme Layout" />
+            </button>
+        </div>
+    </div>
+</header>
+
+    <div class="sticky-viewport-container">
+        <div class="flip-wrapper" id="dynamic-showcase-card">
+            <div class="flip-card">
+                <div class="card-face front">
+                    <img src="images/mainMap.jpg" alt="Main Map of Mexico Overview">
+                </div>
+                <div class="card-face back">
+                    <img src="images/mexicoWorld.jpg" alt="States Map of Mexico Overview">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero-section">
+        <div class="v-rain-stage" aria-hidden="true">
+            <canvas id="goldRainCanvas"></canvas>
+        </div>
+
+        <h1 class="giant-title">
+            <span id="hero-title-part1"><em>Charting Mexico: </em></span>
+            <span id="hero-title-part2">Ancient Trails and</span>
+            <span id="hero-title-part3">Modern Maps</span>
+        </h1>
+    </section>
+
+    <section class="details-section">
+        <div class="details-grid">
+            <div class="grid-col left-col">
+                <h2 class="section-trigger" id="geo-overview-title">Geographic and Historical Location Overview</h2>
+                <p class="highlight-text" id="geo-overview-p1">
+                    <strong>Continental Position and Area:</strong> Mexico is situated on the North American continent, occupying the southern portion of the landmass and serving as a geographic bridge connecting North and Central America. It is bounded by the United States to the north, the Gulf of Mexico and the Caribbean Sea to the east, the Pacific Ocean to the west and south, and Guatemala and Belize to the southeast.
+                </p>
+            </div>
+
+            <div class="center-target-slot" id="grid-target-box"></div>
+
+            <div class="grid-col right-col">
+                <p class="description-text" id="geo-overview-p2">
+                    <strong>Latitudinal Range:</strong> The country spans a latitudinal range from approximately 14°32' N at its southernmost border along the Suchiate River to 32°43' N at its northernmost boundary in Baja California.
+                </p>
+                <p class="description-text" id="geo-overview-p3">
+                    <strong>Historical Existence and Timeline:</strong> As an independent sovereign nation, Mexico has existed from 1821 to the present, building upon thousands of years of pre-Columbian indigenous civilizations and the 300-year colonial period of the Viceroyalty of New Spain (1521–1821). Today, it operates as a federal constitutional republic supporting over 129 million citizens.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAP 1: Image Left, Text Right -->
+    <section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+        <div class="map-img-box">
+            <img src="images/oldMexico.jpeg" alt="Ancient Pre-Columbian Cartography of Tenochtitlan" />
+            <div class="map-badge">
+            <div class="map-badge-text">
+                <span class="map-badge-title" id="map1-badge-title">The Foundation of Tenochtitlan (Codex Mendoza)</span>
+                <span class="map-badge-subtitle" id="map1-badge-sub">1541–1542 (Depicting events from 1325)</span>
+            </div>
+            <div class="map-badge-circle"></div>
+            </div>
+        </div>
+        <div class="map-content">
+            <span class="map-label" id="map1-label">MAP 01</span>
+            <div class="map-divider"></div>
+            <h2 id="map1-title">Ancient Pre-Columbian Cartography</h2>
+            <p id="map1-desc">This indigenous pictorial document maps the foundational layout, canal systems, and territorial conquests of the Aztec capital of Tenochtitlan. It provides crucial insight into pre-Hispanic urban planning and spatial organization before European contact.</p>
+            <div class="map-tags">
+            <span class="map-tag" id="map1-tag1">Aztec Codex</span>
+            <span class="map-tag" id="map1-tag2">Tenochtitlan</span>
+            <span class="map-tag" id="map1-tag3">Urban Planning</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- MAP 2: Image Right, Text Left -->
+    <section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+        <div class="map-img-box">
+            <img src="images/historicalBoundary.jpeg" alt="Historical Boundary Changes of Mexico Pre-1848" />
+            <div class="map-badge">
+            <div class="map-badge-text">
+                <span class="map-badge-title" id="map2-badge-title">Carta Geográfica de la República Mexicana (Pre-1848 Extent)</span>
+                <span class="map-badge-subtitle" id="map2-badge-sub">1847</span>
+            </div>
+            <div class="map-badge-circle"></div>
+            </div>
+        </div>
+        <div class="map-content">
+            <span class="map-label" id="map2-label">MAP 02</span>
+            <div class="map-divider"></div>
+            <h2 id="map2-title">Historical Boundary Changes</h2>
+            <p id="map2-desc">This historical map illustrates Mexico's expansive mid-19th-century borders prior to the Mexican-American War and the Treaty of Guadalupe Hidalgo. It outlines the vast northern territories that historically encompassed modern-day California, Nevada, Utah, Arizona, New Mexico, and parts of Colorado and Wyoming.</p>
+            <div class="map-tags">
+            <span class="map-tag" id="map2-tag1">Boundary Changes</span>
+            <span class="map-tag" id="map2-tag2">Treaty of Guadalupe Hidalgo</span>
+            <span class="map-tag" id="map2-tag3">Northern Frontier</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- MAP 3: Image Left, Text Right -->
+    <section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+        <div class="map-img-box">
+            <img src="images/mapTrade.jpeg" alt="Colonial Trade and Maritime Routes Map of Mexico" />
+            <div class="map-badge">
+            <div class="map-badge-text">
+                <span class="map-badge-title" id="map3-badge-title">Camino Real</span>
+                <span class="map-badge-subtitle" id="map3-badge-sub">16TH–19TH CENTURY</span>
+            </div>
+            <div class="map-badge-circle"></div>
+            </div>
+        </div>
+        <div class="map-content">
+            <span class="map-label" id="map3-label">MAP 03</span>
+            <div class="map-divider"></div>
+            <h2 id="map3-title">Colonial Trade & Maritime Routes</h2>
+            <p id="map3-desc">This archival route map highlights the interior royal roads (<em>Camino Real</em>) and critical transoceanic sea voyage routes established during the Spanish colonial era. It traces the historic flow of global commerce linking the Atlantic port of Veracruz to the Pacific port of Acapulco.</p>
+            <div class="map-tags">
+            <span class="map-tag" id="map3-tag1">Veracruz</span>
+            <span class="map-tag" id="map3-tag2">Acapulco</span>
+            <span class="map-tag" id="map3-tag3">Maritime Trade</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- MAP 4: Image Right, Text Left -->
+    <section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+        <div class="map-img-box">
+            <img src="images/modernMexico.jpeg" alt="Modern Topographic and Political Map of Mexico" />
+            <div class="map-badge">
+            <div class="map-badge-text">
+                <span class="map-badge-title" id="map4-badge-title">Polyconic Projection</span>
+                <span class="map-badge-subtitle" id="map4-badge-sub">31 STATES + CDMX</span>
+            </div>
+            <div class="map-badge-circle"></div>
+            </div>
+        </div>
+        <div class="map-content">
+            <span class="map-label" id="map4-label">MAP 04</span>
+            <div class="map-divider"></div>
+            <h2 id="map4-title">Modern Topographic & Political Map</h2>
+            <p id="map4-desc">Utilizing a standard conformal Polyconic projection, this modern map details Mexico's contemporary political boundaries across 31 states and Mexico City. It illustrates major elevation profiles, mountain ranges, and national transportation networks to serve as an accurate baseline for spatial analysis.</p>
+            <div class="map-tags">
+            <span class="map-tag" id="map4-tag1">Topography</span>
+            <span class="map-tag" id="map4-tag2">Polyconic Grid</span>
+            <span class="map-tag" id="map4-tag3">31 States</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <section class="cartographer-section">
+    <div class="cartographer-container">
+        <div class="cartographer-grid">
+        <div class="cartographer-img-wrapper">
+            <img src="images/garciaCubas.jpeg" alt="Archival portrait of Antonio García Cubas" />
+            <div class="cartographer-badge">
+            <div class="cartographer-badge-text">
+                <span class="cartographer-badge-title" id="cart-badge-title">Antonio García Cubas</span>
+                <span class="cartographer-badge-subtitle" id="cart-badge-sub">1832–1912</span>
+            </div>
+            <div class="cartographer-badge-circle"></div>
+            </div>
+        </div>
+
+        <div class="cartographer-content">
+            <span class="cartographer-label" id="cart-label">Prominent Influence</span>
+            <div class="cartographer-divider"></div>
+            <h2 id="cart-title">Antonio García Cubas</h2>
+            <p id="cart-bio">Antonio García Cubas (1832–1912) was Mexico's preeminent 19th-century geographer, historian, and cartographer. Born in Mexico City, he overcame early childhood orphanhood to study geography at the Colegio de San Gregorio and the College of Engineers, graduating with honors as a professional geographer. He became a foundational member of the Mexican Society of Geography and Statistics and revolutionized Latin American mapmaking by introducing rigorous scientific surveying data and advanced chromolithography printing.</p>
+            
+            <h3 class="accomplishments-title" id="cart-acc-title">Biggest Cartographic Accomplishments:</h3>
+            <ul class="accomplishments-list">
+            <li id="cart-acc-1">
+                <strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> A groundbreaking national atlas that merged detailed state maps with comprehensive statistical and historical data, establishing a unified cartographic identity for the young republic.
+            </li>
+            <li id="cart-acc-2">
+                <strong>Carta General de la República Mexicana (1863):</strong> A comprehensive general map of the country that corrected widespread topographical inaccuracies found in earlier colonial and foreign maps.
+            </li>
+            <li id="cart-acc-3">
+                <strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> An acclaimed chromolithographic masterwork featuring vibrant cultural, historical, and topographical maps that earned widespread acclaim from international geographical societies.
+            </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
