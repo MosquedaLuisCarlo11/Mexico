@@ -92,92 +92,102 @@ document.querySelectorAll('.nav-links a, .logo').forEach(anchor => {
 // GSAP Animations
 // ==============================================
 document.addEventListener('DOMContentLoaded', () => {
-    gsap.registerPlugin(ScrollTrigger);
+    // Check if GSAP and ScrollTrigger are loaded
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
 
-    const heroTimeline = gsap.timeline({
-        scrollTrigger: {
-            trigger: ".hero-scroll-section",
-            start: "top top",      
-            end: "+=150%",         
-            scrub: 1,              
-            pin: true,             
+        // --- Hero Section Animation & Scroll Indicator Fade ---
+        const heroSection = document.querySelector('.hero-scroll-section');
+        if (heroSection) {
+            const heroTimeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".hero-scroll-section",
+                    start: "top top",      
+                    end: "+=150%",         
+                    scrub: 1,              
+                    pin: true,             
+                }
+            });
+
+            // Fade out the scroll indicator instantly when scrolling starts
+            heroTimeline.to(".scroll-indicator", {
+                opacity: 0,
+                y: 20,
+                duration: 0.05, 
+                ease: "power1.out"
+            }, 0); 
+
+            heroTimeline.to(".mask-wrapper", {
+                webkitMaskSize: "20000%", 
+                maskSize: "20000%",
+                ease: "power2.in"
+            }, 0); 
+
+            heroTimeline.to(".phase-1", {
+                opacity: 0,
+                y: "-=50", 
+                ease: "power1.inOut"
+            }, 0);
+
+            heroTimeline.fromTo(".phase-2", 
+                { opacity: 0, y: "+=50", autoAlpha: 0 }, 
+                { opacity: 1, y: "-=50", autoAlpha: 1, ease: "power2.out" }, 
+                0.2 
+            );
+
+            heroTimeline.to(".phase-2-bg", {
+                opacity: 1,
+                ease: "power2.inOut"
+            }, 0.2);
         }
-    });
 
-    heroTimeline.to(".mask-wrapper", {
-        webkitMaskSize: "20000%", 
-        maskSize: "20000%",
-        ease: "power2.in"
-    }, 0); 
+        // --- SVG Path Animation ---
+        const path = document.querySelector('#scroll-line');
+        if (path) {
+            const pathLength = path.getTotalLength();
 
-    heroTimeline.to(".phase-1", {
-        opacity: 0,
-        y: "-=50", 
-        ease: "power1.inOut"
-    }, 0);
+            gsap.set(path, { 
+                strokeDasharray: pathLength, 
+                strokeDashoffset: pathLength 
+            });
 
-    heroTimeline.fromTo(".phase-2", 
-        { opacity: 0, y: "+=50", autoAlpha: 0 }, 
-        { opacity: 1, y: "-=50", autoAlpha: 1, ease: "power2.out" }, 
-        0.2 
-    );
-
-    heroTimeline.to(".phase-2-bg", {
-        opacity: 1,
-        ease: "power2.inOut"
-    }, 0.2);
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const path = document.querySelector('#scroll-line');
-    
-    const pathLength = path.getTotalLength();
-
-    gsap.set(path, { 
-        strokeDasharray: pathLength, 
-        strokeDashoffset: pathLength 
-    });
-
-    gsap.to(path, {
-        strokeDashoffset: 0,
-        ease: "none",
-        scrollTrigger: {
-            trigger: ".journey_wrapper", 
-            start: "top 60%",           
-            end: "bottom 80%",           
-            scrub: 1,                    
+            gsap.to(path, {
+                strokeDashoffset: 0,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".journey_wrapper", 
+                    start: "top 60%",           
+                    end: "bottom 80%",           
+                    scrub: 1,                    
+                }
+            });
         }
-    });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const statsContent = document.querySelector('.stats-content');
-
-    gsap.to(statsContent, {
-        y: -150, 
-        ease: "none", 
-        scrollTrigger: {
-            trigger: ".mountain-parallax-section",
-            start: "top bottom", 
-            end: "bottom top",   
-            scrub: 0.5
+        // --- Stats Content Parallax ---
+        const statsContent = document.querySelector('.stats-content');
+        if (statsContent) {
+            gsap.to(statsContent, {
+                y: -150, 
+                ease: "none", 
+                scrollTrigger: {
+                    trigger: ".mountain-parallax-section",
+                    start: "top bottom", 
+                    end: "bottom top",   
+                    scrub: 0.5
+                }
+            });
         }
-    });
+    }
 });
 
 // ==========================================================================
-// MOTOR DINÁMICO DE SCROLL Y PINNING / Filosofia - Main Page
+// MOTOR DINÁMICO DE SCROLL Y PINNING - Main Page
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const spacers = document.querySelectorAll('.pin-spacer');
     const track = document.querySelector('.vo-stack-track');
 
-    if (spacers.length === 0 || !track) return;
+    if (spacers.length === 0 || !track) return; // Exit if elements don't exist
 
     const collapsedCardHeight = window.innerWidth > 768 ? 65 : 45;
     const baseTopOffset = 130; 
@@ -214,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', handleScrollPinning, { passive: true });
     window.addEventListener('resize', handleScrollPinning);
+    
+    // Initialize positioning on load
     handleScrollPinning();
 });
 
