@@ -631,6 +631,151 @@ document.addEventListener("DOMContentLoaded", () => {
     animateRain();
 });
 
+// ===============================
+// Hero animation - Tectonics page
+// ===============================
+    document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('threadsCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const linesCount = 18; 
+    let step = 0;
+
+    const mouse = {
+        x: undefined,
+        y: undefined,
+        radius: 180,
+        force: 0.12
+    };
+
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+        mouse.x = undefined;
+        mouse.y = undefined;
+    });
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        step += 0.005; 
+
+        for (let i = 0; i < linesCount; i++) {
+        ctx.beginPath();
+        
+        const opacity = (1 - (i / linesCount)) * 0.22;
+        ctx.strokeStyle = `rgba(184, 154, 90, ${opacity})`;
+        ctx.lineWidth = 1.2;
+
+        for (let x = 0; x < width; x += 10) {
+            const baseSin = Math.sin(x * 0.002 + step + (i * 0.08));
+            const secondaryCos = Math.cos(x * 0.001 - step * 0.5 + (i * 0.04));
+            
+            let targetY = (height / 2) + (baseSin * secondaryCos * (height * 0.28));
+
+            if (mouse.x !== undefined && mouse.y !== undefined) {
+            const dx = x - mouse.x;
+            const dy = targetY - mouse.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < mouse.radius) {
+                const forceFactor = (mouse.radius - distance) / mouse.radius;
+                
+                targetY += (mouse.y - targetY) * forceFactor * mouse.force;
+            }
+            }
+
+            if (x === 0) {
+            ctx.moveTo(x, targetY);
+            } else {
+            ctx.lineTo(x, targetY);
+            }
+        }
+        ctx.stroke();
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!searchBox.contains(event.target) && !searchTrigger.contains(event.target)) {
+            searchBox.classList.remove('active');
+        }
+    });
+
+// ================================
+// Portfolio Section - Tectonics Page
+// ================================
+document.addEventListener('DOMContentLoaded', () => {
+    const panels = document.querySelectorAll('.panel');
+    const body = document.body;
+
+    // Variables for Article Overlay
+    const overlay = document.getElementById('article-overlay');
+    const closeBtns = document.querySelectorAll('.close-article-btn, .footer-close-btn');
+    const openBtns = document.querySelectorAll('.open-article');
+    const articleTitle = document.getElementById('article-title');
+    const articleHero = document.getElementById('article-hero-img');
+    const articleBody = document.getElementById('article-body'); 
+
+    // 1. Accordion click handler
+    panels.forEach(panel => {
+        panel.addEventListener('click', (e) => {
+            if (e.target.classList.contains('open-article')) return;
+
+            if (!panel.classList.contains('active')) {
+                panels.forEach(p => p.classList.remove('active'));
+                panel.classList.add('active');
+            }
+        });
+    });
+
+    // 2. Open Article Overlay and Switch Content
+    openBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const title = btn.getAttribute('data-title');
+            const imgSrc = btn.getAttribute('data-img');
+            const targetId = btn.getAttribute('data-target'); 
+            
+            articleTitle.textContent = title;
+            articleHero.src = imgSrc;
+
+            const contentTemplate = document.getElementById(targetId);
+            if (contentTemplate) {
+                articleBody.innerHTML = contentTemplate.innerHTML;
+            }
+            
+            overlay.classList.add('open');
+            body.style.overflow = 'hidden'; 
+        });
+    });
+
+    // 3. Close Article Overlay
+    closeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            overlay.classList.remove('open');
+            body.style.overflow = ''; 
+        });
+    });
+});
+
 
 // ==============================================
 // Language Switcher

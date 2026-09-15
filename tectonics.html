@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a México</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header" id="top">
+    <div class="header-left">
+        <div class="options-dropdown">
+            <button class="options-btn" aria-label="Toggle Language">
+                <img src="images/language.png" class="nav-icon" alt="Language Selector" />
+            </button>
+            <div class="options">
+                <a href="#" class="lang-switch" data-lang="en">English</a>
+                <a href="#" class="lang-switch" data-lang="es">Español</a>
+                <a href="#" class="lang-switch" data-lang="fr">Français</a>
+                <a href="#" class="lang-switch" data-lang="pt">Português</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="#top" class="logo">BIENVENIDO A MEXICO</a>
+        <nav class="nav-links">
+            <a href="maps.html" id="nav-fundamentals">MAPS</a>
+            <a href="tectonics.html" id="nav-stats">TECTONICS</a>
+            <a href="erosion.html" id="nav-real-cases">EROSION</a>
+            <a href="about.html" id="nav-about">ABOUT</a>
+            <a href="oceans.html" id="nav-take-action">OCEANS</a>
+            <a href="climate.html" id="nav-donations">CLIMATE</a>
+            <a href="references.html" id="nav-contact">REFERENCES</a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <div class="cta-buttons">
+            <button class="icon-action-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <img src="images/dark.png" class="nav-icon" id="theme-icon" alt="Toggle Theme Layout" />
+            </button>
+        </div>
+    </div>
+</header>
+
+<section id="inicio">
+    <div class="threads-stage" aria-hidden="true">
+        <canvas class="threads" id="threadsCanvas"></canvas>
+    </div>
+    <h1 data-i18n="heroTitle">Mexico’s Dynamic Earth:<br/><em>Plates, Peaks, and Power</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub" data-i18n="heroSub">Explore how subduction zones, volcanic arcs, and rich mineral deposits have shaped the geology, culture, and economy of Mexico.</p>
+</section>
+
+<!-- PORTFOLIO SECTION -->
+    <div class="portfolio-wrapper">
+        <aside class="sidebar">
+        <div class="sidebar-content">
+            <h2>Learn More Here!</h2>
+            <p>Mexico’s landscape is a direct reflection of intense geological activity occurring beneath the surface. Positioned at the collision point of five tectonic plates, the region is characterized by active volcanoes, high-magnitude seismic zones, and towering mountain ranges that act as natural walls across the country. These same tectonic forces created rich mineral veins that make Mexico a global leader in silver mining, while volcanic ash continues to enrich the soil feeding millions. This page explores the interconnections between Mexico's deep earth dynamics, natural hazards, economic resources, and everyday life.</p>
+        </div>
+        <div class="sidebar-footer">
+            <a href="maps.html">Learn About the Mexican's Maps</a>
+        </div>
+        </aside>
+
+        <main class="accordion" id="projectAccordion">
+
+        <!-- ITEM 1 -->
+        <article class="panel active" data-index="1">
+            <div class="collapsed-view">
+            <span class="plus-icon">+</span>
+            <span class="vertical-title">Tectonic Plates and Natural Disasters</span>
+            <span class="panel-num">1</span>
+            </div>
+            <div class="expanded-view">
+            <div class="image-wrapper">
+                <img src="images/tectonic.jpeg">
+            </div>
+            <div class="expanded-details">
+                <h3>Tectonic Plates and Natural Disasters</h3>
+                <p>Discover how five shifting tectonic plates drive Mexico’s dynamic landscape, triggering megathrust earthquakes, active stratovolcanoes, and coastal tsunamis.</p>
+            </div>
+            <div class="expanded-footer">
+                <a class="more-link open-article" 
+                data-title="Tectonic Plates and Natural Disasters" 
+                data-img="images/tectonic.jpeg"
+                data-target="content-1">
+                Read More
+                </a>
+                <span class="panel-num">1</span>
+            </div>
+            </div>
+
+            <!-- Content Template for Item 1 -->
+            <template id="content-1">
+                <p><strong>Overview:</strong> Mexico sits on five tectonic plates: the North American, Cocos, Rivera, Pacific, and Caribbean plates. The oceanic Cocos and Rivera plates actively subduct beneath the continental North American Plate along the Middle America Trench off the Pacific coast at 5 to 6 cm per year. Meanwhile, the Gulf of California acts as a transform rift zone sliding northern Baja California northwest.</p>
+                <ul>
+                    <li><strong>Earthquakes:</strong> Megathrust subduction events along the Pacific coast generate major shaking across central and southern states.</li>
+                    <li><strong>Volcanism:</strong> Subducting oceanic crust melts at depth, fueling active stratovolcanoes across the central belt.</li>
+                    <li><strong>Tsunamis:</strong> Localized tsunamis threaten coastal settlements following off-shore subduction quakes, such as the 1995 Colima tsunami.</li>
+                </ul>
+            </template>
+        </article>
+
+        <!-- ITEM 2 -->
+        <article class="panel" data-index="2">
+            <div class="collapsed-view">
+            <span class="plus-icon">+</span>
+            <span class="vertical-title">Rock and Mineral Resources</span>
+            <span class="panel-num">2</span>
+            </div>
+            <div class="expanded-view">
+            <div class="image-wrapper">
+                <img src="images/mineral.jpeg" alt="Rock and Mineral Resources">
+            </div>
+            <div class="expanded-details">
+                <h3>Rock and Mineral Resources</h3>
+                <p>Uncover Mexico's rich geological history, yielding over 20% of the world's silver alongside vital copper, gold, and zinc reserves.</p>
+            </div>
+            <div class="expanded-footer">
+                <a class="more-link open-article" 
+                data-title="Rock and Mineral Resources" 
+                data-img="images/mineral.jpeg"
+                data-target="content-2">
+                Read More
+                </a>
+                <span class="panel-num">2</span>
+            </div>
+            </div>
+
+            <!-- Content Template for Item 2 -->
+            <template id="content-2">
+                <p><strong>Overview:</strong> A complex tectonic history yields diverse rock formations: Cretaceous limestone in the east, Tertiary volcanic ignimbrites and rhyolites across western plateaus, and ancient metamorphic rocks in the south.</p>
+                <ul>
+                    <li><strong>Global Silver Leader:</strong> Mexico produces over 20% of the world's silver, alongside substantial reserves of copper, gold, lead, and zinc.</li>
+                    <li><strong>Jobs & Exports:</strong> Mining contributes ~2.4% to national GDP and directly employs over 400,000 workers. Major exports go to the United States, China, Japan, and Canada.</li>
+                    <li><strong>Challenges:</strong> Mining in arid regions strains local groundwater supplies and creates risks of acid mine drainage, leaving mining-dependent towns vulnerable to global commodity price swings.</li>
+                </ul>
+            </template>
+        </article>
+
+        <!-- ITEM 3 -->
+        <article class="panel" data-index="3">
+            <div class="collapsed-view">
+            <span class="plus-icon">+</span>
+            <span class="vertical-title">Earthquakes and Seismic Preparedness</span>
+            <span class="panel-num">3</span>
+            </div>
+            <div class="expanded-view">
+            <div class="image-wrapper">
+                <img src="images/seismic.jpeg" alt="Earthquakes and Seismic Preparedness">
+            </div>
+            <div class="expanded-details">
+                <h3>Earthquakes and Seismic Preparedness</h3>
+                <p>Explore historic seismic events that reshaped central Mexico and the cutting-edge early warning systems saving lives today.</p>
+            </div>
+            <div class="expanded-footer">
+                <a class="more-link open-article" 
+                data-title="Earthquakes and Seismic Preparedness" 
+                data-img="images/seismic.jpeg"
+                data-target="content-3">
+                Read More
+                </a>
+                <span class="panel-num">3</span>
+            </div>
+            </div>
+
+            <!-- Content Template for Item 3 -->
+            <template id="content-3">
+                <p><strong>Overview:</strong> Mexico has experienced severe seismic events, notably the September 19, 1985 (M8.0) earthquake where ancient lakebed sediments beneath Mexico City amplified seismic waves, leading to widespread building collapses and over 10,000 casualties. On the same day in 2017, an M7.1 intraplate event within the subducting Cocos slab caused significant structural damage in Puebla, Morelos, and Mexico City.</p>
+                <ul>
+                    <li><strong>SASMEX (Early Warning System):</strong> Coastal sensors detect fast-moving primary seismic waves (P-waves) and broadcast radio alerts, granting urban residents 60 to 120 seconds of advance warning before destructive secondary waves (S-waves) arrive.</li>
+                    <li><strong>Safety Protocols:</strong> Annual nationwide evacuation drills (Simulacro Nacional) every September 19th and strict, continuously updated structural building codes tailored for soft lakebed soils.</li>
+                </ul>
+            </template>
+        </article>
+
+        <!-- ITEM 4 -->
+        <article class="panel" data-index="4">
+            <div class="collapsed-view">
+            <span class="plus-icon">+</span>
+            <span class="vertical-title">Major Mountain Ranges</span>
+            <span class="panel-num">4</span>
+            </div>
+            <div class="expanded-view">
+            <div class="image-wrapper">
+                <img src="images/mountain.jpeg" alt="Major Mountain Ranges">
+            </div>
+            <div class="expanded-details">
+                <h3>Major Mountain Ranges</h3>
+                <p>Journey across Mexico’s rugged ranges, from Copper Canyon to high volcanic peaks, shaping unique climates, cultures, and trade routes.</p>
+            </div>
+            <div class="expanded-footer">
+                <a class="more-link open-article" 
+                data-title="Major Mountain Ranges" 
+                data-img="images/mountain.jpeg"
+                data-target="content-4">
+                Read More
+                </a>
+                <span class="panel-num">4</span>
+            </div>
+            </div>
+
+            <!-- Content Template for Item 4 -->
+            <template id="content-4">
+                <p><strong>Overview:</strong> The mountain ranges create rain-shadow effects, keeping the central northern plateau dry while trapping moisture on coastal slopes. Historically, these steep ranges acted as barriers to trade and military conquest, preserving isolated indigenous cultures like the Rarámuri in the north and Zapotec in the south. Today, trade requires complex mountain highways and bridges connecting inner cities to coastal ports.</p>
+                <ul>
+                    <li><strong>Sierra Madre Occidental:</strong> High volcanic plateau composed of rhyolite and ignimbrite, cut by deep canyons like Copper Canyon (Barrancas del Cobre).</li>
+                    <li><strong>Sierra Madre Oriental:</strong> Folded sedimentary limestone range running down the eastern side of the country.</li>
+                    <li><strong>Trans-Mexican Volcanic Belt:</strong> An active east-west volcanic chain holding Mexico's highest peaks, including Pico de Orizaba (5,636 m) and Popocatépetl (5,426 m).</li>
+                    <li><strong>Sierra Madre del Sur:</strong> Metamorphic mountain terrain lining the southern Pacific coast.</li>
+                </ul>
+            </template>
+        </article>
+
+        <!-- ITEM 5 -->
+        <article class="panel" data-index="5">
+            <div class="collapsed-view">
+            <span class="plus-icon">+</span>
+            <span class="vertical-title">Volcanoes of Mexico</span>
+            <span class="panel-num">5</span>
+            </div>
+            <div class="expanded-view">
+            <div class="image-wrapper">
+                <img src="images/volcano.jpeg" alt="Volcanoes of Mexico">
+            </div>
+            <div class="expanded-details">
+                <h3>Volcanoes of Mexico</h3>
+                <p>Explore iconic peaks like Popocatépetl and Parícutin, where volcanic power enriches soils for agriculture while posing constant eruptive hazards.</p>
+            </div>
+            <div class="expanded-footer">
+                <a class="more-link open-article" 
+                data-title="Volcanoes of Mexico" 
+                data-img="images/volcano.jpeg"
+                data-target="content-5">
+                Read More
+                </a>
+                <span class="panel-num">5</span>
+            </div>
+            </div>
+
+            <!-- Content Template for Item 5 -->
+            <template id="content-5">
+                <p><strong>Overview:</strong> Volcanic ash degrades into rich volcanic soil (Andisols), creating fertile land for crops like blue agave, avocado, and coffee. While active volcanoes support agricultural economies and geotourism, they pose constant threats of pyroclastic flows, mudflows (lahars), and aviation-disrupting ash clouds.</p>
+                <ul>
+                    <li><strong>Popocatépetl:</strong> Active composite stratovolcano (~70 km from Mexico City) known for ash plumes and explosive pyroclastic activity.</li>
+                    <li><strong>Parícutin:</strong> Monogenetic cinder cone in Michoacán that famously emerged in a cornfield in 1943, growing 424 meters high and burying nearby villages under lava.</li>
+                    <li><strong>Pico de Orizaba:</strong> Dormant stratovolcano and Mexico's highest peak, topped by high-altitude glaciers.</li>
+                    <li><strong>Volcán de Colima:</strong> Highly active lava dome and stratovolcano complex near the Pacific coast.</li>
+                </ul>
+            </template>
+        </article>
+        </main>
+    </div>
+
+    <!-- ARTICLE OVERLAY -->
+    <div id="article-overlay" class="article-overlay">
+        <button id="close-article-top" class="close-article-btn">✕ Exit Article</button>
+        
+        <img id="article-hero-img" src="" alt="Article Hero Image" class="article-hero">
+        
+        <div class="article-container">
+        <h2 id="article-title">Article Title</h2>
+        <div id="article-body">
+        </div>
+        </div>
+
+        <footer class="article-footer">
+        <p>Thank you for exploring this Article.</p>
+        <button id="close-article-bottom" class="footer-close-btn">Exit Article</button>
+        </footer>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1842,3 +1842,408 @@ section { min-height: 100vh; width: 100%; padding: 120px 6% 60px 6%; position: r
     font-size: 1.65rem;
   }
 }
+
+    /* ===================
+    Hero Section - Tectonics Page
+    ====================== */
+    #inicio {
+    min-height: 100vh;
+    background-color: var(--bg-color); 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    text-align: center;
+    padding: 9rem 2rem 6rem;
+    position: relative; 
+    overflow: hidden;
+    }
+
+    .threads-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none; 
+    }
+
+    .threads {
+    width: 100%;
+    height: 100%;
+    display: block;
+    }
+
+    #inicio::before {
+    content: '';
+    position: absolute; 
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 55%, var(--third) 0%, transparent 70%);
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 1; 
+    }
+
+    #inicio > *:not(.threads-stage) {
+    position: relative;
+    z-index: 2;
+    }
+
+    #inicio .overline {
+    font-size: 1.95rem; 
+    letter-spacing: 0.45em; 
+    text-transform: uppercase;
+    color: var(--third); 
+    margin-bottom: 2.5rem;
+    }
+
+    #inicio h1 { 
+    color: var(--text); 
+    max-width: 900px; 
+    font-size: 3.5rem;
+    }
+
+    #inicio h1 em { 
+    color: var(--primary); 
+    }
+
+    #inicio .hero-sub {
+    margin-top: 0.5rem; 
+    max-width: 420px;
+    font-size: 0.9rem; 
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    line-height: 1.9;
+    }
+
+    #inicio .hero-rule { 
+    width: 40px; 
+    height: 1px; 
+    background: var(--third); 
+    margin: 2rem auto; 
+    }
+
+    #inicio .hero-products {
+    display: flex; 
+    gap: 3.5rem; 
+    align-items: center;
+    font-size: 0.65rem; 
+    letter-spacing: 0.3em; 
+    text-transform: uppercase;
+    color: var(--tab-inactive-text);
+    }
+
+    #inicio .hero-products span { 
+    color: var(--text); 
+    }
+
+    /* ===================
+    Portfolio Accordion Section - Tectonics Page
+    ====================== */
+    .portfolio-wrapper {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 40px;
+        padding: 20px 5% 60px 5%;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+        flex-grow: 1;
+        }
+
+        /* LEFT SIDEBAR */
+        .sidebar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        }
+
+        .sidebar-content h2 {
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        margin-bottom: 20px;
+        }
+
+        .sidebar-content p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        }
+
+        .sidebar-footer a {
+        color: var(--text);
+        font-weight: 700;
+        text-decoration: underline;
+        font-size: 1rem;
+        text-underline-offset: 4px;
+        }
+
+        /* ACCORDION */
+        .accordion {
+        display: flex;
+        border: 1px solid var(--border-color);
+        height: 650px;
+        overflow: hidden;
+        background-color: var(--card-bg);
+        }
+
+        .panel {
+        position: relative;
+        flex: 0 0 75px;
+        border-right: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
+        overflow: hidden;
+        user-select: none;
+        }
+
+        .panel:last-child {
+        border-right: none;
+        }
+
+        .panel.active {
+        flex: 1;
+        cursor: default;
+        background-color: var(--card-bg);
+        }
+
+        .panel:not(.active):hover {
+        background-color: var(--text);
+        color: var(--text-light);
+        }
+
+        .panel:not(.active):hover .panel-num,
+        .panel:not(.active):hover .plus-icon {
+        color: var(--text-light);
+        }
+
+        /* COLLAPSED STATE */
+        .collapsed-view {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 0;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+        }
+
+        .panel.active .collapsed-view {
+        opacity: 0;
+        pointer-events: none;
+        }
+
+        .plus-icon {
+        font-size: 1.4rem;
+        color: var(--tab-inactive-text);
+        font-weight: 300;
+        }
+
+        .vertical-title {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        }
+
+        .panel-num {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--tab-inactive-text);
+        line-height: 1;
+        }
+
+        /* EXPANDED STATE */
+        .expanded-view {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease 0.15s;
+        }
+
+        .panel.active .expanded-view {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        .image-wrapper {
+        width: 100%;
+        height: 60%;
+        overflow: hidden;
+        margin-bottom: 24px;
+        }
+
+        .image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        }
+
+        .expanded-details h3 {
+        font-family: var(--font-heading);
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+        }
+
+        .expanded-details p {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 16px;
+        max-width: 90%;
+        }
+
+        .more-link {
+        display: inline-block;
+        color: var(--text);
+        font-weight: 700;
+        text-decoration: underline;
+        font-size: 0.9rem;
+        text-underline-offset: 4px;
+        cursor: pointer;
+        }
+
+        .expanded-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+
+        .expanded-footer .panel-num {
+        color: var(--tab-inactive-text);
+        }
+
+        /* ARTICLE OVERLAY / MODAL */
+        .article-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg-color);
+        z-index: 2000;
+        overflow-y: auto;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease, background-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        }
+
+        .article-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+        }
+
+        /* Top right close button */
+        .close-article-btn {
+        position: fixed;
+        top: 30px;
+        right: 40px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        border: 1px solid transparent;
+        padding: 10px 24px;
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 30px;
+        cursor: pointer;
+        z-index: 2010;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        }
+
+        .close-article-btn:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        }
+
+        .article-hero {
+        width: 100%;
+        height: 55vh;
+        object-fit: cover;
+        display: block;
+        }
+
+        .article-container {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 0 5%;
+        flex-grow: 1;
+        }
+
+        .article-container h2 {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        margin-bottom: 30px;
+        color: var(--text);
+        line-height: 1.2;
+        }
+
+        .article-container p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 24px;
+        color: var(--text);
+        }
+
+        /* Solid Article Footer */
+        .article-footer {
+        background-color: var(--primary);
+        color: var(--text-light);
+        padding: 60px 20px;
+        text-align: center;
+        margin-top: 60px;
+        transition: background-color 0.3s ease;
+        }
+
+        .article-footer p {
+        margin-bottom: 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        }
+        
+        .article-footer .footer-close-btn {
+        background: transparent;
+        border: 1px solid var(--text-light);
+        color: var(--text-light);
+        padding: 10px 24px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+        }
+
+        .article-footer .footer-close-btn:hover {
+        background-color: var(--border-color);
+        color: var(--primary);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+        .portfolio-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .accordion {
+            height: 550px;
+        }
+        .panel {
+            flex: 0 0 55px;
+        }
+        .article-container h2 {
+            font-size: 2.2rem;
+        }
+        }
