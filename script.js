@@ -88,6 +88,56 @@ document.querySelectorAll('.nav-links a, .logo').forEach(anchor => {
     });
 });
 
+// ==========================================
+// Persistent Audio Player Logic
+// ==========================================
+const audioToggle = document.getElementById('audio-toggle');
+const audioElement = document.getElementById('audioElement');
+const floatingAudioContainer = document.getElementById('floating-audio'); 
+
+const savedTime = localStorage.getItem('audioCurrentTime');
+const isPlaying = localStorage.getItem('audioIsPlaying') === 'true';
+
+if (savedTime) {
+    audioElement.currentTime = parseFloat(savedTime);
+}
+
+audioToggle.addEventListener('change', () => {
+    if (audioToggle.checked) {
+        audioElement.play().then(() => {
+            localStorage.setItem('audioIsPlaying', 'true');
+        }).catch(error => {
+            console.log("Browser prevented autoplay:", error);
+            audioToggle.checked = false; 
+        });
+    } else {
+        audioElement.pause();
+        localStorage.setItem('audioIsPlaying', 'false');
+    }
+});
+
+if (isPlaying) {
+    audioToggle.checked = true;
+    
+    audioElement.play().catch(error => {
+        console.log("Waiting for user interaction to resume audio.");
+        audioToggle.checked = false;
+        localStorage.setItem('audioIsPlaying', 'false');
+    });
+}
+
+audioElement.addEventListener('timeupdate', () => {
+    localStorage.setItem('audioCurrentTime', audioElement.currentTime);
+});
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 120) {
+        floatingAudioContainer.classList.add('scrolled');
+    } else {
+        floatingAudioContainer.classList.remove('scrolled');
+    }
+});
+
 // ==============================================
 // GSAP Animations
 // ==============================================
