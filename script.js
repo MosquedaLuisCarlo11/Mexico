@@ -94,7 +94,6 @@ document.querySelectorAll('.nav-links a, .logo').forEach(anchor => {
 const audioToggle = document.getElementById('audio-toggle');
 const audioElement = document.getElementById('audioElement');
 const floatingAudioContainer = document.getElementById('floating-audio'); 
-
 const savedTime = localStorage.getItem('audioCurrentTime');
 const isPlaying = localStorage.getItem('audioIsPlaying') === 'true';
 
@@ -1799,3 +1798,71 @@ const translations = {
         "overlay-close-bottom": "Sair do Artigo"
     }
 };
+
+// ===============================
+// Carousel section - about page
+// ===============================
+document.addEventListener('DOMContentLoaded', () => {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const carouselSection = document.querySelector('.hero-carousel');
+
+    let currentIndex = 0;
+    let autoplayTimer = null;
+    const AUTOPLAY_INTERVAL = 6000; 
+
+    function goToSlide(index) {
+        // Wrap around bounds
+        if (index < 0) {
+            currentIndex = slides.length - 1;
+        } else if (index >= slides.length) {
+            currentIndex = 0;
+        } else {
+            currentIndex = index;
+        }
+
+        slides.forEach((slide, i) => {
+            if (i === currentIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+
+        dots.forEach((dot, i) => {
+            if (i === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function nextSlide() {
+        goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentIndex - 1);
+    }
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoplay();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoplay();
+    });
+
+    dots.forEach((dot) => {
+        dot.addEventListener('click', (e) => {
+            const targetIndex = parseInt(e.target.getAttribute('data-index'), 10);
+            goToSlide(targetIndex);
+            resetAutoplay();
+        });
+    });
+});
