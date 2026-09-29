@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erosion & Earth Processes - Bienvenido a México</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="main-header" id="top">
+    <div class="header-left">
+        <div class="options-dropdown">
+            <button class="options-btn" aria-label="Toggle Language">
+                <img src="images/language.png" class="nav-icon" alt="Language Selector" />
+            </button>
+            <div class="options">
+                <a href="#" class="lang-switch" data-lang="en">English</a>
+                <a href="#" class="lang-switch" data-lang="es">Español</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="index.html" class="logo" id="nav-logo">BIENVENIDO A MEXICO</a>
+        <nav class="nav-links">
+            <a href="maps.html" id="nav-fundamentals">MAPS</a>
+            <a href="tectonics.html" id="nav-stats">TECTONICS</a>
+            <a href="erosion.html" class="active" id="nav-real-cases">EROSION</a>
+            <a href="about.html" id="nav-about">ABOUT</a>
+            <a href="oceans.html" id="nav-take-action">OCEANS</a>
+            <a href="climate.html" id="nav-donations">CLIMATE</a>
+            <a href="references.html" id="nav-contact">REFERENCES</a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <div class="cta-buttons">
+            <button class="icon-action-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <img src="images/dark.png" class="nav-icon" id="theme-icon" alt="Toggle Theme Layout" />
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="floating-audio-toggle" id="floating-audio">
+    <div class="toggle-label">
+        <img src="images/sonido.jpg" alt="Music Icon">
+    </div>
+    <div class="toggle-switch">
+        <input type="checkbox" id="audio-toggle">
+        <label for="audio-toggle"></label>
+    </div>
+    <audio id="audioElement">
+        <source src="images/mexicoEnLaPiel.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+</div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="v-rain-stage" aria-hidden="true">
+        <canvas id="goldRainCanvas"></canvas>
+    </div>
+    <h1 class="giant-title">
+        <span id="hero-title-part1"><em>Sculpting Mexico: </em></span>
+        <span id="hero-title-part2">Erosion, Weathering,</span>
+        <span id="hero-title-part3">and Deserts</span>
+    </h1>
+</section>
+
+<!-- Introduction Details -->
+<section class="intro-stacked-section">
+    <div class="intro-header">
+        <h2 class="section-trigger">A Land Shaped by Elements</h2>
+        <p class="highlight-text">
+            Mexico’s dramatically diverse topography is a masterpiece carved by relentless exogenous processes. From the arid deserts of the north to the humid, tropical jungles of the south, the forces of weathering, mass wasting, and erosion continuously redefine the nation's economic, social, and physical landscapes.
+        </p>
+    </div>
+    
+    <div class="intro-media">
+        <div class="video-container">
+            <!-- Replace the src URL with one of the video options below -->
+            <iframe src="https://www.youtube.com/embed/Kxy74EAjAec" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <p class="description-text">
+            <em>Video: Exploring the physical geography, climate zones, and dramatic topography of Mexico.</em>
+        </p>
+    </div>
+</section>
+
+<!-- SECTION 1: Weathering & Mass Wasting -->
+<section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <!-- Add a relevant image of a cenote or landslide in your images folder -->
+                <img src="images/landslides.jpg" alt="Landslide in Puebla" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Carbonation & Landslides</span>
+                        <span class="map-badge-subtitle">Yucatán & Puebla</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">GEOLOGIC HAZARDS</span>
+                <div class="map-divider"></div>
+                <h2>Weathering & Mass Wasting</h2>
+                <p><strong>Chemical Weathering:</strong> In the Yucatán Peninsula, extensive limestone bedrock experiences intense <em>carbonation</em>, a chemical weathering process where acidic rainwater dissolves the rock. This creates a vast karst topography featuring underground rivers and iconic sinkholes known as <em>cenotes</em>.</p>
+                <p><strong>Mass Wasting:</strong> The steep, mountainous terrains of the Sierra Madre and heavy seasonal rains make Mexico highly susceptible to landslides. A tragic example is the <strong>1999 Teziutlán landslide</strong> in Puebla, triggered by extreme rainfall, which buried neighborhoods and claimed over 250 lives.</p>
+                <p><strong>Government Action:</strong> To mitigate these risks, the Mexican government utilizes <strong>CENAPRED</strong> (National Center for Disaster Prevention). They developed the <em>National Risk Atlas</em> to map vulnerable slopes and implement early warning systems to evacuate communities before heavy storms hit.</p>
+                <div class="map-tags">
+                    <span class="map-tag">Carbonation</span>
+                    <span class="map-tag">Landslides</span>
+                    <span class="map-tag">CENAPRED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: Water Erosion (Rivers) -->
+<section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/usumacintaRiver.jpg" alt="Meandering Usumacinta River" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Usumacinta River</span>
+                        <span class="map-badge-subtitle">Tabasco / Guatemala Border</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">HYDROLOGY</span>
+                <div class="map-divider"></div>
+                <h2>Water Erosion: The Mighty Rivers</h2>
+                <p>While local splash or sheet erosion impacts localized farming, major river systems severely impact regional economies. The <strong>Usumacinta River</strong> is Mexico's largest by discharge volume.</p>
+                <ul style="margin-bottom: 1rem; line-height: 1.6;">
+                    <li><strong>Source & Length:</strong> Originating in the Guatemalan Highlands, it flows roughly 1,000 km.</li>
+                    <li><strong>Discharge & Estuary:</strong> Discharging around 1,700 m³/s, it eventually merges with the Grijalva River, forming a massive delta that empties into the Gulf of Mexico.</li>
+                    <li><strong>Channel Type:</strong> As it reaches the flat plains of Tabasco, it features a highly <strong>meandering channel</strong>.</li>
+                </ul>
+                <p><strong>Socio-Economic Impacts:</strong> The meandering and lateral erosion constantly shifts property boundaries, destroys fertile agricultural land along the cut banks, and poses severe flood risks to communities in Tabasco.</p>
+                <p><strong>Government Action:</strong> <strong>CONAGUA</strong> (National Water Commission) combats streambank erosion and flooding by dredging the riverbeds, constructing levees, and installing riprap (rock armor) to stabilize vulnerable outer meander bends.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: Wind Erosion & Deserts -->
+<section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/desertsonora.jpg" alt="Sonoran Desert Dunes" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Arid Landscapes</span>
+                        <span class="map-badge-subtitle">Sonoran & Chihuahuan</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">ARID CLIMATES</span>
+                <div class="map-divider"></div>
+                <h2>Wind Erosion & Desertification</h2>
+                <p><strong>Wind Erosion:</strong> Mexico experiences severe wind erosion, particularly in its arid northern states, stripping valuable topsoil and reducing agricultural productivity. The government agency <strong>CONAFOR</strong> (National Forestry Commission) mitigates this by planting windbreaks and supporting reforestation initiatives.</p>
+                <p><strong>Major Deserts:</strong> Deserts drastically limit water availability and dictate agriculture in the north.</p>
+                <ul style="margin-bottom: 1rem; line-height: 1.6;">
+                    <li><strong>Sonoran Desert:</strong> Features sprawling sand seas known as <em>ergs</em> (like the Gran Desierto de Altar) alongside iconic Saguaro cacti.</li>
+                    <li><strong>Chihuahuan Desert:</strong> The largest in North America, dominated by a <em>reg</em> landscape (gravel-covered plains) and rocky plateaus (<em>hamadas</em>), covered in tough scrubland.</li>
+                </ul>
+                <p><strong>Desertification:</strong> Yes, desertification is a severe and growing problem. Over 60% of Mexico's land is considered degraded due to overgrazing, deforestation, and climate change, threatening food security and pushing rural populations toward urban migration.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: Glaciers -->
+<section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/picodeOrizaba.jpg" alt="Glacier on Pico de Orizaba" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Pico de Orizaba</span>
+                        <span class="map-badge-subtitle">Jamapa Glacier</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">CRYOSPHERE</span>
+                <div class="map-divider"></div>
+                <h2>The Last Glaciers of Mexico</h2>
+                <p>Though associated with warm climates, Mexico's highest volcanic peaks were historically heavily glaciated. Today, they are retreating at alarming rates.</p>
+                <p><strong>Current & Ancient Influence:</strong> Ancient Pleistocene glaciers carved distinct features like U-shaped valleys, moraines, and cirques into peaks like Iztaccíhuatl and Popocatépetl. Today, the only significant surviving glacier is the <strong>Jamapa Glacier</strong> on Pico de Orizaba (Citlaltépetl).</p>
+                <p><strong>Impact of Remaining Features:</strong> These glaciers serve as vital freshwater reservoirs during dry seasons for downstream communities and agricultural sectors in Veracruz and Puebla. However, due to global climate change and recent volcanic activity (which eradicated Popocatépetl's glaciers in the early 2000s), their rapid disappearance presents a looming crisis for regional water security.</p>
+                <div class="map-tags">
+                    <span class="map-tag">Pico de Orizaba</span>
+                    <span class="map-tag">Jamapa Glacier</span>
+                    <span class="map-tag">Freshwater Supply</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: APA References -->
+<section class="apa-references">
+    <h2>References</h2>
+    <div class="apa-item">
+        Centro Nacional de Prevención de Desastres (CENAPRED). (2020). <em>Atlas Nacional de Riesgos: Deslizamientos de Laderas</em>. Gobierno de México. https://www.gob.mx/cenapred
+    </div>
+    <div class="apa-item">
+        Comisión Nacional del Agua (CONAGUA). (2021). <em>Estadísticas del agua en México 2021</em>. Secretaría de Medio Ambiente y Recursos Naturales. https://www.gob.mx/conagua
+    </div>
+    <div class="apa-item">
+        Cortés, A. L., & Delgado-Granados, H. (2015). Glaciers of Mexico. In <em>Glaciers of North America—SATELLITE IMAGE ATLAS OF GLACIERS OF THE WORLD</em> (pp. 1-13). U.S. Geological Survey Professional Paper 1386–J.
+    </div>
+    <div class="apa-item">
+        Lugo-Hubp, J. (2011). Geomorphology of Mexico. In <em>Geomorphological Landscapes of the World</em> (pp. 205-214). Springer, Dordrecht.
+    </div>
+    <div class="apa-item">
+        United Nations Convention to Combat Desertification (UNCCD). (2019). <em>Desertification and land degradation in Mexico: Challenges and policies</em>. UNCCD Secretariat.
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
