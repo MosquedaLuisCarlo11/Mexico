@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title" data-i18n="page-title">Bienvenido a México</title>
+    <title id="page-title" data-i18n="page-title">Bienvenido a México - Tectonics</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        .apa-references {
+            padding: 4rem 10%;
+            background-color: var(--bg-color, #f4f4f4);
+            color: var(--text-color, #333);
+            font-family: 'Montserrat', sans-serif;
+        }
+        .apa-references h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .apa-item {
+            text-indent: -2em;
+            padding-left: 2em;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
 
@@ -74,7 +93,7 @@
         <aside class="sidebar">
         <div class="sidebar-content">
             <h2 id="sidebar-title" data-i18n="sidebar-title">Learn More Here!</h2>
-            <p id="sidebar-desc" data-i18n="sidebar-desc">Mexico’s landscape is a direct reflection of intense geological activity occurring beneath the surface. Positioned at the collision point of five tectonic plates, the region is characterized by active volcanoes, high-magnitude seismic zones, and towering mountain ranges that act as natural walls across the country. These same tectonic forces created rich mineral veins that make Mexico a global leader in silver mining, while volcanic ash continues to enrich the soil feeding millions. This page explores the interconnections between Mexico's deep earth dynamics, natural hazards, economic resources, and everyday life.</p>
+            <p id="sidebar-desc" data-i18n="sidebar-desc">Mexico’s landscape is a direct reflection of intense geological activity occurring beneath the surface (USGS, 2020). Positioned at the collision point of five tectonic plates, the region is characterized by active volcanoes, high-magnitude seismic zones, and towering mountain ranges that act as natural walls across the country (Ferrari et al., 2012; USGS, 2020). These same tectonic forces created rich mineral veins that make Mexico a global leader in silver mining, while volcanic ash continues to enrich the soil feeding millions (CAMIMEX, 2021). This page explores the interconnections between Mexico's deep earth dynamics, natural hazards, economic resources, and everyday life (Ferrari et al., 2012).</p>
         </div>
         <div class="sidebar-footer">
             <a id="sidebar-link" href="maps.html" data-i18n="sidebar-link">Learn About the Mexican's Maps</a>
@@ -96,7 +115,7 @@
             </div>
             <div class="expanded-details">
                 <h3 id="exp-title-1" data-i18n="exp-title-1">Tectonic Plates and Natural Disasters</h3>
-                <p id="exp-desc-1" data-i18n="exp-desc-1">Discover how five shifting tectonic plates drive Mexico’s dynamic landscape, triggering megathrust earthquakes, active stratovolcanoes, and coastal tsunamis.</p>
+                <p id="exp-desc-1" data-i18n="exp-desc-1">Discover how five shifting tectonic plates drive Mexico’s dynamic landscape, triggering megathrust earthquakes, active stratovolcanoes, and coastal tsunamis (Ferrari et al., 2012; USGS, 2020).</p>
             </div>
             <div class="expanded-footer">
                 <a id="read-more-1" class="more-link open-article" 
@@ -112,11 +131,11 @@
 
             <!-- Content Template for Item 1 -->
             <template id="content-1">
-                <p id="tpl-1-p1" data-i18n="tpl-1-p1"><strong>Overview:</strong> Mexico sits on five tectonic plates: the North American, Cocos, Rivera, Pacific, and Caribbean plates. The oceanic Cocos and Rivera plates actively subduct beneath the continental North American Plate along the Middle America Trench off the Pacific coast at 5 to 6 cm per year. Meanwhile, the Gulf of California acts as a transform rift zone sliding northern Baja California northwest.</p>
+                <p id="tpl-1-p1" data-i18n="tpl-1-p1"><strong>Overview:</strong> Mexico sits on five tectonic plates: the North American, Cocos, Rivera, Pacific, and Caribbean plates (USGS, 2020). The oceanic Cocos and Rivera plates actively subduct beneath the continental North American Plate along the Middle America Trench off the Pacific coast at 5 to 6 cm per year (Ferrari et al., 2012; USGS, 2020). Meanwhile, the Gulf of California acts as a transform rift zone sliding northern Baja California northwest (Ferrari et al., 2012).</p>
                 <ul>
-                    <li id="tpl-1-li1" data-i18n="tpl-1-li1"><strong>Earthquakes:</strong> Megathrust subduction events along the Pacific coast generate major shaking across central and southern states.</li>
-                    <li id="tpl-1-li2" data-i18n="tpl-1-li2"><strong>Volcanism:</strong> Subducting oceanic crust melts at depth, fueling active stratovolcanoes across the central belt.</li>
-                    <li id="tpl-1-li3" data-i18n="tpl-1-li3"><strong>Tsunamis:</strong> Localized tsunamis threaten coastal settlements following off-shore subduction quakes, such as the 1995 Colima tsunami.</li>
+                    <li id="tpl-1-li1" data-i18n="tpl-1-li1"><strong>Earthquakes:</strong> Megathrust subduction events along the Pacific coast generate major shaking across central and southern states (SSN, 2020).</li>
+                    <li id="tpl-1-li2" data-i18n="tpl-1-li2"><strong>Volcanism:</strong> Subducting oceanic crust melts at depth, fueling active stratovolcanoes across the central belt (Ferrari et al., 2012).</li>
+                    <li id="tpl-1-li3" data-i18n="tpl-1-li3"><strong>Tsunamis:</strong> Localized tsunamis threaten coastal settlements following off-shore subduction quakes, such as the 1995 Colima tsunami (SSN, 2020).</li>
                 </ul>
             </template>
         </article>
@@ -134,7 +153,7 @@
             </div>
             <div class="expanded-details">
                 <h3 id="exp-title-2" data-i18n="exp-title-2">Rock and Mineral Resources</h3>
-                <p id="exp-desc-2" data-i18n="exp-desc-2">Uncover Mexico's rich geological history, yielding over 20% of the world's silver alongside vital copper, gold, and zinc reserves.</p>
+                <p id="exp-desc-2" data-i18n="exp-desc-2">Uncover Mexico's rich geological history, yielding over 20% of the world's silver alongside vital copper, gold, and zinc reserves (CAMIMEX, 2021).</p>
             </div>
             <div class="expanded-footer">
                 <a id="read-more-2" class="more-link open-article" 
@@ -150,11 +169,11 @@
 
             <!-- Content Template for Item 2 -->
             <template id="content-2">
-                <p id="tpl-2-p1" data-i18n="tpl-2-p1"><strong>Overview:</strong> A complex tectonic history yields diverse rock formations: Cretaceous limestone in the east, Tertiary volcanic ignimbrites and rhyolites across western plateaus, and ancient metamorphic rocks in the south.</p>
+                <p id="tpl-2-p1" data-i18n="tpl-2-p1"><strong>Overview:</strong> A complex tectonic history yields diverse rock formations: Cretaceous limestone in the east, Tertiary volcanic ignimbrites and rhyolites across western plateaus, and ancient metamorphic rocks in the south (Ferrari et al., 2012).</p>
                 <ul>
-                    <li id="tpl-2-li1" data-i18n="tpl-2-li1"><strong>Global Silver Leader:</strong> Mexico produces over 20% of the world's silver, alongside substantial reserves of copper, gold, lead, and zinc.</li>
-                    <li id="tpl-2-li2" data-i18n="tpl-2-li2"><strong>Jobs & Exports:</strong> Mining contributes ~2.4% to national GDP and directly employs over 400,000 workers. Major exports go to the United States, China, Japan, and Canada.</li>
-                    <li id="tpl-2-li3" data-i18n="tpl-2-li3"><strong>Challenges:</strong> Mining in arid regions strains local groundwater supplies and creates risks of acid mine drainage, leaving mining-dependent towns vulnerable to global commodity price swings.</li>
+                    <li id="tpl-2-li1" data-i18n="tpl-2-li1"><strong>Global Silver Leader:</strong> Mexico produces over 20% of the world's silver, alongside substantial reserves of copper, gold, lead, and zinc (CAMIMEX, 2021).</li>
+                    <li id="tpl-2-li2" data-i18n="tpl-2-li2"><strong>Jobs & Exports:</strong> Mining contributes ~2.4% to national GDP and directly employs over 400,000 workers (CAMIMEX, 2021). Major exports go to the United States, China, Japan, and Canada (CAMIMEX, 2021).</li>
+                    <li id="tpl-2-li3" data-i18n="tpl-2-li3"><strong>Challenges:</strong> Mining in arid regions strains local groundwater supplies and creates risks of acid mine drainage, leaving mining-dependent towns vulnerable to global commodity price swings (CAMIMEX, 2021).</li>
                 </ul>
             </template>
         </article>
@@ -172,7 +191,7 @@
             </div>
             <div class="expanded-details">
                 <h3 id="exp-title-3" data-i18n="exp-title-3">Earthquakes and Seismic Preparedness</h3>
-                <p id="exp-desc-3" data-i18n="exp-desc-3">Explore historic seismic events that reshaped central Mexico and the cutting-edge early warning systems saving lives today.</p>
+                <p id="exp-desc-3" data-i18n="exp-desc-3">Explore historic seismic events that reshaped central Mexico and the cutting-edge early warning systems saving lives today (SSN, 2020; Suárez et al., 2018).</p>
             </div>
             <div class="expanded-footer">
                 <a id="read-more-3" class="more-link open-article" 
@@ -188,10 +207,10 @@
 
             <!-- Content Template for Item 3 -->
             <template id="content-3">
-                <p id="tpl-3-p1" data-i18n="tpl-3-p1"><strong>Overview:</strong> Mexico has experienced severe seismic events, notably the September 19, 1985 (M8.0) earthquake where ancient lakebed sediments beneath Mexico City amplified seismic waves, leading to widespread building collapses and over 10,000 casualties. On the same day in 2017, an M7.1 intraplate event within the subducting Cocos slab caused significant structural damage in Puebla, Morelos, and Mexico City.</p>
+                <p id="tpl-3-p1" data-i18n="tpl-3-p1"><strong>Overview:</strong> Mexico has experienced severe seismic events, notably the September 19, 1985 (M8.0) earthquake where ancient lakebed sediments beneath Mexico City amplified seismic waves, leading to widespread building collapses and over 10,000 casualties (SSN, 2020). On the same day in 2017, an M7.1 intraplate event within the subducting Cocos slab caused significant structural damage in Puebla, Morelos, and Mexico City (SSN, 2020).</p>
                 <ul>
-                    <li id="tpl-3-li1" data-i18n="tpl-3-li1"><strong>SASMEX (Early Warning System):</strong> Coastal sensors detect fast-moving primary seismic waves (P-waves) and broadcast radio alerts, granting urban residents 60 to 120 seconds of advance warning before destructive secondary waves (S-waves) arrive.</li>
-                    <li id="tpl-3-li2" data-i18n="tpl-3-li2"><strong>Safety Protocols:</strong> Annual nationwide evacuation drills (Simulacro Nacional) every September 19th and strict, continuously updated structural building codes tailored for soft lakebed soils.</li>
+                    <li id="tpl-3-li1" data-i18n="tpl-3-li1"><strong>SASMEX (Early Warning System):</strong> Coastal sensors detect fast-moving primary seismic waves (P-waves) and broadcast radio alerts, granting urban residents 60 to 120 seconds of advance warning before destructive secondary waves (S-waves) arrive (Suárez et al., 2018).</li>
+                    <li id="tpl-3-li2" data-i18n="tpl-3-li2"><strong>Safety Protocols:</strong> Annual nationwide evacuation drills (Simulacro Nacional) every September 19th and strict, continuously updated structural building codes tailored for soft lakebed soils (CENAPRED, 2020; SSN, 2020).</li>
                 </ul>
             </template>
         </article>
@@ -209,7 +228,7 @@
             </div>
             <div class="expanded-details">
                 <h3 id="exp-title-4" data-i18n="exp-title-4">Major Mountain Ranges</h3>
-                <p id="exp-desc-4" data-i18n="exp-desc-4">Journey across Mexico’s rugged ranges, from Copper Canyon to high volcanic peaks, shaping unique climates, cultures, and trade routes.</p>
+                <p id="exp-desc-4" data-i18n="exp-desc-4">Journey across Mexico’s rugged ranges, from Copper Canyon to high volcanic peaks, shaping unique climates, cultures, and trade routes (Ferrari et al., 2012; Lugo-Hubp, 2011).</p>
             </div>
             <div class="expanded-footer">
                 <a id="read-more-4" class="more-link open-article" 
@@ -225,12 +244,12 @@
 
             <!-- Content Template for Item 4 -->
             <template id="content-4">
-                <p id="tpl-4-p1" data-i18n="tpl-4-p1"><strong>Overview:</strong> The mountain ranges create rain-shadow effects, keeping the central northern plateau dry while trapping moisture on coastal slopes. Historically, these steep ranges acted as barriers to trade and military conquest, preserving isolated indigenous cultures like the Rarámuri in the north and Zapotec in the south. Today, trade requires complex mountain highways and bridges connecting inner cities to coastal ports.</p>
+                <p id="tpl-4-p1" data-i18n="tpl-4-p1"><strong>Overview:</strong> The mountain ranges create rain-shadow effects, keeping the central northern plateau dry while trapping moisture on coastal slopes (Lugo-Hubp, 2011). Historically, these steep ranges acted as barriers to trade and military conquest, preserving isolated indigenous cultures like the Rarámuri in the north and Zapotec in the south (Lugo-Hubp, 2011). Today, trade requires complex mountain highways and bridges connecting inner cities to coastal ports (INEGI, 2020).</p>
                 <ul>
-                    <li id="tpl-4-li1" data-i18n="tpl-4-li1"><strong>Sierra Madre Occidental:</strong> High volcanic plateau composed of rhyolite and ignimbrite, cut by deep canyons like Copper Canyon (Barrancas del Cobre).</li>
-                    <li id="tpl-4-li2" data-i18n="tpl-4-li2"><strong>Sierra Madre Oriental:</strong> Folded sedimentary limestone range running down the eastern side of the country.</li>
-                    <li id="tpl-4-li3" data-i18n="tpl-4-li3"><strong>Trans-Mexican Volcanic Belt:</strong> An active east-west volcanic chain holding Mexico's highest peaks, including Pico de Orizaba (5,636 m) and Popocatépetl (5,426 m).</li>
-                    <li id="tpl-4-li4" data-i18n="tpl-4-li4"><strong>Sierra Madre del Sur:</strong> Metamorphic mountain terrain lining the southern Pacific coast.</li>
+                    <li id="tpl-4-li1" data-i18n="tpl-4-li1"><strong>Sierra Madre Occidental:</strong> High volcanic plateau composed of rhyolite and ignimbrite, cut by deep canyons like Copper Canyon (Barrancas del Cobre) (Ferrari et al., 2012).</li>
+                    <li id="tpl-4-li2" data-i18n="tpl-4-li2"><strong>Sierra Madre Oriental:</strong> Folded sedimentary limestone range running down the eastern side of the country (Ferrari et al., 2012).</li>
+                    <li id="tpl-4-li3" data-i18n="tpl-4-li3"><strong>Trans-Mexican Volcanic Belt:</strong> An active east-west volcanic chain holding Mexico's highest peaks, including Pico de Orizaba (5,636 m) and Popocatépetl (5,426 m) (Ferrari et al., 2012).</li>
+                    <li id="tpl-4-li4" data-i18n="tpl-4-li4"><strong>Sierra Madre del Sur:</strong> Metamorphic mountain terrain lining the southern Pacific coast (Ferrari et al., 2012).</li>
                 </ul>
             </template>
         </article>
@@ -248,7 +267,7 @@
             </div>
             <div class="expanded-details">
                 <h3 id="exp-title-5" data-i18n="exp-title-5">Volcanoes of Mexico</h3>
-                <p id="exp-desc-5" data-i18n="exp-desc-5">Explore iconic peaks like Popocatépetl and Parícutin, where volcanic power enriches soils for agriculture while posing constant eruptive hazards.</p>
+                <p id="exp-desc-5" data-i18n="exp-desc-5">Explore iconic peaks like Popocatépetl and Parícutin, where volcanic power enriches soils for agriculture while posing constant eruptive hazards (CENAPRED, 2020; Macías, 2007).</p>
             </div>
             <div class="expanded-footer">
                 <a id="read-more-5" class="more-link open-article" 
@@ -264,12 +283,12 @@
 
             <!-- Content Template for Item 5 -->
             <template id="content-5">
-                <p id="tpl-5-p1" data-i18n="tpl-5-p1"><strong>Overview:</strong> Volcanic ash degrades into rich volcanic soil (Andisols), creating fertile land for crops like blue agave, avocado, and coffee. While active volcanoes support agricultural economies and geotourism, they pose constant threats of pyroclastic flows, mudflows (lahars), and aviation-disrupting ash clouds.</p>
+                <p id="tpl-5-p1" data-i18n="tpl-5-p1"><strong>Overview:</strong> Volcanic ash degrades into rich volcanic soil (Andisols), creating fertile land for crops like blue agave, avocado, and coffee (Macías, 2007). While active volcanoes support agricultural economies and geotourism, they pose constant threats of pyroclastic flows, mudflows (lahars), and aviation-disrupting ash clouds (CENAPRED, 2020; Macías, 2007).</p>
                 <ul>
-                    <li id="tpl-5-li1" data-i18n="tpl-5-li1"><strong>Popocatépetl:</strong> Active composite stratovolcano (~70 km from Mexico City) known for ash plumes and explosive pyroclastic activity.</li>
-                    <li id="tpl-5-li2" data-i18n="tpl-5-li2"><strong>Parícutin:</strong> Monogenetic cinder cone in Michoacán that famously emerged in a cornfield in 1943, growing 424 meters high and burying nearby villages under lava.</li>
-                    <li id="tpl-5-li3" data-i18n="tpl-5-li3"><strong>Pico de Orizaba:</strong> Dormant stratovolcano and Mexico's highest peak, topped by high-altitude glaciers.</li>
-                    <li id="tpl-5-li4" data-i18n="tpl-5-li4"><strong>Volcán de Colima:</strong> Highly active lava dome and stratovolcano complex near the Pacific coast.</li>
+                    <li id="tpl-5-li1" data-i18n="tpl-5-li1"><strong>Popocatépetl:</strong> Active composite stratovolcano (~70 km from Mexico City) known for ash plumes and explosive pyroclastic activity (CENAPRED, 2020; Macías, 2007).</li>
+                    <li id="tpl-5-li2" data-i18n="tpl-5-li2"><strong>Parícutin:</strong> Monogenetic cinder cone in Michoacán that famously emerged in a cornfield in 1943, growing 424 meters high and burying nearby villages under lava (Macías, 2007).</li>
+                    <li id="tpl-5-li3" data-i18n="tpl-5-li3"><strong>Pico de Orizaba:</strong> Dormant stratovolcano and Mexico's highest peak, topped by high-altitude glaciers (Cortés & Delgado-Granados, 2015; Macías, 2007).</li>
+                    <li id="tpl-5-li4" data-i18n="tpl-5-li4"><strong>Volcán de Colima:</strong> Highly active lava dome and stratovolcano complex near the Pacific coast (CENAPRED, 2020; Macías, 2007).</li>
                 </ul>
             </template>
         </article>

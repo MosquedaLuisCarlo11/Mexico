@@ -381,12 +381,14 @@ const initMultiStepForm = () => {
       prevBtn.classList.remove("invisible");
     }
 
+    const dict = translations[currentLang] || translations.en;
     if (currentStepIndex === steps.length - 1) {
-      nextBtn.textContent = "Enviar Formulario";
+      nextBtn.textContent = dict["submit-btn"];
     } else {
-      nextBtn.textContent = "Siguiente Paso ›";
+      nextBtn.textContent = dict["next-btn"];
     }
   }
+  window.refreshWizardView = updateFormWizardView;
 
   function validateCurrentStep() {
     const activeStep = steps[currentStepIndex];
@@ -501,39 +503,67 @@ if (document.readyState === "loading") {
   initMultiStepForm();
 }
 
+// Active language (also used by the form wizard so its button labels follow it)
+var currentLang = ((document.documentElement.lang || 'en').slice(0, 2));
+
 document.querySelectorAll('.lang-switch').forEach(button => {
     button.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const selectedLang = this.getAttribute('data-lang'); 
+        e.preventDefault();
+        const selectedLang = this.getAttribute('data-lang');
         changeLanguage(selectedLang);
     });
 });
 
+// index.html has a few IDs that are duplicated or not unique to one element.
+// getElementById() would hit the wrong element, so target them explicitly.
+const ELEMENT_OVERRIDES = {
+    "nav-about":       () => document.getElementById('nav-about') || document.querySelector('.nav-links a[href="about.html"]'),
+    "action-1-desc":   () => document.querySelector('p#action-1-desc') || document.getElementById('action-1-desc'),
+    "action-subtitle": () => document.getElementById('action-subtitle') || document.querySelector('#take-action .journey_heading h3'),
+    "scroll-text":     () => document.getElementById('scroll-text') || document.querySelector('.scroll-indicator span')
+};
+
+function getTranslationTarget(id) {
+    return ELEMENT_OVERRIDES[id] ? ELEMENT_OVERRIDES[id]() : document.getElementById(id);
+}
+
+// Set HTML content. If the element only wraps a single link (e.g. <h3><a>Maps</a></h3>),
+// translate the link's text and keep the link itself.
+function setTranslatedHTML(element, html) {
+    const only = element.children.length === 1 ? element.children[0] : null;
+    const wrapsOnlyLink = only && only.tagName === 'A' &&
+        element.textContent.trim() === only.textContent.trim();
+    (wrapsOnlyLink ? only : element).innerHTML = html;
+}
+
 function changeLanguage(lang) {
     const langDict = translations[lang];
-    if (!langDict) return; 
-    
+    if (!langDict) return;
+    currentLang = lang;
+    document.documentElement.lang = lang;
+
     for (const id in langDict) {
-        const element = document.getElementById(id);
-        
-        if (element) {
-            const content = langDict[id];
-            
-            if (typeof content === 'string') {
-                element.innerHTML = content;
-            } else if (typeof content === 'object') {
-                for (const attr in content) {
-                    if (attr === 'innerHTML') {
-                        element.innerHTML = content[attr];
-                    } else if (attr === 'placeholder') {
-                        element.placeholder = content[attr];
-                    } else {
-                        element.setAttribute(attr, content[attr]);
-                    }
+        const element = getTranslationTarget(id);
+        if (!element) continue;   // ID belongs to another page
+
+        const content = langDict[id];
+        if (typeof content === 'string') {
+            setTranslatedHTML(element, content);
+        } else if (content && typeof content === 'object') {
+            for (const attr in content) {
+                if (attr === 'innerHTML') {
+                    element.innerHTML = content[attr];
+                } else if (attr === 'placeholder') {
+                    element.placeholder = content[attr];
+                } else {
+                    element.setAttribute(attr, content[attr]);
                 }
             }
         }
     }
+
+    // Re-apply the wizard button label (last step shows "Submit", not "Next")
+    if (typeof window.refreshWizardView === 'function') window.refreshWizardView();
 }
 
 // =========================================================
@@ -837,11 +867,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ===============================
+// Carousel section - about page
+// ===============================
+document.addEventListener('DOMContentLoaded', () => {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const carouselSection = document.querySelector('.hero-carousel');
+
+    let currentIndex = 0;
+    let autoplayTimer = null;
+    const AUTOPLAY_INTERVAL = 6000; 
+
+    function goToSlide(index) {
+        // Wrap around bounds
+        if (index < 0) {
+            currentIndex = slides.length - 1;
+        } else if (index >= slides.length) {
+            currentIndex = 0;
+        } else {
+            currentIndex = index;
+        }
+
+        slides.forEach((slide, i) => {
+            if (i === currentIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+
+        dots.forEach((dot, i) => {
+            if (i === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function nextSlide() {
+        goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        goToSlide(currentIndex - 1);
+    }
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoplay();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoplay();
+    });
+
+    dots.forEach((dot) => {
+        dot.addEventListener('click', (e) => {
+            const targetIndex = parseInt(e.target.getAttribute('data-index'), 10);
+            goToSlide(targetIndex);
+            resetAutoplay();
+        });
+    });
+    function resetAutoplay() {
+        if (autoplayTimer) {
+            clearInterval(autoplayTimer);
+        }
+        autoplayTimer = setInterval(nextSlide, AUTOPLAY_INTERVAL);
+    }
+
+    // Initialize autoplay
+    autoplayTimer = setInterval(nextSlide, AUTOPLAY_INTERVAL);
+});
 
 // ==============================================
 // Language Switcher
 // ==============================================
-const translations = {
+const translationsIndex = {   // index.html
+    // English
     en: {
         "nav-fundamentals": "MAPS",
         "nav-stats": "TECTONICS",
@@ -849,6 +956,8 @@ const translations = {
         "nav-take-action": "OCEANS",
         "nav-donations": "CLIMATE",
         "nav-contact": "REFERENCES",
+        "scroll-text": "Scroll to begin",
+        "action-subtitle": "Discover more by clicking on the titles below! Each link will take you to an exciting page filled with information tailored just for you. Dive in and explore!",
         
         "hero-title-1": "Experience Mexico’s breathtaking nature, rich geology, and stunning tectonic wonders!",
         "hero-title-2": "Bienvenido!",
@@ -941,9 +1050,10 @@ const translations = {
         "lbl-reason": "Reason for Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Write your questions, concerns, or comments here..." }, "err-reason": "Please write the reason for your message.",
         
         "succ-title": "Form Submitted!", "succ-desc": "Your request has been processed successfully. We will contact you very soon.",
-        "prev-btn": "‹ Back", "next-btn": "Next Step ›"
+        "prev-btn": "‹ Back", "next-btn": "Next Step ›", "submit-btn": "Submit Form"
     },
     
+    // Spanish
     es: {
         "nav-fundamentals": "MAPAS",
         "nav-stats": "TECTÓNICA",
@@ -951,6 +1061,8 @@ const translations = {
         "nav-take-action": "OCÉANOS",
         "nav-donations": "CLIMA",
         "nav-contact": "REFERENCIAS",
+        "scroll-text": "Desplázate para comenzar",
+        "action-subtitle": "¡Descubre más haciendo clic en los títulos de abajo! Cada enlace te llevará a una página emocionante llena de información hecha especialmente para ti. ¡Sumérgete y explora!",
         
         "hero-title-1": "¡Experimenta la impresionante naturaleza, la rica geología y las asombrosas maravillas tectónicas de México!",
         "hero-title-2": "¡Bienvenido!",
@@ -1043,9 +1155,10 @@ const translations = {
         "lbl-reason": "Motivo del Contacto<span class='required'>*</span>", "contact-reason": { placeholder: "Escribe tus preguntas, inquietudes o comentarios aquí..." }, "err-reason": "Por favor, escribe el motivo de tu mensaje.",
         
         "succ-title": "¡Formulario Enviado!", "succ-desc": "Tu solicitud ha sido procesada con éxito. Nos pondremos en contacto contigo muy pronto.",
-        "prev-btn": "‹ Volver", "next-btn": "Siguiente Paso ›"
+        "prev-btn": "‹ Volver", "next-btn": "Siguiente Paso ›", "submit-btn": "Enviar Formulario"
     },
 
+    // French
     fr: {
         "nav-fundamentals": "CARTES",
         "nav-stats": "TECTONIQUE",
@@ -1053,6 +1166,8 @@ const translations = {
         "nav-take-action": "OCÉANS",
         "nav-donations": "CLIMAT",
         "nav-contact": "RÉFÉRENCES",
+        "scroll-text": "Faites défiler pour commencer",
+        "action-subtitle": "Découvrez-en plus en cliquant sur les titres ci-dessous ! Chaque lien vous mènera vers une page passionnante remplie d'informations adaptées pour vous. Plongez et explorez !",
         
         "hero-title-1": "Découvrez la nature époustouflante, la géologie riche et les merveilles tectoniques du Mexique !",
         "hero-title-2": "Bienvenue !",
@@ -1129,15 +1244,15 @@ const translations = {
         "close-modal": "← Retour à la Chronologie",
         
         "tab-1-text": "Votre Nom", "tab-2-text": "Méthode de Contact", "tab-3-text": "Note",
-        "step-1-sub": "Étape 1", "step-1-title": "Votre Nom", "step-1-desc": "Veuillez saisir vos coordonnées pour que nous sachions avec qui nous communiquons.",
+        "step-1-sub": "Étape 1", "step-1-title": "Votre Nom", "step-1-desc": "Veuillez entrer vos coordonnées pour que nous sachions avec qui nous communiquons.",
         "lbl-fname": "Prénom<span class='required'>*</span>", "first-name": { placeholder: "Entrez votre prénom" }, "err-fname": "Le prénom est requis.",
-        "lbl-lname": "Nom de famille<span class='required'>*</span>", "last-name": { placeholder: "Entrez votre nom" }, "err-lname": "Le nom est requis.",
-        "lbl-nick": "Surnom / Comment devrions-nous vous appeler <span class='optional'>(Facultatif)</span>", "nickname": { placeholder: "Comment préférez-vous qu'on vous appelle ?" },
+        "lbl-lname": "Nom de Famille<span class='required'>*</span>", "last-name": { placeholder: "Entrez votre nom de famille" }, "err-lname": "Le nom de famille est requis.",
+        "lbl-nick": "Surnom / Comment devrions-nous vous appeler <span class='optional'>(Facultatif)</span>", "nickname": { placeholder: "Comment préférez-vous que nous vous appelions ?" },
         
-        "step-2-sub": "Étape 2", "step-2-title": "Méthode de Contact", "step-2-desc": "Sélectionnez comment vous préférez que notre équipe vous contacte.",
+        "step-2-sub": "Étape 2", "step-2-title": "Méthode de Contact", "step-2-desc": "Sélectionnez la façon dont vous préférez que notre équipe vous contacte.",
         "pref-email": "Adresse E-mail", "pref-phone": "Téléphone / Mobile",
         "lbl-contact-email": "Adresse E-mail<span class='required'>*</span>", "contact-email": { placeholder: "exemple@email.com" }, "err-email": "Veuillez entrer une adresse e-mail valide.",
-        "lbl-contact-phone": "Numéro de Téléphone<span class='required'>*</span>", "err-phone": "Veuillez entrer un numéro valide.",
+        "lbl-contact-phone": "Numéro de Téléphone<span class='required'>*</span>", "err-phone": "Veuillez entrer un numéro de téléphone valide.",
 
         "step-3-sub": "Étape 3", "step-3-title": "Note", "step-3-desc": "Aidez-nous à catégoriser votre demande et laissez vos commentaires détaillés ci-dessous.",
         "lbl-category": "Sélectionnez une Catégorie<span class='required'>*</span>",
@@ -1145,9 +1260,10 @@ const translations = {
         "lbl-reason": "Raison du Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Écrivez vos questions, inquiétudes ou commentaires ici..." }, "err-reason": "Veuillez écrire la raison de votre message.",
         
         "succ-title": "Formulaire Soumis !", "succ-desc": "Votre demande a été traitée avec succès. Nous vous contacterons très bientôt.",
-        "prev-btn": "‹ Retour", "next-btn": "Étape Suivante ›"
+        "prev-btn": "‹ Retour", "next-btn": "Étape Suivante ›", "submit-btn": "Envoyer le Formulaire"
     },
 
+    // Portuguese
     pt: {
         "nav-fundamentals": "MAPAS",
         "nav-stats": "TECTÔNICA",
@@ -1155,85 +1271,87 @@ const translations = {
         "nav-take-action": "OCEANOS",
         "nav-donations": "CLIMA",
         "nav-contact": "REFERÊNCIAS",
+        "scroll-text": "Role para começar",
+        "action-subtitle": "Descubra mais clicando nos títulos abaixo! Cada link levará você a uma página emocionante cheia de informações feitas especialmente para você. Mergulhe e explore!",
         
-        "hero-title-1": "Experimente a natureza deslumbrante, a rica geologia e as maravilhas tectônicas do México!",
+        "hero-title-1": "Experimente a natureza deslumbrante, a rica geologia e as impressionantes maravilhas tectônicas do México!",
         "hero-title-2": "Bem-vindo!",
-        "hero-desc": "Bem-vindo à nossa exploração da terra do México! Desde suas majestosas montanhas e vulcões ativos até suas costas vibrantes, o México é um país definido por forças naturais extraordinárias, uma rica história e profundas raízes culturais. Se você tem curiosidade sobre sua poderosa atividade sísmica, biomas únicos ou rotas comerciais históricas, este site oferece um guia completo dos processos dinâmicos da terra que moldam esta incrível nação.",
+        "hero-desc": "Bem-vindo à nossa exploração da terra do México! Desde suas montanhas majestosas e vulcões ativos até suas costas vibrantes, o México é um país definido por forças naturais extraordinárias, história rica e profundas raízes culturais. Se você tem curiosidade sobre sua poderosa atividade sísmica, biomas únicos ou rotas comerciais históricas, este site oferece um guia completo para os processos dinâmicos da terra que moldam esta incrível nação.",
         
         "stats-title": "Três Fatos Impactantes",
         "stat-1-label": "PAISAGEM HUMANA VIBRANTE",
-        "stat-1-num": "Mais de 129 Milhões",
+        "stat-1-num": "Mais de 129 Milhões de Cidadãos",
         "stat-2-label": "PONTO DE BIODIVERSIDADE GLOBAL",
         "stat-2-num": "Mais de 200.000 Espécies",
         "stat-3-label": "TESOURO CULTURAL INTANGÍVEL",
-        "stat-3-num": "Patrimônio UNESCO 2010",
+        "stat-3-num": "Marco da UNESCO de 2010",
         
         "cases-subheading": "Forjado Através do Tempo: A Evolução Histórica do México",
-        "cases-desc": "A história do México está escrita diretamente em sua paisagem acidentada. Desde a engenharia urbana das antigas civilizações mesoamericanas até as transformações coloniais, lutas territoriais e reformas políticas modernas, eventos históricos têm redefinido continuamente as fronteiras físicas, a identidade cultural e a estrutura social do México.",
+        "cases-desc": "A história do México está escrita diretamente em sua paisagem acidentada. Desde a engenharia urbana das antigas civilizações mesoamericanas até as transformações coloniais, lutas territoriais e reformas políticas modernas, os eventos históricos redefiniram continuamente as fronteiras físicas, a identidade cultural e a estrutura social do México.",
         
-        "case-1-title": "A Fundação de Tenochtitlan", "case-1-cat": "Tenochtitlan", "case-1-year": "1325",
-        "case-1": { "data-title": "A Fundação de Tenochtitlan", "data-text": "Segundo códices históricos, os mexicas (astecas) fundaram sua capital após vagarem por décadas em busca de um sinal divino profetizado por Huitzilopochtli: uma águia empoleirada em um cacto nopal devorando uma serpente. Encontrando este sinal em uma ilha pantanosa no Lago Texcoco, eles construíram uma cidade de canais, calçadas e campos agrícolas elevados (chinampas)." },
+        "case-1-title": "A Fundação de Tenochtitlán", "case-1-cat": "Tenochtitlán", "case-1-year": "1325",
+        "case-1": { "data-title": "A Fundação de Tenochtitlán", "data-text": "Segundo os códices históricos, os mexicas (astecas) fundaram sua capital após vagar por décadas em busca de um sinal divino profetizado por Huitzilopochtli: uma águia pousada em um cacto nopal devorando uma serpente. Encontrando este sinal em uma ilha pantanosa no Lago Texcoco, eles construíram uma cidade de canais, calçadas e campos agrícolas elevados (chinampas)." },
         
-        "case-2-title": "A Queda de Tenochtitlan e o Início da Era Colonial", "case-2-cat": "Tenochtitlan", "case-2-year": "1521",
-        "case-2": { "data-title": "A Queda de Tenochtitlan e o Início da Era Colonial", "data-text": "Após um cerco de vários meses, o conquistador espanhol Hernán Cortés e seus aliados indígenas derrotaram as forças astecas lideradas por Cuauhtémoc. A vitória pôs fim ao Império Asteca e iniciou três séculos de domínio colonial espanhol sob o Vice-Reino da Nova Espanha. Durante esta era, arquitetos espanhóis construíram a moderna Cidade do México sobre as ruínas de Tenochtitlan." },
+        "case-2-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "case-2-cat": "Tenochtitlán", "case-2-year": "1521",
+        "case-2": { "data-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "data-text": "Após um cerco de vários meses, o conquistador espanhol Hernán Cortés e seus aliados indígenas (principalmente os tlaxcaltecas) derrotaram as forças astecas lideradas por Cuauhtémoc. A vitória pôs fim ao Império Asteca e iniciou três séculos de domínio colonial espanhol sob o Vice-Reino da Nova Espanha." },
         
-        "case-3-title": "O Grito de Independência Mexicano (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
-        "case-3": { "data-title": "O Grito de Independência Mexicano (Grito de Dolores)", "data-text": "Na madrugada de 16 de setembro de 1810, o padre católico Miguel Hidalgo y Costilla tocou o sino de sua igreja e fez um chamado revolucionário às armas contra a opressão colonial espanhola. O Grito de Dolores acendeu uma guerra de independência de 11 anos, unindo camponeses, comunidades indígenas e líderes locais." },
+        "case-3-title": "O Grito de Independência do México (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
+        "case-3": { "data-title": "O Grito de Independência do México (Grito de Dolores)", "data-text": "Na madrugada de 16 de setembro de 1810, o padre católico Miguel Hidalgo y Costilla tocou o sino de sua igreja e emitiu um chamado revolucionário às armas contra a opressão colonial espanhola. O Grito de Dolores desencadeou uma guerra de independência de 11 anos." },
         
         "case-4-title": "O Tratado de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
-        "case-4": { "data-title": "O Tratado de Guadalupe Hidalgo", "data-text": "Concluindo a Guerra Mexicano-Americana de dois anos, o Tratado de Guadalupe Hidalgo remodelou permanentemente o mapa da América do Norte. Sob seus termos, um México derrotado cedeu mais de 50 por cento de sua massa territorial soberana aos Estados Unidos em troca de 15 milhões de dólares." },
+        "case-4": { "data-title": "O Tratado de Guadalupe Hidalgo", "data-text": "Concluindo a Guerra Mexicano-Americana de dois anos, o Tratado de Guadalupe Hidalgo reformulou permanentemente o mapa da América do Norte. Sob seus termos, um México derrotado cedeu mais de 50 por cento de sua massa territorial soberana para os Estados Unidos em troca de 15 milhões de dólares." },
         
         "case-5-title": "O Porfiriato e a Fase de Modernização", "case-5-cat": "Cidade do México", "case-5-year": "1876–1911",
-        "case-5": { "data-title": "O Porfiriato e a Fase de Modernização", "data-text": "O General Porfirio Díaz governou o México como presidente por mais de três décadas, uma era conhecida como o Porfiriato. Díaz priorizou a ordem e o rápido crescimento econômico, convidando capital estrangeiro para construir milhares de quilômetros de ferrovias, sistemas de telégrafo modernos, portos e instalações industriais." },
+        "case-5": { "data-title": "O Porfiriato e a Fase de Modernização", "data-text": "O General Porfirio Díaz governou o México como presidente por mais de três décadas, uma era conhecida como o Porfiriato. Díaz priorizou a ordem e o rápido crescimento econômico, convidando o capital estrangeiro para construir milhares de quilômetros de ferrovias." },
         
         "case-6-title": "A Revolução Mexicana", "case-6-cat": "México", "case-6-year": "1910–1920",
-        "case-6": { "data-title": "A Revolução Mexicana", "data-text": "Desencadeada pela ampla oposição ao regime autoritário de Porfirio Díaz, a Revolução Mexicana eclodiu como um complexo conflito social, agrário e político liderado por figuras como Francisco Madero, Emiliano Zapata e Pancho Villa. A década de conflito levou a uma reestruturação política radical e culminou na ratificação da progressiva Constituição de 1917." },
+        "case-6": { "data-title": "A Revolução Mexicana", "data-text": "Desencadeada pela oposição generalizada ao governo autoritário de Porfirio Díaz, a Revolução Mexicana eclodiu como um complexo conflito social, agrário e político liderado por figuras como Francisco Madero, Emiliano Zapata e Pancho Villa." },
         
         "case-7-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "case-7-cat": "México", "case-7-year": "2000–Presente",
-        "case-7": { "data-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "data-text": "Hoje, o México se destaca como uma república constitucional federal de mais de 129 milhões de pessoas, moldada por sua história de resiliência e adaptação. O ano 2000 marcou um marco democrático histórico quando a liderança da oposição encerrou 71 anos consecutivos de governo de partido único. A nação reflete uma fusão distinta de tradições indígenas mesoamericanas e herança colonial espanhola." },
+        "case-7": { "data-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "data-text": "Hoje, o México é uma república constitucional federal com mais de 129 milhões de habitantes. O ano de 2000 marcou um marco democrático histórico quando a liderança da oposição encerrou 71 anos consecutivos de governo de partido único. A nação reflete uma fusão distinta de tradições indígenas e herança colonial espanhola." },
 
-        "fund-main-title": "Para compreender os aspectos fundamentais da cultura e sociedade mexicanas,<br/><em>considere as seguintes quatro perguntas:</em>",
+        "fund-main-title": "Para compreender os aspectos fundamentais da cultura e sociedade mexicanas,<br/><em>considere as quatro perguntas a seguir:</em>",
         "fund-q1-title": "Como as antigas tradições mesoamericanas e as influências coloniais espanholas coexistem na vida diária?",
-        "fund-q1-desc": "A sociedade mexicana é definida pelo mestizaje — uma rica síntese de herança indígena e costumes espanhóis vistos na arquitetura, língua, celebrações comunitárias e devoção religiosa.",
+        "fund-q1-desc": "A sociedade mexicana é definida pela mestiçagem — uma rica síntese da herança indígena e costumes espanhóis vistos na arquitetura, idioma, celebrações comunitárias e devoção religiosa.",
         "fund-q2-title": "Qual o papel da família (la familia) na formação da estrutura comunitária?",
-        "fund-q2-desc": "A família atua como a unidade social primária no México, onde lares multigeracionais, profundo respeito pelos idosos e redes comunitárias unidas formam a espinha dorsal da vida diária.",
-        "fund-q3-title": "Como a geografia influencia o regionalismo cultural em toda a nação?",
-        "fund-q3-desc": "Paisagens distintas criaram diversas identidades regionais — desde as tradições vaqueiras do norte em planícies áridas até as ricas tradições indígenas e tecidos coloridos em estados do sul, como Oaxaca e Chiapas.",
+        "fund-q2-desc": "A família atua como a unidade social primária no México, onde lares multigeracionais, profundo respeito pelos mais velhos e redes comunitárias unidas formam a espinha dorsal da vida diária.",
+        "fund-q3-title": "Como a geografia influencia o regionalismo cultural em todo o país?",
+        "fund-q3-desc": "Paisagens distintas criaram diversas identidades regionais — desde as tradições de vaqueiros do norte em planícies áridas até as ricas tradições indígenas e tecidos coloridos em estados do sul como Oaxaca e Chiapas.",
         "fund-q4-title": "Por que os feriados nacionais e as reuniões públicas são centrais para a unidade social mexicana?",
-        "fund-q4-desc": "Eventos como o Dia dos Mortos e o Dia da Independência reúnem as comunidades para honrar a memória, a herança compartilhada e o orgulho nacional por meio das artes públicas, música tradicional e comida.",
+        "fund-q4-desc": "Eventos como o Día de los Muertos e o Día de la Independencia reúnem as comunidades para honrar a memória, a herança compartilhada e o orgulho nacional por meio de artes públicas, música tradicional e comida.",
         
         "donations-title": "A Arquitetura Econômica do México",
-        "donations-desc": "O México possui a segunda maior economia da América Latina e figura entre os principais centros de manufatura do mundo. Impulsionado por acordos comerciais internacionais, riqueza mineral e uma força de trabalho dinâmica, o México desempenha um papel crítico na cadeia de abastecimento global.",
+        "donations-desc": "O México possui a segunda maior economia da América Latina e está entre os principais centros de manufatura do mundo. Impulsionado por acordos comerciais internacionais, riqueza mineral e uma força de trabalho dinâmica, o México desempenha um papel crítico na cadeia de suprimentos global.",
         "don-irc-cat": "Quais são as principais fontes de renda nacional do México?",
         "don-irc-focus": "Resposta:",
-        "don-irc-desc": "As principais fontes de renda do México incluem a manufatura industrial avançada (automotiva, eletrônica e aeroespacial), exportações de petróleo bruto, extração de prata e minerais, turismo internacional e exportações agrícolas (abacates, frutas vermelhas e tequila).",
+        "don-irc-desc": "As principais fontes de renda do México incluem manufatura industrial avançada (automotiva, eletrônica e aeroespacial), exportações de petróleo bruto, extração de prata e minerais, turismo internacional e exportações agrícolas (abacates, frutas vermelhas e tequila).",
         "don-pf-cat": "Qual é o salário mínimo diário atual no México?",
         "don-pf-focus": "Resposta:",
-        "don-pf-desc": "De acordo com atualizações econômicas recentes, o salário mínimo diário geral do México é de aproximadamente 278,80 MXN (e mais alto na Zona Franca da Fronteira Norte, em cerca de 419,88 MXN, para corresponder às condições de custo regionais).",
-        "don-uni-cat": "Como o custo de vida se compara a outras economias norte-americanas?",
+        "don-pf-desc": "A partir de atualizações econômicas recentes, o salário mínimo diário geral do México é de aproximadamente 278,80 MXN por dia (e superior ao longo da Zona Livre da Fronteira Norte, em torno de 419,88 MXN por dia para corresponder às condições de custo regionais).",
+        "don-uni-cat": "Como o custo de vida se compara a outras economias da América do Norte?",
         "don-uni-focus": "Resposta:",
-        "don-uni-desc": "Embora grandes centros metropolitanos como Cidade do México, Guadalajara e Monterrey apresentem custos crescentes de moradia, os custos de vida essenciais (mantimentos, transporte público e serviços de saúde) permanecem significativamente mais baixos do que nos Estados Unidos ou Canadá.",
+        "don-uni-desc": "Embora os principais centros metropolitanos, como a Cidade do México, Guadalajara e Monterrey, apresentem custos de moradia crescentes, os custos essenciais de vida gerais (mantimentos, transporte público e serviços de saúde) permanecem significativamente mais baixos do que nos Estados Unidos ou Canadá.",
         
-        "divider-text": "Embarque em uma jornada geográfica sob a superfície para descobrir como a energia tectônica, as majestosas cadeias de montanhas e os vulcões ativos esculpem continuamente a vibrante nação do México.",
+        "divider-text": "Embarque em uma jornada geográfica sob a superfície para descobrir como a energia tectônica, majestosas cadeias de montanhas e vulcões ativos esculpem continuamente a vibrante nação do México.",
         
-        "action-title": "Explore os Processos Terrestres<br>do México",
+        "action-title": "Explore os Processos<br>Terrestres do México",
         "action-1-title": "Mapas",
-        "action-1-desc": "Examine rotas de comércio históricas, posições continentais, mudanças de fronteiras e cartógrafos famosos que mapearam a Nova Espanha e o México moderno.",
+        "action-1-desc": "Examine rotas comerciais históricas, posições continentais, mudanças de fronteira e cartógrafos famosos que mapearam a Nova Espanha e o México moderno.",
         "action-2-title": "Tectônica",
-        "action-2-desc": "Descubra as fronteiras de placas ativas, monitoramento de riscos sísmicos, grandes sistemas montanhosos, riqueza mineral e vulcões icônicos como o Popocatépetl.",
+        "action-2-desc": "Descubra os limites das placas ativas, monitoramento de riscos sísmicos, principais sistemas de montanhas, riqueza mineral e vulcões icônicos como o Popocatépetl.",
         "action-3-title": "Erosão",
-        "action-3-desc": "Descubra os processos de intemperismo físico e químico, a formação dos cenotes em Yucatán, as principais bacias hidrográficas e os desafios da desertificação.",
+        "action-3-desc": "Descubra os processos de intemperismo físico e químico, a formação de cenotes em Yucatán, as principais bacias hidrográficas e os desafios da desertificação.",
         "action-4-title": "Oceanos",
-        "action-4-desc": "Analise as formações costeiras, rotas de comércio oceânicas, padrões de furacões, ilhas regionais e impactos econômicos marítimos.",
+        "action-4-desc": "Analise as formações costeiras, rotas de comércio oceânico, padrões de furacões, ilhas regionais e impactos econômicos marítimos.",
         "action-5-title": "Clima",
-        "action-5-desc": "Investigue as classificações climáticas de Köppen em todo o México, os padrões globais de circulação do vento, biomas diversos e a flora e fauna nativas únicas.",
+        "action-5-desc": "Investigue as classificações climáticas de Köppen em todo o México, os padrões globais de circulação do vento, biomas diversos e flora e fauna nativas exclusivas.",
 
-        "close-modal": "← Voltar para a Linha do Tempo",
+        "close-modal": "← Voltar à Linha do Tempo",
         
         "tab-1-text": "Seu Nome", "tab-2-text": "Método de Contato", "tab-3-text": "Nota",
         "step-1-sub": "Passo 1", "step-1-title": "Seu Nome", "step-1-desc": "Por favor, insira seus dados para sabermos com quem estamos nos comunicando.",
-        "lbl-fname": "Primeiro Nome<span class='required'>*</span>", "first-name": { placeholder: "Digite seu primeiro nome" }, "err-fname": "O nome é obrigatório.",
-        "lbl-lname": "Sobrenome<span class='required'>*</span>", "last-name": { placeholder: "Digite seu sobrenome" }, "err-lname": "O sobrenome é obrigatório.",
+        "lbl-fname": "Primeiro Nome<span class='required'>*</span>", "first-name": { placeholder: "Insira seu primeiro nome" }, "err-fname": "O primeiro nome é obrigatório.",
+        "lbl-lname": "Sobrenome<span class='required'>*</span>", "last-name": { placeholder: "Insira seu sobrenome" }, "err-lname": "O sobrenome é obrigatório.",
         "lbl-nick": "Apelido / Como devemos chamá-lo <span class='optional'>(Opcional)</span>", "nickname": { placeholder: "Como você prefere que o chamemos?" },
         
         "step-2-sub": "Passo 2", "step-2-title": "Método de Contato", "step-2-desc": "Selecione como você prefere que nossa equipe entre em contato com você.",
@@ -1246,11 +1364,17 @@ const translations = {
         "cat-btn-1": "Fazer uma Sugestão", "cat-btn-2": "Preocupação", "cat-btn-3": "Manter Contato", "cat-btn-4": "Outro",
         "lbl-reason": "Motivo do Contato<span class='required'>*</span>", "contact-reason": { placeholder: "Escreva suas perguntas, preocupações ou comentários aqui..." }, "err-reason": "Por favor, escreva o motivo da sua mensagem.",
         
-        "succ-title": "Formulário Enviado!", "succ-desc": "Sua solicitação foi processada com sucesso. Entraremos em contato muito em breve.",
-        "prev-btn": "‹ Voltar", "next-btn": "Próximo Passo ›"
+        "succ-title": "Formulário Enviado!", "succ-desc": "Sua solicitação foi processada com sucesso. Entraremos em contato em breve.",
+        "prev-btn": "‹ Voltar", "next-btn": "Próximo Passo ›", "submit-btn": "Enviar Formulário",
     },
 
+};
+
+// Maps page
+const translationsMaps = {
+    // =========================
     // Maps Page Translations
+    // =========================
     en: {
         "nav-logo": "BIENVENIDO A MEXICO",
         "nav-fundamentals": "MAPS",
@@ -1515,6 +1639,10 @@ const translations = {
         "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Uma aclamada obra-prima cromolitográfica apresentando mapas culturais, históricos e topográficos vibrantes que conquistaram amplo reconhecimento de sociedades geográficas internacionais."
     },
 
+};
+
+// Tectonics page
+const translationsTectonics = {
 // ==============================================
 // Tectonics Page
 // ==============================================
@@ -1799,70 +1927,30 @@ const translations = {
     }
 };
 
-// ===============================
-// Carousel section - about page
-// ===============================
-document.addEventListener('DOMContentLoaded', () => {
-    const slides = document.querySelectorAll('.carousel-slide');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const carouselSection = document.querySelector('.hero-carousel');
+// --------------------------------------------------------------------------
+// Merge the per-page dictionaries into ONE dictionary per language.
+// (They used to be three `en/es/fr/pt` blocks inside a single object literal:
+//  duplicate keys overwrite each other, so only the last block survived and the
+//  index page had no translations at all.)
+// Each page only contains its own element IDs, so merging is collision-free;
+// changeLanguage() silently skips IDs that don't exist on the current page.
+// --------------------------------------------------------------------------
+const translations = {};
+['en', 'es', 'fr', 'pt'].forEach(lang => {
+    translations[lang] = Object.assign(
+        {},
+        translationsIndex[lang],
+        translationsMaps[lang],
+        translationsTectonics[lang]
+    );
 
-    let currentIndex = 0;
-    let autoplayTimer = null;
-    const AUTOPLAY_INTERVAL = 6000; 
-
-    function goToSlide(index) {
-        // Wrap around bounds
-        if (index < 0) {
-            currentIndex = slides.length - 1;
-        } else if (index >= slides.length) {
-            currentIndex = 0;
-        } else {
-            currentIndex = index;
+    // The timeline modal reads data-author / data-date from each .update-item,
+    // so derive them from the already-translated category and year strings.
+    for (let n = 1; n <= 7; n++) {
+        const item = translations[lang][`case-${n}`];
+        if (item) {
+            item['data-author'] = translations[lang][`case-${n}-cat`];
+            item['data-date']   = translations[lang][`case-${n}-year`];
         }
-
-        slides.forEach((slide, i) => {
-            if (i === currentIndex) {
-                slide.classList.add('active');
-            } else {
-                slide.classList.remove('active');
-            }
-        });
-
-        dots.forEach((dot, i) => {
-            if (i === currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
     }
-
-    function nextSlide() {
-        goToSlide(currentIndex + 1);
-    }
-
-    function prevSlide() {
-        goToSlide(currentIndex - 1);
-    }
-
-    nextBtn.addEventListener('click', () => {
-        nextSlide();
-        resetAutoplay();
-    });
-
-    prevBtn.addEventListener('click', () => {
-        prevSlide();
-        resetAutoplay();
-    });
-
-    dots.forEach((dot) => {
-        dot.addEventListener('click', (e) => {
-            const targetIndex = parseInt(e.target.getAttribute('data-index'), 10);
-            goToSlide(targetIndex);
-            resetAutoplay();
-        });
-    });
 });
