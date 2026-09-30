@@ -2590,37 +2590,79 @@ section { min-height: 100vh; width: 100%; padding: 120px 6% 60px 6%; position: r
     color: var(--text-color, #666);
     font-size: 0.95rem;
 }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            border-radius: 12px;
-            margin: 2rem 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .apa-references {
-            background-color: var(--bg-color, #f4f4f4);
-            padding: 4rem 10%;
-            color: var(--text-color, #333);
-            font-family: 'Montserrat', sans-serif;
-        }
-        .apa-references h2 {
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .apa-item {
-            text-indent: -2em;
-            padding-left: 2em;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+/* ------------------------------------------ */
+/* Reference Section Styles */
+/* ------------------------------------------ */
+.references-hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 8rem 10% 6rem; 
+    background-color: var(--bg-color); 
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.references-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.references-hero p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text); 
+}
+
+@media (max-width: 768px) {
+    .references-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .references-hero p {
+        font-size: 1.1rem;
+    }
+}
+
+    .apa-references {
+        background-color: var(--bg-color);
+        padding: 4rem 10%;
+        color: var(--text);
+        font-family: 'Montserrat', sans-serif;
+    }
+    .apa-references h2 {
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .apa-item {
+        text-indent: -2em;
+        padding-left: 2em;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
