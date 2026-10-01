@@ -360,141 +360,141 @@ document.addEventListener('DOMContentLoaded', () => {
 // Formulary Page
 // ====================================================================
 const initMultiStepForm = () => {
-  const form = document.getElementById("multi-step-form");
-  if (!form) return; 
+const form = document.getElementById("multi-step-form");
+if (!form) return; 
 
-  const steps = Array.from(form.querySelectorAll(".form-step"));
-  const tabs = Array.from(document.querySelectorAll(".step-tab"));
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const footerNav = document.getElementById("wizard-footer-nav");
-  const successScreen = document.getElementById("success-screen");
-  let currentStepIndex = 0;
+const steps = Array.from(form.querySelectorAll(".form-step"));
+const tabs = Array.from(document.querySelectorAll(".step-tab"));
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const footerNav = document.getElementById("wizard-footer-nav");
+const successScreen = document.getElementById("success-screen");
+let currentStepIndex = 0;
 
-  function updateFormWizardView() {
-    steps.forEach((step, idx) => step.classList.toggle("active", idx === currentStepIndex));
-    tabs.forEach((tab, idx) => tab.classList.toggle("active", idx === currentStepIndex));
+function updateFormWizardView() {
+steps.forEach((step, idx) => step.classList.toggle("active", idx === currentStepIndex));
+tabs.forEach((tab, idx) => tab.classList.toggle("active", idx === currentStepIndex));
+
+if (currentStepIndex === 0) {
+    prevBtn.classList.add("invisible");
+} else {
+    prevBtn.classList.remove("invisible");
+}
+
+const dict = translations[currentLang] || translations.en;
+if (currentStepIndex === steps.length - 1) {
+    nextBtn.textContent = dict["submit-btn"];
+} else {
+    nextBtn.textContent = dict["next-btn"];
+}
+}
+window.refreshWizardView = updateFormWizardView;
+
+function validateCurrentStep() {
+const activeStep = steps[currentStepIndex];
+let isStepValid = true;
+
+const requiredInputs = activeStep.querySelectorAll("input[required], textarea[required]");
+requiredInputs.forEach(input => {
+    if (input.closest(".hidden")) return;
     
-    if (currentStepIndex === 0) {
-      prevBtn.classList.add("invisible");
-    } else {
-      prevBtn.classList.remove("invisible");
-    }
-
-    const dict = translations[currentLang] || translations.en;
-    if (currentStepIndex === steps.length - 1) {
-      nextBtn.textContent = dict["submit-btn"];
-    } else {
-      nextBtn.textContent = dict["next-btn"];
-    }
-  }
-  window.refreshWizardView = updateFormWizardView;
-
-  function validateCurrentStep() {
-    const activeStep = steps[currentStepIndex];
-    let isStepValid = true;
-
-    const requiredInputs = activeStep.querySelectorAll("input[required], textarea[required]");
-    requiredInputs.forEach(input => {
-      if (input.closest(".hidden")) return;
-      
-      let isValidInput = true;
-      
-      if (input.id === "contact-phone") {
-        if (input.value.trim().length < 7) {
-          isValidInput = false;
-        }
-      } else if (!input.value.trim()) {
+    let isValidInput = true;
+    
+    if (input.id === "contact-phone") {
+    if (input.value.trim().length < 7) {
         isValidInput = false;
-      }
-
-      if (!isValidInput) {
-        input.closest(".input-group").classList.add("invalid");
-        isStepValid = false;
-      } else {
-        input.closest(".input-group").classList.remove("invalid");
-      }
-    });
-
-    const emailInputs = activeStep.querySelectorAll("input[type='email']");
-    emailInputs.forEach(email => {
-      if (email.closest(".hidden")) return;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email.value.trim())) {
-        email.closest(".input-group").classList.add("invalid");
-        isStepValid = false;
-      } else {
-        email.closest(".input-group").classList.remove("invalid");
-      }
-    });
-
-    return isStepValid;
-  }
-
-  form.addEventListener("input", (e) => {
-    const group = e.target.closest(".input-group");
-    if (group && group.classList.contains("invalid")) {
-      group.classList.remove("invalid");
     }
-  });
+    } else if (!input.value.trim()) {
+    isValidInput = false;
+    }
 
-  nextBtn.addEventListener("click", () => {
-    if (!validateCurrentStep()) return;
-
-    if (currentStepIndex < steps.length - 1) {
-      currentStepIndex++;
-      updateFormWizardView();
+    if (!isValidInput) {
+    input.closest(".input-group").classList.add("invalid");
+    isStepValid = false;
     } else {
-      steps.forEach(step => step.classList.remove("active"));
-      footerNav.classList.add("hidden");
-      successScreen.classList.remove("hidden");
-      
-      form.reset();
-      currentStepIndex = 0;
+    input.closest(".input-group").classList.remove("invalid");
     }
-  });
+});
 
-  prevBtn.addEventListener("click", () => {
-    if (currentStepIndex > 0) {
-      currentStepIndex--;
-      updateFormWizardView();
+const emailInputs = activeStep.querySelectorAll("input[type='email']");
+emailInputs.forEach(email => {
+    if (email.closest(".hidden")) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value.trim())) {
+    email.closest(".input-group").classList.add("invalid");
+    isStepValid = false;
+    } else {
+    email.closest(".input-group").classList.remove("invalid");
     }
-  });
+});
 
-  const radioMethods = form.querySelectorAll('input[name="contact-method"]');
-  const emailFieldGroup = document.getElementById("email-field-group");
-  const phoneFieldGroup = document.getElementById("phone-field-group");
-  const emailInput = document.getElementById("contact-email");
-  const phoneInput = document.getElementById("contact-phone");
+return isStepValid;
+}
 
-  radioMethods.forEach(radio => {
-    radio.addEventListener("change", (e) => {
-      if (e.target.value === "email") {
-        emailFieldGroup.classList.remove("hidden");
-        phoneFieldGroup.classList.add("hidden");
-        emailInput.setAttribute("required", "true");
-        phoneInput.removeAttribute("required");
-      } else {
-        emailFieldGroup.classList.add("hidden");
-        phoneFieldGroup.classList.remove("hidden");
-        phoneInput.setAttribute("required", "true");
-        emailInput.removeAttribute("required");
-      }
-    });
-  });
+form.addEventListener("input", (e) => {
+const group = e.target.closest(".input-group");
+if (group && group.classList.contains("invalid")) {
+    group.classList.remove("invalid");
+}
+});
 
-  if (emailInput) emailInput.setAttribute("required", "true");
+nextBtn.addEventListener("click", () => {
+if (!validateCurrentStep()) return;
 
-  const categoryButtons = form.querySelectorAll(".cat-btn");
-  const hiddenCategoryInput = document.getElementById("selected-category");
+if (currentStepIndex < steps.length - 1) {
+    currentStepIndex++;
+    updateFormWizardView();
+} else {
+    steps.forEach(step => step.classList.remove("active"));
+    footerNav.classList.add("hidden");
+    successScreen.classList.remove("hidden");
+    
+    form.reset();
+    currentStepIndex = 0;
+}
+});
 
-  categoryButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      categoryButtons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-      if (hiddenCategoryInput) hiddenCategoryInput.value = button.getAttribute("data-category");
-    });
-  });
+prevBtn.addEventListener("click", () => {
+if (currentStepIndex > 0) {
+    currentStepIndex--;
+    updateFormWizardView();
+}
+});
+
+const radioMethods = form.querySelectorAll('input[name="contact-method"]');
+const emailFieldGroup = document.getElementById("email-field-group");
+const phoneFieldGroup = document.getElementById("phone-field-group");
+const emailInput = document.getElementById("contact-email");
+const phoneInput = document.getElementById("contact-phone");
+
+radioMethods.forEach(radio => {
+radio.addEventListener("change", (e) => {
+    if (e.target.value === "email") {
+    emailFieldGroup.classList.remove("hidden");
+    phoneFieldGroup.classList.add("hidden");
+    emailInput.setAttribute("required", "true");
+    phoneInput.removeAttribute("required");
+    } else {
+    emailFieldGroup.classList.add("hidden");
+    phoneFieldGroup.classList.remove("hidden");
+    phoneInput.setAttribute("required", "true");
+    emailInput.removeAttribute("required");
+    }
+});
+});
+
+if (emailInput) emailInput.setAttribute("required", "true");
+
+const categoryButtons = form.querySelectorAll(".cat-btn");
+const hiddenCategoryInput = document.getElementById("selected-category");
+
+categoryButtons.forEach(button => {
+button.addEventListener("click", () => {
+    categoryButtons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+    if (hiddenCategoryInput) hiddenCategoryInput.value = button.getAttribute("data-category");
+});
+});
 };
 
 if (document.readyState === "loading") {
@@ -503,7 +503,6 @@ if (document.readyState === "loading") {
   initMultiStepForm();
 }
 
-// Active language (also used by the form wizard so its button labels follow it)
 var currentLang = ((document.documentElement.lang || 'en').slice(0, 2));
 
 document.querySelectorAll('.lang-switch').forEach(button => {
@@ -514,8 +513,6 @@ document.querySelectorAll('.lang-switch').forEach(button => {
     });
 });
 
-// index.html has a few IDs that are duplicated or not unique to one element.
-// getElementById() would hit the wrong element, so target them explicitly.
 const ELEMENT_OVERRIDES = {
     "nav-about":       () => document.getElementById('nav-about') || document.querySelector('.nav-links a[href="about.html"]'),
     "action-1-desc":   () => document.querySelector('p#action-1-desc') || document.getElementById('action-1-desc'),
@@ -527,8 +524,6 @@ function getTranslationTarget(id) {
     return ELEMENT_OVERRIDES[id] ? ELEMENT_OVERRIDES[id]() : document.getElementById(id);
 }
 
-// Set HTML content. If the element only wraps a single link (e.g. <h3><a>Maps</a></h3>),
-// translate the link's text and keep the link itself.
 function setTranslatedHTML(element, html) {
     const only = element.children.length === 1 ? element.children[0] : null;
     const wrapsOnlyLink = only && only.tagName === 'A' &&
@@ -544,7 +539,7 @@ function changeLanguage(lang) {
 
     for (const id in langDict) {
         const element = getTranslationTarget(id);
-        if (!element) continue;   // ID belongs to another page
+        if (!element) continue;  
 
         const content = langDict[id];
         if (typeof content === 'string') {
@@ -816,7 +811,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const panels = document.querySelectorAll('.panel');
     const body = document.body;
 
-    // Variables for Article Overlay
     const overlay = document.getElementById('article-overlay');
     const closeBtns = document.querySelectorAll('.close-article-btn, .footer-close-btn');
     const openBtns = document.querySelectorAll('.open-article');
@@ -824,7 +818,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const articleHero = document.getElementById('article-hero-img');
     const articleBody = document.getElementById('article-body'); 
 
-    // 1. Accordion click handler
     panels.forEach(panel => {
         panel.addEventListener('click', (e) => {
             if (e.target.classList.contains('open-article')) return;
@@ -836,7 +829,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 2. Open Article Overlay and Switch Content
     openBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -858,7 +850,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Close Article Overlay
     closeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             overlay.classList.remove('open');
@@ -882,7 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const AUTOPLAY_INTERVAL = 6000; 
 
     function goToSlide(index) {
-        // Wrap around bounds
         if (index < 0) {
             currentIndex = slides.length - 1;
         } else if (index >= slides.length) {
@@ -939,8 +929,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         autoplayTimer = setInterval(nextSlide, AUTOPLAY_INTERVAL);
     }
-
-    // Initialize autoplay
     autoplayTimer = setInterval(nextSlide, AUTOPLAY_INTERVAL);
 });
 
@@ -948,433 +936,432 @@ document.addEventListener('DOMContentLoaded', () => {
 // Language Switcher
 // ==============================================
 const translationsIndex = {   // index.html
-    // English
-    en: {
-        "nav-fundamentals": "MAPS",
-        "nav-stats": "TECTONICS",
-        "nav-real-cases": "EROSION",
-        "nav-take-action": "OCEANS",
-        "nav-donations": "CLIMATE",
-        "nav-contact": "REFERENCES",
-        "scroll-text": "Scroll to begin",
-        "action-subtitle": "Discover more by clicking on the titles below! Each link will take you to an exciting page filled with information tailored just for you. Dive in and explore!",
-        
-        "hero-title-1": "Experience Mexico’s breathtaking nature, rich geology, and stunning tectonic wonders!",
-        "hero-title-2": "Bienvenido!",
-        "hero-desc": "Welcome to our exploration of la tierra of Mexico! From its majestic mountains and active volcanes to its vibrant coastlines, Mexico is a country defined by extraordinary natural forces, rich history, and deep cultural roots. Whether you are curious about its powerful seismic activity, unique biomas, or historic trade routes, this site offers a complete guide to the dynamic earth processes that shape this incredible nación.",
-        
-        "stats-title": "Three Impactful Facts",
-        "stat-1-label": "VIBRANT HUMAN LANDSCAPE",
-        "stat-1-num": "129+ Million Citizens",
-        "stat-2-label": "GLOBAL BIODIVERSITY HOTSPOT",
-        "stat-2-num": "Over 200,000 Species",
-        "stat-3-label": "INTANGIBLE CULTURAL TREASURE",
-        "stat-3-num": "2010 UNESCO Landmark",
-        
-        "cases-subheading": "Forged Through Time: The Historical Evolution of Mexico",
-        "cases-desc": "Mexico's history is written directly onto its rugged landscape. From the urban engineering of ancient Mesoamerican civilizations to colonial transformations, territorial struggles, and modern political reform, historical events have continuously redefined Mexico's physical boundaries, cultural identity, and societal framework.",
-        
-        "case-1-title": "The Foundation of Tenochtitlan", "case-1-cat": "Tenochtitlan", "case-1-year": "1325",
-        "case-1": { "data-title": "The Foundation of Tenochtitlan", "data-text": "According to historical codices, the Mexica (Aztecs) founded their capital city after wandering for decades in search of a divine sign prophesied by Huitzilopochtli: an eagle perched on a nopal cactus devouring a snake. Finding this sign on a swampy island in Lake Texcoco, they engineered a city of canals, causeways, and raised agricultural fields (chinampas). Tenochtitlan grew into one of the largest and most sophisticated cities in the pre-Columbian world, establishing the Valley of Mexico as the nation's political and economic heartland." },
-        
-        "case-2-title": "The Fall of Tenochtitlan & Colonial Era Begins", "case-2-cat": "Tenochtitlan", "case-2-year": "1521",
-        "case-2": { "data-title": "The Fall of Tenochtitlan & Colonial Era Begins", "data-text": "Following a multi-month siege, Spanish conquistador Hernán Cortés and his indigenous allies (primarily the Tlaxcalans) defeated Aztec forces led by Cuauhtémoc. The victory brought an end to the Aztec Empire and initiated three centuries of Spanish colonial rule under the Viceroyalty of New Spain (Nueva España). During this era, Spanish architects built modern Mexico City over the ruins of Tenochtitlan, introducing Catholicism, Spanish governance, and extensive silver mining networks that transformed global commerce." },
-        
-        "case-3-title": "The Mexican Cry for Independence (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
-        "case-3": { "data-title": "The Mexican Cry for Independence (Grito de Dolores)", "data-text": "Early on the morning of September 16, 1810, Roman Catholic priest Miguel Hidalgo y Costilla rang his church bell and issued a revolutionary call to arms against Spanish colonial oppression. The Grito de Dolores ignited an 11-year war for independence, uniting rural peasants, indigenous communities, and local leaders. After years of guerrilla warfare, Agustín de Iturbide and Vicente Guerrero formed the Army of the Three Guarantees, entering Mexico City in 1821 to secure official independence from the Spanish Crown." },
-        
-        "case-4-title": "The Treaty of Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
-        "case-4": { "data-title": "The Treaty of Guadalupe Hidalgo", "data-text": "Concluding the two-year Mexican-American War, the Treaty of Guadalupe Hidalgo permanently reshaped the map of North America. Under its terms, a defeated Mexico ceded over 50 percent of its sovereign territorial landmass—spanning present-day California, Nevada, Utah, Arizona, and parts of Colorado, New Mexico, and Wyoming—to the United States in exchange for $15 million. This dramatic loss redefined Mexico's northern frontier, drastically altered regional trade dynamics, and left deep socio-political scars on national identity." },
-        
-        "case-5-title": "The Porfiriato & Modernization Phase", "case-5-cat": "Mexico City", "case-5-year": "1876–1911",
-        "case-5": { "data-title": "The Porfiriato & Modernization Phase", "data-text": "General Porfirio Díaz ruled Mexico as president for over three decades, an era known as the Porfiriato. Díaz prioritized order and rapid economic growth, inviting foreign capital to construct thousands of miles of railroad tracks, modern telegraph systems, ports, and industrial facilities. While this period modernized Mexico's infrastructure and integrated its raw materials into global markets, it generated severe economic inequality, concentration of land ownership among elite haciendas, and social unrest among the working class." },
-        
-        "case-6-title": "The Mexican Revolution", "case-6-cat": "Mexico", "case-6-year": "1910–1920",
-        "case-6": { "data-title": "The Mexican Revolution", "data-text": "Sparked by widespread opposition to Porfirio Díaz's authoritarian rule, the Mexican Revolution broke out as a complex social, agrarian, and political conflict led by figures like Francisco Madero, Emiliano Zapata, and Pancho Villa. The decade of conflict led to radical political restructuring and culminated in the ratification of the progressive 1917 Constitution of Mexico. This cornerstone document enshrined worker rights, nationalized subsoil mineral resources, and established sweeping agrarian reforms through the ejido land distribution system." },
-        
-        "case-7-title": "Modern Mexico: Democratic Transition & Contemporary Identity", "case-7-cat": "Mexico", "case-7-year": "2000–Present",
-        "case-7": { "data-title": "Modern Mexico: Democratic Transition & Contemporary Identity", "data-text": "Today, Mexico stands as a federal constitutional republic of over 129 million people, shaped by its history of resilience and adaptation. The year 2000 marked a historical democratic milestone when opposition leadership ended 71 consecutive years of single-party rule. Modern Mexico functions as a major industrial powerhouse and international trade hub, holding crucial trade agreements like the USMCA. The nation reflects a distinct fusion of Mesoamerican indigenous traditions and Spanish colonial heritage, maintaining its position as Latin America's second-largest economy while continuously balancing urban industrial growth with cultural preservation." },
-
-        "fund-main-title": "In order to grasp the fundamental aspects of Mexican culture and society,<br/><em>consider the following four questions:</em>",
-        "fund-q1-title": "How do ancient Mesoamerican traditions and Spanish colonial influences coexist in daily life?",
-        "fund-q1-desc": "Mexican society is defined by mestizaje—a rich synthesis of indigenous heritage and Spanish customs seen in architecture, language, community celebrations, and religious devotion.",
-        "fund-q2-title": "What role does family (la familia) play in shaping community structure?",
-        "fund-q2-desc": "Family serves as the primary social unit in Mexico, where multi-generational households, deep respect for elders, and close-knit community networks form the backbone of daily life.",
-        "fund-q3-title": "How does geography influence cultural regionalism across the nation?",
-        "fund-q3-desc": "Distinct landscapes have created diverse regional identities—from northern vaquero traditions in arid plains to rich indigenous traditions and colorful textiles in southern states like Oaxaca and Chiapas.",
-        "fund-q4-title": "Why are national holidays and public gatherings central to Mexican social unity?",
-        "fund-q4-desc": "Events such as Día de los Muertos and Día de la Independencia bring communities together to honor memory, shared heritage, and national pride through public arts, traditional music, and food.",
-        
-        "donations-title": "The Economic Architecture of Mexico",
-        "donations-desc": "Mexico boasts the second-largest economy in Latin America and ranks among the world's major manufacturing hubs. Driven by international trade agreements, mineral wealth, and a dynamic workforce, Mexico plays a critical role in the global supply chain.",
-        "don-irc-cat": "What are the main sources of national income for Mexico?",
-        "don-irc-focus": "Answer:",
-        "don-irc-desc": "Mexico's main income sources include advanced industrial manufacturing (automotive, electronics, and aerospace), crude oil exports, silver and mineral extraction, international tourism, and agricultural exports (avocados, berries, and tequila).",
-        "don-pf-cat": "What is the current daily minimum wage in Mexico?",
-        "don-pf-focus": "Answer:",
-        "don-pf-desc": "As of recent economic updates, Mexico’s general daily minimum wage is approximately 278.80 MXN per day (and higher along the Northern Border Free Zone at roughly 419.88 MXN per day to match regional cost conditions).",
-        "don-uni-cat": "How does the cost of living compare to other North American economies?",
-        "don-uni-focus": "Answer:",
-        "don-uni-desc": "While major metropolitan hubs like Mexico City, Guadalajara, and Monterrey feature rising housing costs, overall essential living costs (groceries, public transit, and health services) remain significantly lower than in the United States or Canada, supporting strong local purchasing power.",
-        
-        "divider-text": "Embark on a geographical journey beneath the surface to discover how tectonic energy, majestic mountain ranges, and active volcanoes continuously sculpt the vibrant nation of Mexico.",
-        
-        "action-title": "Explore Mexico's<br>Earth Processes",
-        "action-1-title": "Maps",
-        "action-1-desc": "Examine historical trade routes, continental positions, boundary changes, and famous cartographers who mapped New Spain and modern Mexico.",
-        "action-2-title": "Tectonics",
-        "action-2-desc": "Uncover the active plate boundaries, seismic hazard monitoring, major mountain systems, mineral wealth, and iconic volcanoes like Popocatépetl.",
-        "action-3-title": "Erosion",
-        "action-3-desc": "Discover physical and chemical weathering processes, the formation of Yucatán cenotes, major river basins, and desertification challenges.",
-        "action-4-title": "Oceans",
-        "action-4-desc": "Analyze coastal formations, ocean trade routes, hurricane patterns, regional islands, and maritime economic impacts.",
-        "action-5-title": "Climate",
-        "action-5-desc": "Investigate Köppen climate classifications across Mexico, global wind circulation patterns, diverse biomes, and unique native flora and fauna.",
-
-        "close-modal": "← Back to Timeline",
-        
-        "tab-1-text": "Your Name", "tab-2-text": "Contact Method", "tab-3-text": "Note",
-        "step-1-sub": "Step 1", "step-1-title": "Your Name", "step-1-desc": "Please enter your details so we know who we are communicating with.",
-        "lbl-fname": "First Name<span class='required'>*</span>", "first-name": { placeholder: "Enter your first name" }, "err-fname": "First name is required.",
-        "lbl-lname": "Last Name<span class='required'>*</span>", "last-name": { placeholder: "Enter your last name" }, "err-lname": "Last name is required.",
-        "lbl-nick": "Nickname / What should we call you <span class='optional'>(Optional)</span>", "nickname": { placeholder: "What do you prefer us to call you?" },
-        
-        "step-2-sub": "Step 2", "step-2-title": "Contact Method", "step-2-desc": "Select how you prefer our team to contact you.",
-        "pref-email": "Email Address", "pref-phone": "Phone / Mobile",
-        "lbl-contact-email": "Email Address<span class='required'>*</span>", "contact-email": { placeholder: "example@email.com" }, "err-email": "Please enter a valid email address.",
-        "lbl-contact-phone": "Phone Number<span class='required'>*</span>", "err-phone": "Please enter a valid phone number.",
-
-        "step-3-sub": "Step 3", "step-3-title": "Note", "step-3-desc": "Help us categorize your request and leave your detailed comments below.",
-        "lbl-category": "Select a Category<span class='required'>*</span>",
-        "cat-btn-1": "Make A Suggestion", "cat-btn-2": "Concern", "cat-btn-3": "Keep in Touch", "cat-btn-4": "Other",
-        "lbl-reason": "Reason for Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Write your questions, concerns, or comments here..." }, "err-reason": "Please write the reason for your message.",
-        
-        "succ-title": "Form Submitted!", "succ-desc": "Your request has been processed successfully. We will contact you very soon.",
-        "prev-btn": "‹ Back", "next-btn": "Next Step ›", "submit-btn": "Submit Form"
-    },
+// English
+en: {
+    "nav-fundamentals": "MAPS",
+    "nav-stats": "TECTONICS",
+    "nav-real-cases": "EROSION",
+    "nav-take-action": "OCEANS",
+    "nav-donations": "CLIMATE",
+    "nav-contact": "REFERENCES",
+    "scroll-text": "Scroll to begin",
+    "action-subtitle": "Discover more by clicking on the titles below! Each link will take you to an exciting page filled with information tailored just for you. Dive in and explore!",
     
-    // Spanish
-    es: {
-        "nav-fundamentals": "MAPAS",
-        "nav-stats": "TECTÓNICA",
-        "nav-real-cases": "EROSIÓN",
-        "nav-take-action": "OCÉANOS",
-        "nav-donations": "CLIMA",
-        "nav-contact": "REFERENCIAS",
-        "scroll-text": "Desplázate para comenzar",
-        "action-subtitle": "¡Descubre más haciendo clic en los títulos de abajo! Cada enlace te llevará a una página emocionante llena de información hecha especialmente para ti. ¡Sumérgete y explora!",
-        
-        "hero-title-1": "¡Experimenta la impresionante naturaleza, la rica geología y las asombrosas maravillas tectónicas de México!",
-        "hero-title-2": "¡Bienvenido!",
-        "hero-desc": "¡Bienvenido a nuestra exploración de la tierra de México! Desde sus majestuosas montañas y volcanes activos hasta sus vibrantes costas, México es un país definido por fuerzas naturales extraordinarias, una rica historia y profundas raíces culturales. Ya sea que tengas curiosidad por su poderosa actividad sísmica, biomas únicos o rutas comerciales históricas, este sitio ofrece una guía completa de los procesos terrestres dinámicos que dan forma a esta increíble nación.",
-        
-        "stats-title": "Tres Datos Impactantes",
-        "stat-1-label": "PAISAJE HUMANO VIBRANTE",
-        "stat-1-num": "Más de 129 Millones",
-        "stat-2-label": "PUNTO CLAVE DE BIODIVERSIDAD",
-        "stat-2-num": "Más de 200,000 Especies",
-        "stat-3-label": "TESORO CULTURAL INTANGIBLE",
-        "stat-3-num": "Patrimonio UNESCO 2010",
-        
-        "cases-subheading": "Forjado a Través del Tiempo: La Evolución Histórica de México",
-        "cases-desc": "La historia de México está escrita directamente sobre su accidentado paisaje. Desde la ingeniería urbana de las antiguas civilizaciones mesoamericanas hasta las transformaciones coloniales, luchas territoriales y reformas políticas modernas, los eventos históricos han redefinido continuamente las fronteras físicas, la identidad cultural y el marco social de México.",
-        
-        "case-1-title": "La Fundación de Tenochtitlán", "case-1-cat": "Tenochtitlán", "case-1-year": "1325",
-        "case-1": { "data-title": "La Fundación de Tenochtitlán", "data-text": "Según los códices históricos, los mexicas (aztecas) fundaron su capital después de vagar durante décadas en busca de una señal divina profetizada por Huitzilopochtli: un águila posada sobre un nopal devorando una serpiente. Al encontrar esta señal en una isla pantanosa del lago de Texcoco, diseñaron una ciudad de canales, calzadas y campos agrícolas elevados (chinampas). Tenochtitlán se convirtió en una de las ciudades más grandes y sofisticadas del mundo precolombino." },
-        
-        "case-2-title": "La Caída de Tenochtitlán y el Inicio de la Era Colonial", "case-2-cat": "Tenochtitlán", "case-2-year": "1521",
-        "case-2": { "data-title": "La Caída de Tenochtitlán y el Inicio de la Era Colonial", "data-text": "Tras un asedio de varios meses, el conquistador español Hernán Cortés y sus aliados indígenas (principalmente tlaxcaltecas) derrotaron a las fuerzas aztecas lideradas por Cuauhtémoc. La victoria puso fin al Imperio Azteca e inició tres siglos de dominio colonial español bajo el Virreinato de la Nueva España. Durante esta época, los arquitectos españoles construyeron la moderna Ciudad de México sobre las ruinas de Tenochtitlán, introduciendo el catolicismo, el gobierno español y extensas redes de minería de plata." },
-        
-        "case-3-title": "El Grito de Independencia (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
-        "case-3": { "data-title": "El Grito de Independencia (Grito de Dolores)", "data-text": "En la madrugada del 16 de septiembre de 1810, el sacerdote católico Miguel Hidalgo y Costilla tocó la campana de su iglesia y emitió un llamado revolucionario a las armas contra la opresión colonial española. El Grito de Dolores encendió una guerra de independencia de 11 años, uniendo a campesinos rurales, comunidades indígenas y líderes locales. Años después, el Ejército Trigarante entró en la Ciudad de México en 1821 para asegurar la independencia oficial." },
-        
-        "case-4-title": "El Tratado de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
-        "case-4": { "data-title": "El Tratado de Guadalupe Hidalgo", "data-text": "Al concluir la Guerra México-Estadounidense de dos años, el Tratado de Guadalupe Hidalgo reformó permanentemente el mapa de América del Norte. Bajo sus términos, un México derrotado cedió más del 50 por ciento de su masa territorial soberana—que abarca los actuales California, Nevada, Utah, Arizona y partes de Colorado, Nuevo México y Wyoming—a los Estados Unidos a cambio de 15 millones de dólares." },
-        
-        "case-5-title": "El Porfiriato y la Fase de Modernización", "case-5-cat": "Ciudad de México", "case-5-year": "1876–1911",
-        "case-5": { "data-title": "El Porfiriato y la Fase de Modernización", "data-text": "El general Porfirio Díaz gobernó México como presidente durante más de tres décadas, una era conocida como el Porfiriato. Díaz priorizó el orden y el rápido crecimiento económico, invitando al capital extranjero a construir miles de kilómetros de vías férreas, sistemas telegráficos modernos, puertos e instalaciones industriales. Si bien este período modernizó la infraestructura de México, generó una grave desigualdad económica." },
-        
-        "case-6-title": "La Revolución Mexicana", "case-6-cat": "México", "case-6-year": "1910–1920",
-        "case-6": { "data-title": "La Revolución Mexicana", "data-text": "Desatada por la oposición generalizada al gobierno autoritario de Porfirio Díaz, la Revolución Mexicana estalló como un complejo conflicto social, agrario y político liderado por figuras como Francisco I. Madero, Emiliano Zapata y Pancho Villa. La década de conflicto condujo a una reestructuración política radical y culminó con la ratificación de la progresista Constitución de 1917, estableciendo amplias reformas agrarias a través del sistema de ejidos." },
-        
-        "case-7-title": "México Moderno: Transición Democrática e Identidad Contemporánea", "case-7-cat": "México", "case-7-year": "2000–Presente",
-        "case-7": { "data-title": "México Moderno: Transición Democrática e Identidad Contemporánea", "data-text": "Hoy, México se erige como una república constitucional federal de más de 129 millones de personas. El año 2000 marcó un hito democrático histórico cuando el liderazgo de la oposición puso fin a 71 años consecutivos de gobierno de un solo partido. El México moderno funciona como una importante potencia industrial y un centro de comercio internacional, reflejando una fusión distinta de las tradiciones indígenas mesoamericanas y la herencia colonial española." },
+    "hero-title-1": "Experience Mexico’s breathtaking nature, rich geology, and stunning tectonic wonders!",
+    "hero-title-2": "Bienvenido!",
+    "hero-desc": "Welcome to our exploration of la tierra of Mexico! From its majestic mountains and active volcanes to its vibrant coastlines, Mexico is a country defined by extraordinary natural forces, rich history, and deep cultural roots. Whether you are curious about its powerful seismic activity, unique biomas, or historic trade routes, this site offers a complete guide to the dynamic earth processes that shape this incredible nación.",
+    
+    "stats-title": "Three Impactful Facts",
+    "stat-1-label": "VIBRANT HUMAN LANDSCAPE",
+    "stat-1-num": "129+ Million Citizens",
+    "stat-2-label": "GLOBAL BIODIVERSITY HOTSPOT",
+    "stat-2-num": "Over 200,000 Species",
+    "stat-3-label": "INTANGIBLE CULTURAL TREASURE",
+    "stat-3-num": "2010 UNESCO Landmark",
+    
+    "cases-subheading": "Forged Through Time: The Historical Evolution of Mexico",
+    "cases-desc": "Mexico's history is written directly onto its rugged landscape. From the urban engineering of ancient Mesoamerican civilizations to colonial transformations, territorial struggles, and modern political reform, historical events have continuously redefined Mexico's physical boundaries, cultural identity, and societal framework.",
+    
+    "case-1-title": "The Foundation of Tenochtitlan", "case-1-cat": "Tenochtitlan", "case-1-year": "1325",
+    "case-1": { "data-title": "The Foundation of Tenochtitlan", "data-text": "According to historical codices, the Mexica (Aztecs) founded their capital city after wandering for decades in search of a divine sign prophesied by Huitzilopochtli: an eagle perched on a nopal cactus devouring a snake. Finding this sign on a swampy island in Lake Texcoco, they engineered a city of canals, causeways, and raised agricultural fields (chinampas). Tenochtitlan grew into one of the largest and most sophisticated cities in the pre-Columbian world, establishing the Valley of Mexico as the nation's political and economic heartland." },
+    
+    "case-2-title": "The Fall of Tenochtitlan & Colonial Era Begins", "case-2-cat": "Tenochtitlan", "case-2-year": "1521",
+    "case-2": { "data-title": "The Fall of Tenochtitlan & Colonial Era Begins", "data-text": "Following a multi-month siege, Spanish conquistador Hernán Cortés and his indigenous allies (primarily the Tlaxcalans) defeated Aztec forces led by Cuauhtémoc. The victory brought an end to the Aztec Empire and initiated three centuries of Spanish colonial rule under the Viceroyalty of New Spain (Nueva España). During this era, Spanish architects built modern Mexico City over the ruins of Tenochtitlan, introducing Catholicism, Spanish governance, and extensive silver mining networks that transformed global commerce." },
+    
+    "case-3-title": "The Mexican Cry for Independence (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
+    "case-3": { "data-title": "The Mexican Cry for Independence (Grito de Dolores)", "data-text": "Early on the morning of September 16, 1810, Roman Catholic priest Miguel Hidalgo y Costilla rang his church bell and issued a revolutionary call to arms against Spanish colonial oppression. The Grito de Dolores ignited an 11-year war for independence, uniting rural peasants, indigenous communities, and local leaders. After years of guerrilla warfare, Agustín de Iturbide and Vicente Guerrero formed the Army of the Three Guarantees, entering Mexico City in 1821 to secure official independence from the Spanish Crown." },
+    
+    "case-4-title": "The Treaty of Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
+    "case-4": { "data-title": "The Treaty of Guadalupe Hidalgo", "data-text": "Concluding the two-year Mexican-American War, the Treaty of Guadalupe Hidalgo permanently reshaped the map of North America. Under its terms, a defeated Mexico ceded over 50 percent of its sovereign territorial landmass—spanning present-day California, Nevada, Utah, Arizona, and parts of Colorado, New Mexico, and Wyoming—to the United States in exchange for $15 million. This dramatic loss redefined Mexico's northern frontier, drastically altered regional trade dynamics, and left deep socio-political scars on national identity." },
+    
+    "case-5-title": "The Porfiriato & Modernization Phase", "case-5-cat": "Mexico City", "case-5-year": "1876–1911",
+    "case-5": { "data-title": "The Porfiriato & Modernization Phase", "data-text": "General Porfirio Díaz ruled Mexico as president for over three decades, an era known as the Porfiriato. Díaz prioritized order and rapid economic growth, inviting foreign capital to construct thousands of miles of railroad tracks, modern telegraph systems, ports, and industrial facilities. While this period modernized Mexico's infrastructure and integrated its raw materials into global markets, it generated severe economic inequality, concentration of land ownership among elite haciendas, and social unrest among the working class." },
+    
+    "case-6-title": "The Mexican Revolution", "case-6-cat": "Mexico", "case-6-year": "1910–1920",
+    "case-6": { "data-title": "The Mexican Revolution", "data-text": "Sparked by widespread opposition to Porfirio Díaz's authoritarian rule, the Mexican Revolution broke out as a complex social, agrarian, and political conflict led by figures like Francisco Madero, Emiliano Zapata, and Pancho Villa. The decade of conflict led to radical political restructuring and culminated in the ratification of the progressive 1917 Constitution of Mexico. This cornerstone document enshrined worker rights, nationalized subsoil mineral resources, and established sweeping agrarian reforms through the ejido land distribution system." },
+    
+    "case-7-title": "Modern Mexico: Democratic Transition & Contemporary Identity", "case-7-cat": "Mexico", "case-7-year": "2000–Present",
+    "case-7": { "data-title": "Modern Mexico: Democratic Transition & Contemporary Identity", "data-text": "Today, Mexico stands as a federal constitutional republic of over 129 million people, shaped by its history of resilience and adaptation. The year 2000 marked a historical democratic milestone when opposition leadership ended 71 consecutive years of single-party rule. Modern Mexico functions as a major industrial powerhouse and international trade hub, holding crucial trade agreements like the USMCA. The nation reflects a distinct fusion of Mesoamerican indigenous traditions and Spanish colonial heritage, maintaining its position as Latin America's second-largest economy while continuously balancing urban industrial growth with cultural preservation." },
 
-        "fund-main-title": "Para comprender los aspectos fundamentales de la cultura y la sociedad mexicanas,<br/><em>considere las siguientes cuatro preguntas:</em>",
-        "fund-q1-title": "¿Cómo coexisten las antiguas tradiciones mesoamericanas y las influencias coloniales españolas en la vida diaria?",
-        "fund-q1-desc": "La sociedad mexicana se define por el mestizaje—una rica síntesis de herencia indígena y costumbres españolas que se ve en la arquitectura, el lenguaje, las celebraciones comunitarias y la devoción religiosa.",
-        "fund-q2-title": "¿Qué papel juega la familia en la configuración de la estructura comunitaria?",
-        "fund-q2-desc": "La familia sirve como la unidad social principal en México, donde los hogares multigeneracionales, el profundo respeto por los mayores y las redes comunitarias unidas forman la columna vertebral de la vida diaria.",
-        "fund-q3-title": "¿Cómo influye la geografía en el regionalismo cultural a lo largo de la nación?",
-        "fund-q3-desc": "Los distintos paisajes han creado diversas identidades regionales—desde las tradiciones vaqueras del norte en las llanuras áridas hasta las ricas tradiciones indígenas y textiles coloridos en estados del sur como Oaxaca y Chiapas.",
-        "fund-q4-title": "¿Por qué las fiestas nacionales y las reuniones públicas son fundamentales para la unidad social mexicana?",
-        "fund-q4-desc": "Eventos como el Día de los Muertos y el Día de la Independencia reúnen a las comunidades para honrar la memoria, la herencia compartida y el orgullo nacional a través de las artes públicas, la música tradicional y la comida.",
-        
-        "donations-title": "La Arquitectura Económica de México",
-        "donations-desc": "México ostenta la segunda economía más grande de América Latina y se encuentra entre los principales centros de fabricación del mundo. Impulsado por acuerdos comerciales internacionales, la riqueza mineral y una fuerza laboral dinámica, México juega un papel fundamental en la cadena de suministro global.",
-        "don-irc-cat": "¿Cuáles son las principales fuentes de ingresos nacionales de México?",
-        "don-irc-focus": "Respuesta:",
-        "don-irc-desc": "Las principales fuentes de ingresos de México incluyen la manufactura industrial avanzada (automotriz, electrónica y aeroespacial), exportaciones de petróleo crudo, extracción de plata y minerales, turismo internacional y exportaciones agrícolas (aguacates, bayas y tequila).",
-        "don-pf-cat": "¿Cuál es el salario mínimo diario actual en México?",
-        "don-pf-focus": "Respuesta:",
-        "don-pf-desc": "A partir de las actualizaciones económicas recientes, el salario mínimo diario general de México es de aproximadamente 278.80 MXN por día (y más alto en la Zona Libre de la Frontera Norte a aproximadamente 419.88 MXN por día para igualar las condiciones de costos regionales).",
-        "don-uni-cat": "¿Cómo se compara el costo de vida con el de otras economías de América del Norte?",
-        "don-uni-focus": "Respuesta:",
-        "don-uni-desc": "Si bien los principales centros metropolitanos como la Ciudad de México, Guadalajara y Monterrey presentan costos de vivienda en aumento, los costos de vida esenciales en general siguen siendo significativamente más bajos que en los Estados Unidos o Canadá, respaldando un fuerte poder adquisitivo local.",
-        
-        "divider-text": "Embárcate en un viaje geográfico debajo de la superficie para descubrir cómo la energía tectónica, las majestuosas cadenas montañosas y los volcanes activos esculpen continuamente la vibrante nación de México.",
-        
-        "action-title": "Explora los Procesos Terrestres<br>de México",
-        "action-1-title": "Mapas",
-        "action-1-desc": "Examina rutas comerciales históricas, posiciones continentales, cambios de límites y cartógrafos famosos que mapearon la Nueva España y el México moderno.",
-        "action-2-title": "Tectónica",
-        "action-2-desc": "Descubre los límites de placas activos, el monitoreo de peligros sísmicos, los principales sistemas montañosos, la riqueza mineral y volcanes icónicos como el Popocatépetl.",
-        "action-3-title": "Erosión",
-        "action-3-desc": "Descubre los procesos de meteorización física y química, la formación de cenotes en Yucatán, las principales cuencas fluviales y los desafíos de la desertificación.",
-        "action-4-title": "Océanos",
-        "action-4-desc": "Analiza las formaciones costeras, las rutas comerciales oceánicas, los patrones de huracanes, las islas regionales y los impactos económicos marítimos.",
-        "action-5-title": "Clima",
-        "action-5-desc": "Investiga las clasificaciones climáticas de Köppen en todo México, los patrones de circulación global del viento, biomas diversos y la flora y fauna nativas únicas.",
+    "fund-main-title": "In order to grasp the fundamental aspects of Mexican culture and society,<br/><em>consider the following four questions:</em>",
+    "fund-q1-title": "How do ancient Mesoamerican traditions and Spanish colonial influences coexist in daily life?",
+    "fund-q1-desc": "Mexican society is defined by mestizaje—a rich synthesis of indigenous heritage and Spanish customs seen in architecture, language, community celebrations, and religious devotion.",
+    "fund-q2-title": "What role does family (la familia) play in shaping community structure?",
+    "fund-q2-desc": "Family serves as the primary social unit in Mexico, where multi-generational households, deep respect for elders, and close-knit community networks form the backbone of daily life.",
+    "fund-q3-title": "How does geography influence cultural regionalism across the nation?",
+    "fund-q3-desc": "Distinct landscapes have created diverse regional identities—from northern vaquero traditions in arid plains to rich indigenous traditions and colorful textiles in southern states like Oaxaca and Chiapas.",
+    "fund-q4-title": "Why are national holidays and public gatherings central to Mexican social unity?",
+    "fund-q4-desc": "Events such as Día de los Muertos and Día de la Independencia bring communities together to honor memory, shared heritage, and national pride through public arts, traditional music, and food.",
+    
+    "donations-title": "The Economic Architecture of Mexico",
+    "donations-desc": "Mexico boasts the second-largest economy in Latin America and ranks among the world's major manufacturing hubs. Driven by international trade agreements, mineral wealth, and a dynamic workforce, Mexico plays a critical role in the global supply chain.",
+    "don-irc-cat": "What are the main sources of national income for Mexico?",
+    "don-irc-focus": "Answer:",
+    "don-irc-desc": "Mexico's main income sources include advanced industrial manufacturing (automotive, electronics, and aerospace), crude oil exports, silver and mineral extraction, international tourism, and agricultural exports (avocados, berries, and tequila).",
+    "don-pf-cat": "What is the current daily minimum wage in Mexico?",
+    "don-pf-focus": "Answer:",
+    "don-pf-desc": "As of recent economic updates, Mexico’s general daily minimum wage is approximately 278.80 MXN per day (and higher along the Northern Border Free Zone at roughly 419.88 MXN per day to match regional cost conditions).",
+    "don-uni-cat": "How does the cost of living compare to other North American economies?",
+    "don-uni-focus": "Answer:",
+    "don-uni-desc": "While major metropolitan hubs like Mexico City, Guadalajara, and Monterrey feature rising housing costs, overall essential living costs (groceries, public transit, and health services) remain significantly lower than in the United States or Canada, supporting strong local purchasing power.",
+    
+    "divider-text": "Embark on a geographical journey beneath the surface to discover how tectonic energy, majestic mountain ranges, and active volcanoes continuously sculpt the vibrant nation of Mexico.",
+    
+    "action-title": "Explore Mexico's<br>Earth Processes",
+    "action-1-title": "Maps",
+    "action-1-desc": "Examine historical trade routes, continental positions, boundary changes, and famous cartographers who mapped New Spain and modern Mexico.",
+    "action-2-title": "Tectonics",
+    "action-2-desc": "Uncover the active plate boundaries, seismic hazard monitoring, major mountain systems, mineral wealth, and iconic volcanoes like Popocatépetl.",
+    "action-3-title": "Erosion",
+    "action-3-desc": "Discover physical and chemical weathering processes, the formation of Yucatán cenotes, major river basins, and desertification challenges.",
+    "action-4-title": "Oceans",
+    "action-4-desc": "Analyze coastal formations, ocean trade routes, hurricane patterns, regional islands, and maritime economic impacts.",
+    "action-5-title": "Climate",
+    "action-5-desc": "Investigate Köppen climate classifications across Mexico, global wind circulation patterns, diverse biomes, and unique native flora and fauna.",
 
-        "close-modal": "← Volver a la Línea de Tiempo",
-        
-        "tab-1-text": "Tu Nombre", "tab-2-text": "Método de Contacto", "tab-3-text": "Nota",
-        "step-1-sub": "Paso 1", "step-1-title": "Tu Nombre", "step-1-desc": "Por favor, ingresa tus datos para que sepamos con quién nos comunicamos.",
-        "lbl-fname": "Nombre<span class='required'>*</span>", "first-name": { placeholder: "Ingresa tu nombre" }, "err-fname": "El nombre es obligatorio.",
-        "lbl-lname": "Apellido<span class='required'>*</span>", "last-name": { placeholder: "Ingresa tu apellido" }, "err-lname": "El apellido es obligatorio.",
-        "lbl-nick": "Apodo / Cómo deberíamos llamarte <span class='optional'>(Opcional)</span>", "nickname": { placeholder: "¿Cómo prefieres que te llamemos?" },
-        
-        "step-2-sub": "Paso 2", "step-2-title": "Método de Contacto", "step-2-desc": "Selecciona cómo prefieres que nuestro equipo te contacte.",
-        "pref-email": "Correo Electrónico", "pref-phone": "Teléfono / Móvil",
-        "lbl-contact-email": "Correo Electrónico<span class='required'>*</span>", "contact-email": { placeholder: "ejemplo@correo.com" }, "err-email": "Por favor, ingresa un correo válido.",
-        "lbl-contact-phone": "Número de Teléfono<span class='required'>*</span>", "err-phone": "Por favor, ingresa un teléfono válido.",
+    "close-modal": "← Back to Timeline",
+    
+    "tab-1-text": "Your Name", "tab-2-text": "Contact Method", "tab-3-text": "Note",
+    "step-1-sub": "Step 1", "step-1-title": "Your Name", "step-1-desc": "Please enter your details so we know who we are communicating with.",
+    "lbl-fname": "First Name<span class='required'>*</span>", "first-name": { placeholder: "Enter your first name" }, "err-fname": "First name is required.",
+    "lbl-lname": "Last Name<span class='required'>*</span>", "last-name": { placeholder: "Enter your last name" }, "err-lname": "Last name is required.",
+    "lbl-nick": "Nickname / What should we call you <span class='optional'>(Optional)</span>", "nickname": { placeholder: "What do you prefer us to call you?" },
+    
+    "step-2-sub": "Step 2", "step-2-title": "Contact Method", "step-2-desc": "Select how you prefer our team to contact you.",
+    "pref-email": "Email Address", "pref-phone": "Phone / Mobile",
+    "lbl-contact-email": "Email Address<span class='required'>*</span>", "contact-email": { placeholder: "example@email.com" }, "err-email": "Please enter a valid email address.",
+    "lbl-contact-phone": "Phone Number<span class='required'>*</span>", "err-phone": "Please enter a valid phone number.",
 
-        "step-3-sub": "Paso 3", "step-3-title": "Nota", "step-3-desc": "Ayúdanos a categorizar tu solicitud y deja tus comentarios detallados a continuación.",
-        "lbl-category": "Selecciona una Categoría<span class='required'>*</span>",
-        "cat-btn-1": "Hacer una Sugerencia", "cat-btn-2": "Inquietud", "cat-btn-3": "Mantenerse en Contacto", "cat-btn-4": "Otro",
-        "lbl-reason": "Motivo del Contacto<span class='required'>*</span>", "contact-reason": { placeholder: "Escribe tus preguntas, inquietudes o comentarios aquí..." }, "err-reason": "Por favor, escribe el motivo de tu mensaje.",
-        
-        "succ-title": "¡Formulario Enviado!", "succ-desc": "Tu solicitud ha sido procesada con éxito. Nos pondremos en contacto contigo muy pronto.",
-        "prev-btn": "‹ Volver", "next-btn": "Siguiente Paso ›", "submit-btn": "Enviar Formulario"
-    },
+    "step-3-sub": "Step 3", "step-3-title": "Note", "step-3-desc": "Help us categorize your request and leave your detailed comments below.",
+    "lbl-category": "Select a Category<span class='required'>*</span>",
+    "cat-btn-1": "Make A Suggestion", "cat-btn-2": "Concern", "cat-btn-3": "Keep in Touch", "cat-btn-4": "Other",
+    "lbl-reason": "Reason for Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Write your questions, concerns, or comments here..." }, "err-reason": "Please write the reason for your message.",
+    
+    "succ-title": "Form Submitted!", "succ-desc": "Your request has been processed successfully. We will contact you very soon.",
+    "prev-btn": "‹ Back", "next-btn": "Next Step ›", "submit-btn": "Submit Form"
+},
 
-    // French
-    fr: {
-        "nav-fundamentals": "CARTES",
-        "nav-stats": "TECTONIQUE",
-        "nav-real-cases": "ÉROSION",
-        "nav-take-action": "OCÉANS",
-        "nav-donations": "CLIMAT",
-        "nav-contact": "RÉFÉRENCES",
-        "scroll-text": "Faites défiler pour commencer",
-        "action-subtitle": "Découvrez-en plus en cliquant sur les titres ci-dessous ! Chaque lien vous mènera vers une page passionnante remplie d'informations adaptées pour vous. Plongez et explorez !",
-        
-        "hero-title-1": "Découvrez la nature époustouflante, la géologie riche et les merveilles tectoniques du Mexique !",
-        "hero-title-2": "Bienvenue !",
-        "hero-desc": "Bienvenue dans notre exploration de la terre du Mexique ! De ses montagnes majestueuses et volcans actifs à ses côtes dynamiques, le Mexique est un pays défini par des forces naturelles extraordinaires, une histoire riche et de profondes racines culturelles. Que vous soyez curieux de sa puissante activité sismique, de ses biomes uniques ou de ses routes commerciales historiques, ce site offre un guide complet des processus terrestres dynamiques qui façonnent cette incroyable nation.",
-        
-        "stats-title": "Trois Faits Marquants",
-        "stat-1-label": "PAYSAGE HUMAIN DYNAMIQUE",
-        "stat-1-num": "Plus de 129 Millions",
-        "stat-2-label": "POINT CHAUD DE LA BIODIVERSITÉ",
-        "stat-2-num": "Plus de 200 000 Espèces",
-        "stat-3-label": "TRÉSOR CULTUREL IMMATÉRIEL",
-        "stat-3-num": "Site UNESCO 2010",
-        
-        "cases-subheading": "Forgé à Travers le Temps : L'Évolution Historique du Mexique",
-        "cases-desc": "L'histoire du Mexique est directement inscrite sur son paysage accidenté. De l'ingénierie urbaine des anciennes civilisations mésoaméricaines aux transformations coloniales, luttes territoriales et réformes politiques modernes, les événements historiques ont continuellement redéfini les frontières physiques, l'identité culturelle et le cadre sociétal du Mexique.",
-        
-        "case-1-title": "La Fondation de Tenochtitlan", "case-1-cat": "Tenochtitlan", "case-1-year": "1325",
-        "case-1": { "data-title": "La Fondation de Tenochtitlan", "data-text": "Selon les codex historiques, les Mexicas (Aztèques) ont fondé leur capitale après avoir erré pendant des décennies à la recherche d'un signe divin prophétisé par Huitzilopochtli : un aigle perché sur un cactus nopal dévorant un serpent. En trouvant ce signe sur une île marécageuse du lac Texcoco, ils ont conçu une ville de canaux, de chaussées et de champs agricoles surélevés (chinampas)." },
-        
-        "case-2-title": "La Chute de Tenochtitlan et le Début de l'Ère Coloniale", "case-2-cat": "Tenochtitlan", "case-2-year": "1521",
-        "case-2": { "data-title": "La Chute de Tenochtitlan et le Début de l'Ère Coloniale", "data-text": "Après un siège de plusieurs mois, le conquistador espagnol Hernán Cortés et ses alliés indigènes (principalement les Tlaxcaltèques) ont vaincu les forces aztèques dirigées par Cuauhtémoc. Cette victoire a mis fin à l'Empire aztèque et initié trois siècles de domination coloniale espagnole sous la vice-royauté de la Nouvelle-Espagne." },
-        
-        "case-3-title": "Le Cri d'Indépendance Mexicain (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
-        "case-3": { "data-title": "Le Cri d'Indépendance Mexicain (Grito de Dolores)", "data-text": "Tôt le matin du 16 septembre 1810, le prêtre catholique Miguel Hidalgo y Costilla a sonné la cloche de son église et a lancé un appel révolutionnaire aux armes contre l'oppression coloniale espagnole. Le Grito de Dolores a déclenché une guerre d'indépendance de 11 ans." },
-        
-        "case-4-title": "Le Traité de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
-        "case-4": { "data-title": "Le Traité de Guadalupe Hidalgo", "data-text": "Concluant la guerre américano-mexicaine de deux ans, le traité de Guadalupe Hidalgo a remodelé de façon permanente la carte de l'Amérique du Nord. En vertu de ses termes, un Mexique vaincu a cédé plus de 50 pour cent de sa masse terrestre souveraine aux États-Unis en échange de 15 millions de dollars." },
-        
-        "case-5-title": "Le Porfiriato et la Phase de Modernisation", "case-5-cat": "Mexico", "case-5-year": "1876–1911",
-        "case-5": { "data-title": "Le Porfiriato et la Phase de Modernisation", "data-text": "Le général Porfirio Díaz a dirigé le Mexique en tant que président pendant plus de trois décennies, une époque connue sous le nom de Porfiriato. Díaz a donné la priorité à l'ordre et à une croissance économique rapide, invitant des capitaux étrangers pour construire des milliers de kilomètres de voies ferrées." },
-        
-        "case-6-title": "La Révolution Mexicaine", "case-6-cat": "Mexique", "case-6-year": "1910–1920",
-        "case-6": { "data-title": "La Révolution Mexicaine", "data-text": "Déclenchée par une opposition généralisée au régime autoritaire de Porfirio Díaz, la Révolution mexicaine a éclaté comme un conflit social, agraire et politique complexe dirigé par des personnalités telles que Francisco Madero, Emiliano Zapata et Pancho Villa." },
-        
-        "case-7-title": "Mexique Moderne : Transition Démocratique et Identité Contemporaine", "case-7-cat": "Mexique", "case-7-year": "2000–Présent",
-        "case-7": { "data-title": "Mexique Moderne : Transition Démocratique et Identité Contemporaine", "data-text": "Aujourd'hui, le Mexique est une république constitutionnelle fédérale de plus de 129 millions d'habitants. L'an 2000 a marqué une étape démocratique historique lorsque l'opposition a mis fin à 71 années consécutives de règne d'un parti unique. La nation reflète une fusion distincte des traditions indigènes et de l'héritage colonial espagnol." },
+// Spanish
+es: {
+    "nav-fundamentals": "MAPAS",
+    "nav-stats": "TECTÓNICA",
+    "nav-real-cases": "EROSIÓN",
+    "nav-take-action": "OCÉANOS",
+    "nav-donations": "CLIMA",
+    "nav-contact": "REFERENCIAS",
+    "scroll-text": "Desplázate para comenzar",
+    "action-subtitle": "¡Descubre más haciendo clic en los títulos de abajo! Cada enlace te llevará a una página emocionante llena de información hecha especialmente para ti. ¡Sumérgete y explora!",
+    
+    "hero-title-1": "¡Experimenta la impresionante naturaleza, la rica geología y las asombrosas maravillas tectónicas de México!",
+    "hero-title-2": "¡Bienvenido!",
+    "hero-desc": "¡Bienvenido a nuestra exploración de la tierra de México! Desde sus majestuosas montañas y volcanes activos hasta sus vibrantes costas, México es un país definido por fuerzas naturales extraordinarias, una rica historia y profundas raíces culturales. Ya sea que tengas curiosidad por su poderosa actividad sísmica, biomas únicos o rutas comerciales históricas, este sitio ofrece una guía completa de los procesos terrestres dinámicos que dan forma a esta increíble nación.",
+    
+    "stats-title": "Tres Datos Impactantes",
+    "stat-1-label": "PAISAJE HUMANO VIBRANTE",
+    "stat-1-num": "Más de 129 Millones",
+    "stat-2-label": "PUNTO CLAVE DE BIODIVERSIDAD",
+    "stat-2-num": "Más de 200,000 Especies",
+    "stat-3-label": "TESORO CULTURAL INTANGIBLE",
+    "stat-3-num": "Patrimonio UNESCO 2010",
+    
+    "cases-subheading": "Forjado a Través del Tiempo: La Evolución Histórica de México",
+    "cases-desc": "La historia de México está escrita directamente sobre su accidentado paisaje. Desde la ingeniería urbana de las antiguas civilizaciones mesoamericanas hasta las transformaciones coloniales, luchas territoriales y reformas políticas modernas, los eventos históricos han redefinido continuamente las fronteras físicas, la identidad cultural y el marco social de México.",
+    
+    "case-1-title": "La Fundación de Tenochtitlán", "case-1-cat": "Tenochtitlán", "case-1-year": "1325",
+    "case-1": { "data-title": "La Fundación de Tenochtitlán", "data-text": "Según los códices históricos, los mexicas (aztecas) fundaron su capital después de vagar durante décadas en busca de una señal divina profetizada por Huitzilopochtli: un águila posada sobre un nopal devorando una serpiente. Al encontrar esta señal en una isla pantanosa del lago de Texcoco, diseñaron una ciudad de canales, calzadas y campos agrícolas elevados (chinampas). Tenochtitlán se convirtió en una de las ciudades más grandes y sofisticadas del mundo precolombino." },
+    
+    "case-2-title": "La Caída de Tenochtitlán y el Inicio de la Era Colonial", "case-2-cat": "Tenochtitlán", "case-2-year": "1521",
+    "case-2": { "data-title": "La Caída de Tenochtitlán y el Inicio de la Era Colonial", "data-text": "Tras un asedio de varios meses, el conquistador español Hernán Cortés y sus aliados indígenas (principalmente tlaxcaltecas) derrotaron a las fuerzas aztecas lideradas por Cuauhtémoc. La victoria puso fin al Imperio Azteca e inició tres siglos de dominio colonial español bajo el Virreinato de la Nueva España. Durante esta época, los arquitectos españoles construyeron la moderna Ciudad de México sobre las ruinas de Tenochtitlán, introduciendo el catolicismo, el gobierno español y extensas redes de minería de plata." },
+    
+    "case-3-title": "El Grito de Independencia (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
+    "case-3": { "data-title": "El Grito de Independencia (Grito de Dolores)", "data-text": "En la madrugada del 16 de septiembre de 1810, el sacerdote católico Miguel Hidalgo y Costilla tocó la campana de su iglesia y emitió un llamado revolucionario a las armas contra la opresión colonial española. El Grito de Dolores encendió una guerra de independencia de 11 años, uniendo a campesinos rurales, comunidades indígenas y líderes locales. Años después, el Ejército Trigarante entró en la Ciudad de México en 1821 para asegurar la independencia oficial." },
+    
+    "case-4-title": "El Tratado de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
+    "case-4": { "data-title": "El Tratado de Guadalupe Hidalgo", "data-text": "Al concluir la Guerra México-Estadounidense de dos años, el Tratado de Guadalupe Hidalgo reformó permanentemente el mapa de América del Norte. Bajo sus términos, un México derrotado cedió más del 50 por ciento de su masa territorial soberana—que abarca los actuales California, Nevada, Utah, Arizona y partes de Colorado, Nuevo México y Wyoming—a los Estados Unidos a cambio de 15 millones de dólares." },
+    
+    "case-5-title": "El Porfiriato y la Fase de Modernización", "case-5-cat": "Ciudad de México", "case-5-year": "1876–1911",
+    "case-5": { "data-title": "El Porfiriato y la Fase de Modernización", "data-text": "El general Porfirio Díaz gobernó México como presidente durante más de tres décadas, una era conocida como el Porfiriato. Díaz priorizó el orden y el rápido crecimiento económico, invitando al capital extranjero a construir miles de kilómetros de vías férreas, sistemas telegráficos modernos, puertos e instalaciones industriales. Si bien este período modernizó la infraestructura de México, generó una grave desigualdad económica." },
+    
+    "case-6-title": "La Revolución Mexicana", "case-6-cat": "México", "case-6-year": "1910–1920",
+    "case-6": { "data-title": "La Revolución Mexicana", "data-text": "Desatada por la oposición generalizada al gobierno autoritario de Porfirio Díaz, la Revolución Mexicana estalló como un complejo conflicto social, agrario y político liderado por figuras como Francisco I. Madero, Emiliano Zapata y Pancho Villa. La década de conflicto condujo a una reestructuración política radical y culminó con la ratificación de la progresista Constitución de 1917, estableciendo amplias reformas agrarias a través del sistema de ejidos." },
+    
+    "case-7-title": "México Moderno: Transición Democrática e Identidad Contemporánea", "case-7-cat": "México", "case-7-year": "2000–Presente",
+    "case-7": { "data-title": "México Moderno: Transición Democrática e Identidad Contemporánea", "data-text": "Hoy, México se erige como una república constitucional federal de más de 129 millones de personas. El año 2000 marcó un hito democrático histórico cuando el liderazgo de la oposición puso fin a 71 años consecutivos de gobierno de un solo partido. El México moderno funciona como una importante potencia industrial y un centro de comercio internacional, reflejando una fusión distinta de las tradiciones indígenas mesoamericanas y la herencia colonial española." },
 
-        "fund-main-title": "Afin de saisir les aspects fondamentaux de la culture et de la société mexicaines,<br/><em>considérez les quatre questions suivantes :</em>",
-        "fund-q1-title": "Comment les anciennes traditions mésoaméricaines et les influences coloniales espagnoles coexistent-elles dans la vie quotidienne ?",
-        "fund-q1-desc": "La société mexicaine est définie par le mestizaje — une riche synthèse de l'héritage indigène et des coutumes espagnoles observée dans l'architecture, la langue, les célébrations communautaires et la dévotion religieuse.",
-        "fund-q2-title": "Quel rôle la famille (la familia) joue-t-elle dans la structure communautaire ?",
-        "fund-q2-desc": "La famille sert d'unité sociale principale au Mexique, où les foyers multigénérationnels, le profond respect pour les aînés et les réseaux communautaires soudés forment l'épine dorsale de la vie quotidienne.",
-        "fund-q3-title": "Comment la géographie influence-t-elle le régionalisme culturel à travers le pays ?",
-        "fund-q3-desc": "Des paysages distincts ont créé diverses identités régionales — des traditions vaquero du nord dans les plaines arides aux riches traditions indigènes et aux textiles colorés dans les États du sud comme Oaxaca et Chiapas.",
-        "fund-q4-title": "Pourquoi les fêtes nationales et les rassemblements publics sont-ils essentiels à l'unité sociale mexicaine ?",
-        "fund-q4-desc": "Des événements tels que le Día de los Muertos et le Día de la Independencia rassemblent les communautés pour honorer la mémoire, l'héritage partagé et la fierté nationale à travers les arts publics, la musique traditionnelle et la nourriture.",
-        
-        "donations-title": "L'Architecture Économique du Mexique",
-        "donations-desc": "Le Mexique possède la deuxième plus grande économie d'Amérique latine et se classe parmi les principaux centres manufacturiers du monde. Stimulé par des accords commerciaux internationaux, la richesse minérale et une main-d'œuvre dynamique, le Mexique joue un rôle essentiel dans la chaîne d'approvisionnement mondiale.",
-        "don-irc-cat": "Quelles sont les principales sources de revenus nationaux pour le Mexique ?",
-        "don-irc-focus": "Réponse :",
-        "don-irc-desc": "Les principales sources de revenus du Mexique comprennent la fabrication industrielle avancée (automobile, électronique et aérospatiale), les exportations de pétrole brut, l'extraction d'argent et de minéraux, le tourisme international et les exportations agricoles (avocats, baies et tequila).",
-        "don-pf-cat": "Quel est le salaire minimum journalier actuel au Mexique ?",
-        "don-pf-focus": "Réponse :",
-        "don-pf-desc": "D'après les récentes mises à jour économiques, le salaire minimum journalier général du Mexique est d'environ 278,80 MXN (et plus élevé dans la zone libre de la frontière nord, à environ 419,88 MXN pour correspondre aux conditions de coût régionales).",
-        "don-uni-cat": "Comment le coût de la vie se compare-t-il à celui des autres économies nord-américaines ?",
-        "don-uni-focus": "Réponse :",
-        "don-uni-desc": "Alors que les grands pôles métropolitains comme Mexico, Guadalajara et Monterrey connaissent une hausse des coûts du logement, les coûts de la vie essentiels (épicerie, transports publics, services de santé) restent globalement nettement inférieurs à ceux des États-Unis ou du Canada.",
-        
-        "divider-text": "Embarquez pour un voyage géographique sous la surface pour découvrir comment l'énergie tectonique, les chaînes de montagnes majestueuses et les volcans actifs sculptent continuellement la vibrante nation du Mexique.",
-        
-        "action-title": "Explorez les Processus Terrestres<br>du Mexique",
-        "action-1-title": "Cartes",
-        "action-1-desc": "Examinez les routes commerciales historiques, les positions continentales, les changements de frontières et les célèbres cartographes qui ont cartographié la Nouvelle-Espagne et le Mexique moderne.",
-        "action-2-title": "Tectonique",
-        "action-2-desc": "Découvrez les limites des plaques actives, la surveillance des risques sismiques, les principaux systèmes montagneux, la richesse minérale et des volcans emblématiques comme le Popocatépetl.",
-        "action-3-title": "Érosion",
-        "action-3-desc": "Découvrez les processus d'altération physique et chimique, la formation des cénotes du Yucatán, les grands bassins fluviaux et les défis de la désertification.",
-        "action-4-title": "Océans",
-        "action-4-desc": "Analysez les formations côtières, les routes commerciales océaniques, les régimes des ouragans, les îles régionales et les impacts économiques maritimes.",
-        "action-5-title": "Climat",
-        "action-5-desc": "Étudiez les classifications climatiques de Köppen à travers le Mexique, les modèles de circulation globale des vents, les divers biomes, ainsi que la flore et la faune indigènes uniques.",
+    "fund-main-title": "Para comprender los aspectos fundamentales de la cultura y la sociedad mexicanas,<br/><em>considere las siguientes cuatro preguntas:</em>",
+    "fund-q1-title": "¿Cómo coexisten las antiguas tradiciones mesoamericanas y las influencias coloniales españolas en la vida diaria?",
+    "fund-q1-desc": "La sociedad mexicana se define por el mestizaje—una rica síntesis de herencia indígena y costumbres españolas que se ve en la arquitectura, el lenguaje, las celebraciones comunitarias y la devoción religiosa.",
+    "fund-q2-title": "¿Qué papel juega la familia en la configuración de la estructura comunitaria?",
+    "fund-q2-desc": "La familia sirve como la unidad social principal en México, donde los hogares multigeneracionales, el profundo respeto por los mayores y las redes comunitarias unidas forman la columna vertebral de la vida diaria.",
+    "fund-q3-title": "¿Cómo influye la geografía en el regionalismo cultural a lo largo de la nación?",
+    "fund-q3-desc": "Los distintos paisajes han creado diversas identidades regionales—desde las tradiciones vaqueras del norte en las llanuras áridas hasta las ricas tradiciones indígenas y textiles coloridos en estados del sur como Oaxaca y Chiapas.",
+    "fund-q4-title": "¿Por qué las fiestas nacionales y las reuniones públicas son fundamentales para la unidad social mexicana?",
+    "fund-q4-desc": "Eventos como el Día de los Muertos y el Día de la Independencia reúnen a las comunidades para honrar la memoria, la herencia compartida y el orgullo nacional a través de las artes públicas, la música tradicional y la comida.",
+    
+    "donations-title": "La Arquitectura Económica de México",
+    "donations-desc": "México ostenta la segunda economía más grande de América Latina y se encuentra entre los principales centros de fabricación del mundo. Impulsado por acuerdos comerciales internacionales, la riqueza mineral y una fuerza laboral dinámica, México juega un papel fundamental en la cadena de suministro global.",
+    "don-irc-cat": "¿Cuáles son las principales fuentes de ingresos nacionales de México?",
+    "don-irc-focus": "Respuesta:",
+    "don-irc-desc": "Las principales fuentes de ingresos de México incluyen la manufactura industrial avanzada (automotriz, electrónica y aeroespacial), exportaciones de petróleo crudo, extracción de plata y minerales, turismo internacional y exportaciones agrícolas (aguacates, bayas y tequila).",
+    "don-pf-cat": "¿Cuál es el salario mínimo diario actual en México?",
+    "don-pf-focus": "Respuesta:",
+    "don-pf-desc": "A partir de las actualizaciones económicas recientes, el salario mínimo diario general de México es de aproximadamente 278.80 MXN por día (y más alto en la Zona Libre de la Frontera Norte a aproximadamente 419.88 MXN por día para igualar las condiciones de costos regionales).",
+    "don-uni-cat": "¿Cómo se compara el costo de vida con el de otras economías de América del Norte?",
+    "don-uni-focus": "Respuesta:",
+    "don-uni-desc": "Si bien los principales centros metropolitanos como la Ciudad de México, Guadalajara y Monterrey presentan costos de vivienda en aumento, los costos de vida esenciales en general siguen siendo significativamente más bajos que en los Estados Unidos o Canadá, respaldando un fuerte poder adquisitivo local.",
+    
+    "divider-text": "Embárcate en un viaje geográfico debajo de la superficie para descubrir cómo la energía tectónica, las majestuosas cadenas montañosas y los volcanes activos esculpen continuamente la vibrante nación de México.",
+    
+    "action-title": "Explora los Procesos Terrestres<br>de México",
+    "action-1-title": "Mapas",
+    "action-1-desc": "Examina rutas comerciales históricas, posiciones continentales, cambios de límites y cartógrafos famosos que mapearon la Nueva España y el México moderno.",
+    "action-2-title": "Tectónica",
+    "action-2-desc": "Descubre los límites de placas activos, el monitoreo de peligros sísmicos, los principales sistemas montañosos, la riqueza mineral y volcanes icónicos como el Popocatépetl.",
+    "action-3-title": "Erosión",
+    "action-3-desc": "Descubre los procesos de meteorización física y química, la formación de cenotes en Yucatán, las principales cuencas fluviales y los desafíos de la desertificación.",
+    "action-4-title": "Océanos",
+    "action-4-desc": "Analiza las formaciones costeras, las rutas comerciales oceánicas, los patrones de huracanes, las islas regionales y los impactos económicos marítimos.",
+    "action-5-title": "Clima",
+    "action-5-desc": "Investiga las clasificaciones climáticas de Köppen en todo México, los patrones de circulación global del viento, biomas diversos y la flora y fauna nativas únicas.",
 
-        "close-modal": "← Retour à la Chronologie",
-        
-        "tab-1-text": "Votre Nom", "tab-2-text": "Méthode de Contact", "tab-3-text": "Note",
-        "step-1-sub": "Étape 1", "step-1-title": "Votre Nom", "step-1-desc": "Veuillez entrer vos coordonnées pour que nous sachions avec qui nous communiquons.",
-        "lbl-fname": "Prénom<span class='required'>*</span>", "first-name": { placeholder: "Entrez votre prénom" }, "err-fname": "Le prénom est requis.",
-        "lbl-lname": "Nom de Famille<span class='required'>*</span>", "last-name": { placeholder: "Entrez votre nom de famille" }, "err-lname": "Le nom de famille est requis.",
-        "lbl-nick": "Surnom / Comment devrions-nous vous appeler <span class='optional'>(Facultatif)</span>", "nickname": { placeholder: "Comment préférez-vous que nous vous appelions ?" },
-        
-        "step-2-sub": "Étape 2", "step-2-title": "Méthode de Contact", "step-2-desc": "Sélectionnez la façon dont vous préférez que notre équipe vous contacte.",
-        "pref-email": "Adresse E-mail", "pref-phone": "Téléphone / Mobile",
-        "lbl-contact-email": "Adresse E-mail<span class='required'>*</span>", "contact-email": { placeholder: "exemple@email.com" }, "err-email": "Veuillez entrer une adresse e-mail valide.",
-        "lbl-contact-phone": "Numéro de Téléphone<span class='required'>*</span>", "err-phone": "Veuillez entrer un numéro de téléphone valide.",
+    "close-modal": "← Volver a la Línea de Tiempo",
+    
+    "tab-1-text": "Tu Nombre", "tab-2-text": "Método de Contacto", "tab-3-text": "Nota",
+    "step-1-sub": "Paso 1", "step-1-title": "Tu Nombre", "step-1-desc": "Por favor, ingresa tus datos para que sepamos con quién nos comunicamos.",
+    "lbl-fname": "Nombre<span class='required'>*</span>", "first-name": { placeholder: "Ingresa tu nombre" }, "err-fname": "El nombre es obligatorio.",
+    "lbl-lname": "Apellido<span class='required'>*</span>", "last-name": { placeholder: "Ingresa tu apellido" }, "err-lname": "El apellido es obligatorio.",
+    "lbl-nick": "Apodo / Cómo deberíamos llamarte <span class='optional'>(Opcional)</span>", "nickname": { placeholder: "¿Cómo prefieres que te llamemos?" },
+    
+    "step-2-sub": "Paso 2", "step-2-title": "Método de Contacto", "step-2-desc": "Selecciona cómo prefieres que nuestro equipo te contacte.",
+    "pref-email": "Correo Electrónico", "pref-phone": "Teléfono / Móvil",
+    "lbl-contact-email": "Correo Electrónico<span class='required'>*</span>", "contact-email": { placeholder: "ejemplo@correo.com" }, "err-email": "Por favor, ingresa un correo válido.",
+    "lbl-contact-phone": "Número de Teléfono<span class='required'>*</span>", "err-phone": "Por favor, ingresa un teléfono válido.",
 
-        "step-3-sub": "Étape 3", "step-3-title": "Note", "step-3-desc": "Aidez-nous à catégoriser votre demande et laissez vos commentaires détaillés ci-dessous.",
-        "lbl-category": "Sélectionnez une Catégorie<span class='required'>*</span>",
-        "cat-btn-1": "Faire une Suggestion", "cat-btn-2": "Inquiétude", "cat-btn-3": "Garder le Contact", "cat-btn-4": "Autre",
-        "lbl-reason": "Raison du Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Écrivez vos questions, inquiétudes ou commentaires ici..." }, "err-reason": "Veuillez écrire la raison de votre message.",
-        
-        "succ-title": "Formulaire Soumis !", "succ-desc": "Votre demande a été traitée avec succès. Nous vous contacterons très bientôt.",
-        "prev-btn": "‹ Retour", "next-btn": "Étape Suivante ›", "submit-btn": "Envoyer le Formulaire"
-    },
+    "step-3-sub": "Paso 3", "step-3-title": "Nota", "step-3-desc": "Ayúdanos a categorizar tu solicitud y deja tus comentarios detallados a continuación.",
+    "lbl-category": "Selecciona una Categoría<span class='required'>*</span>",
+    "cat-btn-1": "Hacer una Sugerencia", "cat-btn-2": "Inquietud", "cat-btn-3": "Mantenerse en Contacto", "cat-btn-4": "Otro",
+    "lbl-reason": "Motivo del Contacto<span class='required'>*</span>", "contact-reason": { placeholder: "Escribe tus preguntas, inquietudes o comentarios aquí..." }, "err-reason": "Por favor, escribe el motivo de tu mensaje.",
+    
+    "succ-title": "¡Formulario Enviado!", "succ-desc": "Tu solicitud ha sido procesada con éxito. Nos pondremos en contacto contigo muy pronto.",
+    "prev-btn": "‹ Volver", "next-btn": "Siguiente Paso ›", "submit-btn": "Enviar Formulario"
+},
 
-    // Portuguese
-    pt: {
-        "nav-fundamentals": "MAPAS",
-        "nav-stats": "TECTÔNICA",
-        "nav-real-cases": "EROSÃO",
-        "nav-take-action": "OCEANOS",
-        "nav-donations": "CLIMA",
-        "nav-contact": "REFERÊNCIAS",
-        "scroll-text": "Role para começar",
-        "action-subtitle": "Descubra mais clicando nos títulos abaixo! Cada link levará você a uma página emocionante cheia de informações feitas especialmente para você. Mergulhe e explore!",
-        
-        "hero-title-1": "Experimente a natureza deslumbrante, a rica geologia e as impressionantes maravilhas tectônicas do México!",
-        "hero-title-2": "Bem-vindo!",
-        "hero-desc": "Bem-vindo à nossa exploração da terra do México! Desde suas montanhas majestosas e vulcões ativos até suas costas vibrantes, o México é um país definido por forças naturais extraordinárias, história rica e profundas raízes culturais. Se você tem curiosidade sobre sua poderosa atividade sísmica, biomas únicos ou rotas comerciais históricas, este site oferece um guia completo para os processos dinâmicos da terra que moldam esta incrível nação.",
-        
-        "stats-title": "Três Fatos Impactantes",
-        "stat-1-label": "PAISAGEM HUMANA VIBRANTE",
-        "stat-1-num": "Mais de 129 Milhões de Cidadãos",
-        "stat-2-label": "PONTO DE BIODIVERSIDADE GLOBAL",
-        "stat-2-num": "Mais de 200.000 Espécies",
-        "stat-3-label": "TESOURO CULTURAL INTANGÍVEL",
-        "stat-3-num": "Marco da UNESCO de 2010",
-        
-        "cases-subheading": "Forjado Através do Tempo: A Evolução Histórica do México",
-        "cases-desc": "A história do México está escrita diretamente em sua paisagem acidentada. Desde a engenharia urbana das antigas civilizações mesoamericanas até as transformações coloniais, lutas territoriais e reformas políticas modernas, os eventos históricos redefiniram continuamente as fronteiras físicas, a identidade cultural e a estrutura social do México.",
-        
-        "case-1-title": "A Fundação de Tenochtitlán", "case-1-cat": "Tenochtitlán", "case-1-year": "1325",
-        "case-1": { "data-title": "A Fundação de Tenochtitlán", "data-text": "Segundo os códices históricos, os mexicas (astecas) fundaram sua capital após vagar por décadas em busca de um sinal divino profetizado por Huitzilopochtli: uma águia pousada em um cacto nopal devorando uma serpente. Encontrando este sinal em uma ilha pantanosa no Lago Texcoco, eles construíram uma cidade de canais, calçadas e campos agrícolas elevados (chinampas)." },
-        
-        "case-2-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "case-2-cat": "Tenochtitlán", "case-2-year": "1521",
-        "case-2": { "data-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "data-text": "Após um cerco de vários meses, o conquistador espanhol Hernán Cortés e seus aliados indígenas (principalmente os tlaxcaltecas) derrotaram as forças astecas lideradas por Cuauhtémoc. A vitória pôs fim ao Império Asteca e iniciou três séculos de domínio colonial espanhol sob o Vice-Reino da Nova Espanha." },
-        
-        "case-3-title": "O Grito de Independência do México (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
-        "case-3": { "data-title": "O Grito de Independência do México (Grito de Dolores)", "data-text": "Na madrugada de 16 de setembro de 1810, o padre católico Miguel Hidalgo y Costilla tocou o sino de sua igreja e emitiu um chamado revolucionário às armas contra a opressão colonial espanhola. O Grito de Dolores desencadeou uma guerra de independência de 11 anos." },
-        
-        "case-4-title": "O Tratado de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
-        "case-4": { "data-title": "O Tratado de Guadalupe Hidalgo", "data-text": "Concluindo a Guerra Mexicano-Americana de dois anos, o Tratado de Guadalupe Hidalgo reformulou permanentemente o mapa da América do Norte. Sob seus termos, um México derrotado cedeu mais de 50 por cento de sua massa territorial soberana para os Estados Unidos em troca de 15 milhões de dólares." },
-        
-        "case-5-title": "O Porfiriato e a Fase de Modernização", "case-5-cat": "Cidade do México", "case-5-year": "1876–1911",
-        "case-5": { "data-title": "O Porfiriato e a Fase de Modernização", "data-text": "O General Porfirio Díaz governou o México como presidente por mais de três décadas, uma era conhecida como o Porfiriato. Díaz priorizou a ordem e o rápido crescimento econômico, convidando o capital estrangeiro para construir milhares de quilômetros de ferrovias." },
-        
-        "case-6-title": "A Revolução Mexicana", "case-6-cat": "México", "case-6-year": "1910–1920",
-        "case-6": { "data-title": "A Revolução Mexicana", "data-text": "Desencadeada pela oposição generalizada ao governo autoritário de Porfirio Díaz, a Revolução Mexicana eclodiu como um complexo conflito social, agrário e político liderado por figuras como Francisco Madero, Emiliano Zapata e Pancho Villa." },
-        
-        "case-7-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "case-7-cat": "México", "case-7-year": "2000–Presente",
-        "case-7": { "data-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "data-text": "Hoje, o México é uma república constitucional federal com mais de 129 milhões de habitantes. O ano de 2000 marcou um marco democrático histórico quando a liderança da oposição encerrou 71 anos consecutivos de governo de partido único. A nação reflete uma fusão distinta de tradições indígenas e herança colonial espanhola." },
+// French
+fr: {
+    "nav-fundamentals": "CARTES",
+    "nav-stats": "TECTONIQUE",
+    "nav-real-cases": "ÉROSION",
+    "nav-take-action": "OCÉANS",
+    "nav-donations": "CLIMAT",
+    "nav-contact": "RÉFÉRENCES",
+    "scroll-text": "Faites défiler pour commencer",
+    "action-subtitle": "Découvrez-en plus en cliquant sur les titres ci-dessous ! Chaque lien vous mènera vers une page passionnante remplie d'informations adaptées pour vous. Plongez et explorez !",
+    
+    "hero-title-1": "Découvrez la nature époustouflante, la géologie riche et les merveilles tectoniques du Mexique !",
+    "hero-title-2": "Bienvenue !",
+    "hero-desc": "Bienvenue dans notre exploration de la terre du Mexique ! De ses montagnes majestueuses et volcans actifs à ses côtes dynamiques, le Mexique est un pays défini par des forces naturelles extraordinaires, une histoire riche et de profondes racines culturelles. Que vous soyez curieux de sa puissante activité sismique, de ses biomes uniques ou de ses routes commerciales historiques, ce site offre un guide complet des processus terrestres dynamiques qui façonnent cette incroyable nation.",
+    
+    "stats-title": "Trois Faits Marquants",
+    "stat-1-label": "PAYSAGE HUMAIN DYNAMIQUE",
+    "stat-1-num": "Plus de 129 Millions",
+    "stat-2-label": "POINT CHAUD DE LA BIODIVERSITÉ",
+    "stat-2-num": "Plus de 200 000 Espèces",
+    "stat-3-label": "TRÉSOR CULTUREL IMMATÉRIEL",
+    "stat-3-num": "Site UNESCO 2010",
+    
+    "cases-subheading": "Forgé à Travers le Temps : L'Évolution Historique du Mexique",
+    "cases-desc": "L'histoire du Mexique est directement inscrite sur son paysage accidenté. De l'ingénierie urbaine des anciennes civilisations mésoaméricaines aux transformations coloniales, luttes territoriales et réformes politiques modernes, les événements historiques ont continuellement redéfini les frontières physiques, l'identité culturelle et le cadre sociétal du Mexique.",
+    
+    "case-1-title": "La Fondation de Tenochtitlan", "case-1-cat": "Tenochtitlan", "case-1-year": "1325",
+    "case-1": { "data-title": "La Fondation de Tenochtitlan", "data-text": "Selon les codex historiques, les Mexicas (Aztèques) ont fondé leur capitale après avoir erré pendant des décennies à la recherche d'un signe divin prophétisé par Huitzilopochtli : un aigle perché sur un cactus nopal dévorant un serpent. En trouvant ce signe sur une île marécageuse du lac Texcoco, ils ont conçu une ville de canaux, de chaussées et de champs agricoles surélevés (chinampas)." },
+    
+    "case-2-title": "La Chute de Tenochtitlan et le Début de l'Ère Coloniale", "case-2-cat": "Tenochtitlan", "case-2-year": "1521",
+    "case-2": { "data-title": "La Chute de Tenochtitlan et le Début de l'Ère Coloniale", "data-text": "Après un siège de plusieurs mois, le conquistador espagnol Hernán Cortés et ses alliés indigènes (principalement les Tlaxcaltèques) ont vaincu les forces aztèques dirigées par Cuauhtémoc. Cette victoire a mis fin à l'Empire aztèque et initié trois siècles de domination coloniale espagnole sous la vice-royauté de la Nouvelle-Espagne." },
+    
+    "case-3-title": "Le Cri d'Indépendance Mexicain (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
+    "case-3": { "data-title": "Le Cri d'Indépendance Mexicain (Grito de Dolores)", "data-text": "Tôt le matin du 16 septembre 1810, le prêtre catholique Miguel Hidalgo y Costilla a sonné la cloche de son église et a lancé un appel révolutionnaire aux armes contre l'oppression coloniale espagnole. Le Grito de Dolores a déclenché une guerre d'indépendance de 11 ans." },
+    
+    "case-4-title": "Le Traité de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
+    "case-4": { "data-title": "Le Traité de Guadalupe Hidalgo", "data-text": "Concluant la guerre américano-mexicaine de deux ans, le traité de Guadalupe Hidalgo a remodelé de façon permanente la carte de l'Amérique du Nord. En vertu de ses termes, un Mexique vaincu a cédé plus de 50 pour cent de sa masse terrestre souveraine aux États-Unis en échange de 15 millions de dollars." },
+    
+    "case-5-title": "Le Porfiriato et la Phase de Modernisation", "case-5-cat": "Mexico", "case-5-year": "1876–1911",
+    "case-5": { "data-title": "Le Porfiriato et la Phase de Modernisation", "data-text": "Le général Porfirio Díaz a dirigé le Mexique en tant que président pendant plus de trois décennies, une époque connue sous le nom de Porfiriato. Díaz a donné la priorité à l'ordre et à une croissance économique rapide, invitant des capitaux étrangers pour construire des milliers de kilomètres de voies ferrées." },
+    
+    "case-6-title": "La Révolution Mexicaine", "case-6-cat": "Mexique", "case-6-year": "1910–1920",
+    "case-6": { "data-title": "La Révolution Mexicaine", "data-text": "Déclenchée par une opposition généralisée au régime autoritaire de Porfirio Díaz, la Révolution mexicaine a éclaté comme un conflit social, agraire et politique complexe dirigé par des personnalités telles que Francisco Madero, Emiliano Zapata et Pancho Villa." },
+    
+    "case-7-title": "Mexique Moderne : Transition Démocratique et Identité Contemporaine", "case-7-cat": "Mexique", "case-7-year": "2000–Présent",
+    "case-7": { "data-title": "Mexique Moderne : Transition Démocratique et Identité Contemporaine", "data-text": "Aujourd'hui, le Mexique est une république constitutionnelle fédérale de plus de 129 millions d'habitants. L'an 2000 a marqué une étape démocratique historique lorsque l'opposition a mis fin à 71 années consécutives de règne d'un parti unique. La nation reflète une fusion distincte des traditions indigènes et de l'héritage colonial espagnol." },
 
-        "fund-main-title": "Para compreender os aspectos fundamentais da cultura e sociedade mexicanas,<br/><em>considere as quatro perguntas a seguir:</em>",
-        "fund-q1-title": "Como as antigas tradições mesoamericanas e as influências coloniais espanholas coexistem na vida diária?",
-        "fund-q1-desc": "A sociedade mexicana é definida pela mestiçagem — uma rica síntese da herança indígena e costumes espanhóis vistos na arquitetura, idioma, celebrações comunitárias e devoção religiosa.",
-        "fund-q2-title": "Qual o papel da família (la familia) na formação da estrutura comunitária?",
-        "fund-q2-desc": "A família atua como a unidade social primária no México, onde lares multigeracionais, profundo respeito pelos mais velhos e redes comunitárias unidas formam a espinha dorsal da vida diária.",
-        "fund-q3-title": "Como a geografia influencia o regionalismo cultural em todo o país?",
-        "fund-q3-desc": "Paisagens distintas criaram diversas identidades regionais — desde as tradições de vaqueiros do norte em planícies áridas até as ricas tradições indígenas e tecidos coloridos em estados do sul como Oaxaca e Chiapas.",
-        "fund-q4-title": "Por que os feriados nacionais e as reuniões públicas são centrais para a unidade social mexicana?",
-        "fund-q4-desc": "Eventos como o Día de los Muertos e o Día de la Independencia reúnem as comunidades para honrar a memória, a herança compartilhada e o orgulho nacional por meio de artes públicas, música tradicional e comida.",
-        
-        "donations-title": "A Arquitetura Econômica do México",
-        "donations-desc": "O México possui a segunda maior economia da América Latina e está entre os principais centros de manufatura do mundo. Impulsionado por acordos comerciais internacionais, riqueza mineral e uma força de trabalho dinâmica, o México desempenha um papel crítico na cadeia de suprimentos global.",
-        "don-irc-cat": "Quais são as principais fontes de renda nacional do México?",
-        "don-irc-focus": "Resposta:",
-        "don-irc-desc": "As principais fontes de renda do México incluem manufatura industrial avançada (automotiva, eletrônica e aeroespacial), exportações de petróleo bruto, extração de prata e minerais, turismo internacional e exportações agrícolas (abacates, frutas vermelhas e tequila).",
-        "don-pf-cat": "Qual é o salário mínimo diário atual no México?",
-        "don-pf-focus": "Resposta:",
-        "don-pf-desc": "A partir de atualizações econômicas recentes, o salário mínimo diário geral do México é de aproximadamente 278,80 MXN por dia (e superior ao longo da Zona Livre da Fronteira Norte, em torno de 419,88 MXN por dia para corresponder às condições de custo regionais).",
-        "don-uni-cat": "Como o custo de vida se compara a outras economias da América do Norte?",
-        "don-uni-focus": "Resposta:",
-        "don-uni-desc": "Embora os principais centros metropolitanos, como a Cidade do México, Guadalajara e Monterrey, apresentem custos de moradia crescentes, os custos essenciais de vida gerais (mantimentos, transporte público e serviços de saúde) permanecem significativamente mais baixos do que nos Estados Unidos ou Canadá.",
-        
-        "divider-text": "Embarque em uma jornada geográfica sob a superfície para descobrir como a energia tectônica, majestosas cadeias de montanhas e vulcões ativos esculpem continuamente a vibrante nação do México.",
-        
-        "action-title": "Explore os Processos<br>Terrestres do México",
-        "action-1-title": "Mapas",
-        "action-1-desc": "Examine rotas comerciais históricas, posições continentais, mudanças de fronteira e cartógrafos famosos que mapearam a Nova Espanha e o México moderno.",
-        "action-2-title": "Tectônica",
-        "action-2-desc": "Descubra os limites das placas ativas, monitoramento de riscos sísmicos, principais sistemas de montanhas, riqueza mineral e vulcões icônicos como o Popocatépetl.",
-        "action-3-title": "Erosão",
-        "action-3-desc": "Descubra os processos de intemperismo físico e químico, a formação de cenotes em Yucatán, as principais bacias hidrográficas e os desafios da desertificação.",
-        "action-4-title": "Oceanos",
-        "action-4-desc": "Analise as formações costeiras, rotas de comércio oceânico, padrões de furacões, ilhas regionais e impactos econômicos marítimos.",
-        "action-5-title": "Clima",
-        "action-5-desc": "Investigue as classificações climáticas de Köppen em todo o México, os padrões globais de circulação do vento, biomas diversos e flora e fauna nativas exclusivas.",
+    "fund-main-title": "Afin de saisir les aspects fondamentaux de la culture et de la société mexicaines,<br/><em>considérez les quatre questions suivantes :</em>",
+    "fund-q1-title": "Comment les anciennes traditions mésoaméricaines et les influences coloniales espagnoles coexistent-elles dans la vie quotidienne ?",
+    "fund-q1-desc": "La société mexicaine est définie par le mestizaje — une riche synthèse de l'héritage indigène et des coutumes espagnoles observée dans l'architecture, la langue, les célébrations communautaires et la dévotion religieuse.",
+    "fund-q2-title": "Quel rôle la famille (la familia) joue-t-elle dans la structure communautaire ?",
+    "fund-q2-desc": "La famille sert d'unité sociale principale au Mexique, où les foyers multigénérationnels, le profond respect pour les aînés et les réseaux communautaires soudés forment l'épine dorsale de la vie quotidienne.",
+    "fund-q3-title": "Comment la géographie influence-t-elle le régionalisme culturel à travers le pays ?",
+    "fund-q3-desc": "Des paysages distincts ont créé diverses identités régionales — des traditions vaquero du nord dans les plaines arides aux riches traditions indigènes et aux textiles colorés dans les États du sud comme Oaxaca et Chiapas.",
+    "fund-q4-title": "Pourquoi les fêtes nationales et les rassemblements publics sont-ils essentiels à l'unité sociale mexicaine ?",
+    "fund-q4-desc": "Des événements tels que le Día de los Muertos et le Día de la Independencia rassemblent les communautés pour honorer la mémoire, l'héritage partagé et la fierté nationale à travers les arts publics, la musique traditionnelle et la nourriture.",
+    
+    "donations-title": "L'Architecture Économique du Mexique",
+    "donations-desc": "Le Mexique possède la deuxième plus grande économie d'Amérique latine et se classe parmi les principaux centres manufacturiers du monde. Stimulé par des accords commerciaux internationaux, la richesse minérale et une main-d'œuvre dynamique, le Mexique joue un rôle essentiel dans la chaîne d'approvisionnement mondiale.",
+    "don-irc-cat": "Quelles sont les principales sources de revenus nationaux pour le Mexique ?",
+    "don-irc-focus": "Réponse :",
+    "don-irc-desc": "Les principales sources de revenus du Mexique comprennent la fabrication industrielle avancée (automobile, électronique et aérospatiale), les exportations de pétrole brut, l'extraction d'argent et de minéraux, le tourisme international et les exportations agricoles (avocats, baies et tequila).",
+    "don-pf-cat": "Quel est le salaire minimum journalier actuel au Mexique ?",
+    "don-pf-focus": "Réponse :",
+    "don-pf-desc": "D'après les récentes mises à jour économiques, le salaire minimum journalier général du Mexique est d'environ 278,80 MXN (et plus élevé dans la zone libre de la frontière nord, à environ 419,88 MXN pour correspondre aux conditions de coût régionales).",
+    "don-uni-cat": "Comment le coût de la vie se compare-t-il à celui des autres économies nord-américaines ?",
+    "don-uni-focus": "Réponse :",
+    "don-uni-desc": "Alors que les grands pôles métropolitains comme Mexico, Guadalajara et Monterrey connaissent une hausse des coûts du logement, les coûts de la vie essentiels (épicerie, transports publics, services de santé) restent globalement nettement inférieurs à ceux des États-Unis ou du Canada.",
+    
+    "divider-text": "Embarquez pour un voyage géographique sous la surface pour découvrir comment l'énergie tectonique, les chaînes de montagnes majestueuses et les volcans actifs sculptent continuellement la vibrante nation du Mexique.",
+    
+    "action-title": "Explorez les Processus Terrestres<br>du Mexique",
+    "action-1-title": "Cartes",
+    "action-1-desc": "Examinez les routes commerciales historiques, les positions continentales, les changements de frontières et les célèbres cartographes qui ont cartographié la Nouvelle-Espagne et le Mexique moderne.",
+    "action-2-title": "Tectonique",
+    "action-2-desc": "Découvrez les limites des plaques actives, la surveillance des risques sismiques, les principaux systèmes montagneux, la richesse minérale et des volcans emblématiques comme le Popocatépetl.",
+    "action-3-title": "Érosion",
+    "action-3-desc": "Découvrez les processus d'altération physique et chimique, la formation des cénotes du Yucatán, les grands bassins fluviaux et les défis de la désertification.",
+    "action-4-title": "Océans",
+    "action-4-desc": "Analysez les formations côtières, les routes commerciales océaniques, les régimes des ouragans, les îles régionales et les impacts économiques maritimes.",
+    "action-5-title": "Climat",
+    "action-5-desc": "Étudiez les classifications climatiques de Köppen à travers le Mexique, les modèles de circulation globale des vents, les divers biomes, ainsi que la flore et la faune indigènes uniques.",
 
-        "close-modal": "← Voltar à Linha do Tempo",
-        
-        "tab-1-text": "Seu Nome", "tab-2-text": "Método de Contato", "tab-3-text": "Nota",
-        "step-1-sub": "Passo 1", "step-1-title": "Seu Nome", "step-1-desc": "Por favor, insira seus dados para sabermos com quem estamos nos comunicando.",
-        "lbl-fname": "Primeiro Nome<span class='required'>*</span>", "first-name": { placeholder: "Insira seu primeiro nome" }, "err-fname": "O primeiro nome é obrigatório.",
-        "lbl-lname": "Sobrenome<span class='required'>*</span>", "last-name": { placeholder: "Insira seu sobrenome" }, "err-lname": "O sobrenome é obrigatório.",
-        "lbl-nick": "Apelido / Como devemos chamá-lo <span class='optional'>(Opcional)</span>", "nickname": { placeholder: "Como você prefere que o chamemos?" },
-        
-        "step-2-sub": "Passo 2", "step-2-title": "Método de Contato", "step-2-desc": "Selecione como você prefere que nossa equipe entre em contato com você.",
-        "pref-email": "Endereço de E-mail", "pref-phone": "Telefone / Celular",
-        "lbl-contact-email": "Endereço de E-mail<span class='required'>*</span>", "contact-email": { placeholder: "exemplo@email.com" }, "err-email": "Por favor, insira um e-mail válido.",
-        "lbl-contact-phone": "Número de Telefone<span class='required'>*</span>", "err-phone": "Por favor, insira um número de telefone válido.",
+    "close-modal": "← Retour à la Chronologie",
+    
+    "tab-1-text": "Votre Nom", "tab-2-text": "Méthode de Contact", "tab-3-text": "Note",
+    "step-1-sub": "Étape 1", "step-1-title": "Votre Nom", "step-1-desc": "Veuillez entrer vos coordonnées pour que nous sachions avec qui nous communiquons.",
+    "lbl-fname": "Prénom<span class='required'>*</span>", "first-name": { placeholder: "Entrez votre prénom" }, "err-fname": "Le prénom est requis.",
+    "lbl-lname": "Nom de Famille<span class='required'>*</span>", "last-name": { placeholder: "Entrez votre nom de famille" }, "err-lname": "Le nom de famille est requis.",
+    "lbl-nick": "Surnom / Comment devrions-nous vous appeler <span class='optional'>(Facultatif)</span>", "nickname": { placeholder: "Comment préférez-vous que nous vous appelions ?" },
+    
+    "step-2-sub": "Étape 2", "step-2-title": "Méthode de Contact", "step-2-desc": "Sélectionnez la façon dont vous préférez que notre équipe vous contacte.",
+    "pref-email": "Adresse E-mail", "pref-phone": "Téléphone / Mobile",
+    "lbl-contact-email": "Adresse E-mail<span class='required'>*</span>", "contact-email": { placeholder: "exemple@email.com" }, "err-email": "Veuillez entrer une adresse e-mail valide.",
+    "lbl-contact-phone": "Numéro de Téléphone<span class='required'>*</span>", "err-phone": "Veuillez entrer un numéro de téléphone valide.",
 
-        "step-3-sub": "Passo 3", "step-3-title": "Nota", "step-3-desc": "Ajude-nos a categorizar sua solicitação e deixe seus comentários detalhados abaixo.",
-        "lbl-category": "Selecione uma Categoria<span class='required'>*</span>",
-        "cat-btn-1": "Fazer uma Sugestão", "cat-btn-2": "Preocupação", "cat-btn-3": "Manter Contato", "cat-btn-4": "Outro",
-        "lbl-reason": "Motivo do Contato<span class='required'>*</span>", "contact-reason": { placeholder: "Escreva suas perguntas, preocupações ou comentários aqui..." }, "err-reason": "Por favor, escreva o motivo da sua mensagem.",
-        
-        "succ-title": "Formulário Enviado!", "succ-desc": "Sua solicitação foi processada com sucesso. Entraremos em contato em breve.",
-        "prev-btn": "‹ Voltar", "next-btn": "Próximo Passo ›", "submit-btn": "Enviar Formulário",
-    },
+    "step-3-sub": "Étape 3", "step-3-title": "Note", "step-3-desc": "Aidez-nous à catégoriser votre demande et laissez vos commentaires détaillés ci-dessous.",
+    "lbl-category": "Sélectionnez une Catégorie<span class='required'>*</span>",
+    "cat-btn-1": "Faire une Suggestion", "cat-btn-2": "Inquiétude", "cat-btn-3": "Garder le Contact", "cat-btn-4": "Autre",
+    "lbl-reason": "Raison du Contact<span class='required'>*</span>", "contact-reason": { placeholder: "Écrivez vos questions, inquiétudes ou commentaires ici..." }, "err-reason": "Veuillez écrire la raison de votre message.",
+    
+    "succ-title": "Formulaire Soumis !", "succ-desc": "Votre demande a été traitée avec succès. Nous vous contacterons très bientôt.",
+    "prev-btn": "‹ Retour", "next-btn": "Étape Suivante ›", "submit-btn": "Envoyer le Formulaire"
+},
 
+// Portuguese
+pt: {
+    "nav-fundamentals": "MAPAS",
+    "nav-stats": "TECTÔNICA",
+    "nav-real-cases": "EROSÃO",
+    "nav-take-action": "OCEANOS",
+    "nav-donations": "CLIMA",
+    "nav-contact": "REFERÊNCIAS",
+    "scroll-text": "Role para começar",
+    "action-subtitle": "Descubra mais clicando nos títulos abaixo! Cada link levará você a uma página emocionante cheia de informações feitas especialmente para você. Mergulhe e explore!",
+    
+    "hero-title-1": "Experimente a natureza deslumbrante, a rica geologia e as impressionantes maravilhas tectônicas do México!",
+    "hero-title-2": "Bem-vindo!",
+    "hero-desc": "Bem-vindo à nossa exploração da terra do México! Desde suas montanhas majestosas e vulcões ativos até suas costas vibrantes, o México é um país definido por forças naturais extraordinárias, história rica e profundas raízes culturais. Se você tem curiosidade sobre sua poderosa atividade sísmica, biomas únicos ou rotas comerciais históricas, este site oferece um guia completo para os processos dinâmicos da terra que moldam esta incrível nação.",
+    
+    "stats-title": "Três Fatos Impactantes",
+    "stat-1-label": "PAISAGEM HUMANA VIBRANTE",
+    "stat-1-num": "Mais de 129 Milhões de Cidadãos",
+    "stat-2-label": "PONTO DE BIODIVERSIDADE GLOBAL",
+    "stat-2-num": "Mais de 200.000 Espécies",
+    "stat-3-label": "TESOURO CULTURAL INTANGÍVEL",
+    "stat-3-num": "Marco da UNESCO de 2010",
+    
+    "cases-subheading": "Forjado Através do Tempo: A Evolução Histórica do México",
+    "cases-desc": "A história do México está escrita diretamente em sua paisagem acidentada. Desde a engenharia urbana das antigas civilizações mesoamericanas até as transformações coloniais, lutas territoriais e reformas políticas modernas, os eventos históricos redefiniram continuamente as fronteiras físicas, a identidade cultural e a estrutura social do México.",
+    
+    "case-1-title": "A Fundação de Tenochtitlán", "case-1-cat": "Tenochtitlán", "case-1-year": "1325",
+    "case-1": { "data-title": "A Fundação de Tenochtitlán", "data-text": "Segundo os códices históricos, os mexicas (astecas) fundaram sua capital após vagar por décadas em busca de um sinal divino profetizado por Huitzilopochtli: uma águia pousada em um cacto nopal devorando uma serpente. Encontrando este sinal em uma ilha pantanosa no Lago Texcoco, eles construíram uma cidade de canais, calçadas e campos agrícolas elevados (chinampas)." },
+    
+    "case-2-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "case-2-cat": "Tenochtitlán", "case-2-year": "1521",
+    "case-2": { "data-title": "A Queda de Tenochtitlán e o Início da Era Colonial", "data-text": "Após um cerco de vários meses, o conquistador espanhol Hernán Cortés e seus aliados indígenas (principalmente os tlaxcaltecas) derrotaram as forças astecas lideradas por Cuauhtémoc. A vitória pôs fim ao Império Asteca e iniciou três séculos de domínio colonial espanhol sob o Vice-Reino da Nova Espanha." },
+    
+    "case-3-title": "O Grito de Independência do México (Grito de Dolores)", "case-3-cat": "Guanajuato", "case-3-year": "1810–1821",
+    "case-3": { "data-title": "O Grito de Independência do México (Grito de Dolores)", "data-text": "Na madrugada de 16 de setembro de 1810, o padre católico Miguel Hidalgo y Costilla tocou o sino de sua igreja e emitiu um chamado revolucionário às armas contra a opressão colonial espanhola. O Grito de Dolores desencadeou uma guerra de independência de 11 anos." },
+    
+    "case-4-title": "O Tratado de Guadalupe Hidalgo", "case-4-cat": "Hidalgo", "case-4-year": "1848",
+    "case-4": { "data-title": "O Tratado de Guadalupe Hidalgo", "data-text": "Concluindo a Guerra Mexicano-Americana de dois anos, o Tratado de Guadalupe Hidalgo reformulou permanentemente o mapa da América do Norte. Sob seus termos, um México derrotado cedeu mais de 50 por cento de sua massa territorial soberana para os Estados Unidos em troca de 15 milhões de dólares." },
+    
+    "case-5-title": "O Porfiriato e a Fase de Modernização", "case-5-cat": "Cidade do México", "case-5-year": "1876–1911",
+    "case-5": { "data-title": "O Porfiriato e a Fase de Modernização", "data-text": "O General Porfirio Díaz governou o México como presidente por mais de três décadas, uma era conhecida como o Porfiriato. Díaz priorizou a ordem e o rápido crescimento econômico, convidando o capital estrangeiro para construir milhares de quilômetros de ferrovias." },
+    
+    "case-6-title": "A Revolução Mexicana", "case-6-cat": "México", "case-6-year": "1910–1920",
+    "case-6": { "data-title": "A Revolução Mexicana", "data-text": "Desencadeada pela oposição generalizada ao governo autoritário de Porfirio Díaz, a Revolução Mexicana eclodiu como um complexo conflito social, agrário e político liderado por figuras como Francisco Madero, Emiliano Zapata e Pancho Villa." },
+    
+    "case-7-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "case-7-cat": "México", "case-7-year": "2000–Presente",
+    "case-7": { "data-title": "México Moderno: Transição Democrática e Identidade Contemporânea", "data-text": "Hoje, o México é uma república constitucional federal com mais de 129 milhões de habitantes. O ano de 2000 marcou um marco democrático histórico quando a liderança da oposição encerrou 71 anos consecutivos de governo de partido único. A nação reflete uma fusão distinta de tradições indígenas e herança colonial espanhola." },
+
+    "fund-main-title": "Para compreender os aspectos fundamentais da cultura e sociedade mexicanas,<br/><em>considere as quatro perguntas a seguir:</em>",
+    "fund-q1-title": "Como as antigas tradições mesoamericanas e as influências coloniais espanholas coexistem na vida diária?",
+    "fund-q1-desc": "A sociedade mexicana é definida pela mestiçagem — uma rica síntese da herança indígena e costumes espanhóis vistos na arquitetura, idioma, celebrações comunitárias e devoção religiosa.",
+    "fund-q2-title": "Qual o papel da família (la familia) na formação da estrutura comunitária?",
+    "fund-q2-desc": "A família atua como a unidade social primária no México, onde lares multigeracionais, profundo respeito pelos mais velhos e redes comunitárias unidas formam a espinha dorsal da vida diária.",
+    "fund-q3-title": "Como a geografia influencia o regionalismo cultural em todo o país?",
+    "fund-q3-desc": "Paisagens distintas criaram diversas identidades regionais — desde as tradições de vaqueiros do norte em planícies áridas até as ricas tradições indígenas e tecidos coloridos em estados do sul como Oaxaca e Chiapas.",
+    "fund-q4-title": "Por que os feriados nacionais e as reuniões públicas são centrais para a unidade social mexicana?",
+    "fund-q4-desc": "Eventos como o Día de los Muertos e o Día de la Independencia reúnem as comunidades para honrar a memória, a herança compartilhada e o orgulho nacional por meio de artes públicas, música tradicional e comida.",
+    
+    "donations-title": "A Arquitetura Econômica do México",
+    "donations-desc": "O México possui a segunda maior economia da América Latina e está entre os principais centros de manufatura do mundo. Impulsionado por acordos comerciais internacionais, riqueza mineral e uma força de trabalho dinâmica, o México desempenha um papel crítico na cadeia de suprimentos global.",
+    "don-irc-cat": "Quais são as principais fontes de renda nacional do México?",
+    "don-irc-focus": "Resposta:",
+    "don-irc-desc": "As principais fontes de renda do México incluem manufatura industrial avançada (automotiva, eletrônica e aeroespacial), exportações de petróleo bruto, extração de prata e minerais, turismo internacional e exportações agrícolas (abacates, frutas vermelhas e tequila).",
+    "don-pf-cat": "Qual é o salário mínimo diário atual no México?",
+    "don-pf-focus": "Resposta:",
+    "don-pf-desc": "A partir de atualizações econômicas recentes, o salário mínimo diário geral do México é de aproximadamente 278,80 MXN por dia (e superior ao longo da Zona Livre da Fronteira Norte, em torno de 419,88 MXN por dia para corresponder às condições de custo regionais).",
+    "don-uni-cat": "Como o custo de vida se compara a outras economias da América do Norte?",
+    "don-uni-focus": "Resposta:",
+    "don-uni-desc": "Embora os principais centros metropolitanos, como a Cidade do México, Guadalajara e Monterrey, apresentem custos de moradia crescentes, os custos essenciais de vida gerais (mantimentos, transporte público e serviços de saúde) permanecem significativamente mais baixos do que nos Estados Unidos ou Canadá.",
+    
+    "divider-text": "Embarque em uma jornada geográfica sob a superfície para descobrir como a energia tectônica, majestosas cadeias de montanhas e vulcões ativos esculpem continuamente a vibrante nação do México.",
+    
+    "action-title": "Explore os Processos<br>Terrestres do México",
+    "action-1-title": "Mapas",
+    "action-1-desc": "Examine rotas comerciais históricas, posições continentais, mudanças de fronteira e cartógrafos famosos que mapearam a Nova Espanha e o México moderno.",
+    "action-2-title": "Tectônica",
+    "action-2-desc": "Descubra os limites das placas ativas, monitoramento de riscos sísmicos, principais sistemas de montanhas, riqueza mineral e vulcões icônicos como o Popocatépetl.",
+    "action-3-title": "Erosão",
+    "action-3-desc": "Descubra os processos de intemperismo físico e químico, a formação de cenotes em Yucatán, as principais bacias hidrográficas e os desafios da desertificação.",
+    "action-4-title": "Oceanos",
+    "action-4-desc": "Analise as formações costeiras, rotas de comércio oceânico, padrões de furacões, ilhas regionais e impactos econômicos marítimos.",
+    "action-5-title": "Clima",
+    "action-5-desc": "Investigue as classificações climáticas de Köppen em todo o México, os padrões globais de circulação do vento, biomas diversos e flora e fauna nativas exclusivas.",
+
+    "close-modal": "← Voltar à Linha do Tempo",
+    
+    "tab-1-text": "Seu Nome", "tab-2-text": "Método de Contato", "tab-3-text": "Nota",
+    "step-1-sub": "Passo 1", "step-1-title": "Seu Nome", "step-1-desc": "Por favor, insira seus dados para sabermos com quem estamos nos comunicando.",
+    "lbl-fname": "Primeiro Nome<span class='required'>*</span>", "first-name": { placeholder: "Insira seu primeiro nome" }, "err-fname": "O primeiro nome é obrigatório.",
+    "lbl-lname": "Sobrenome<span class='required'>*</span>", "last-name": { placeholder: "Insira seu sobrenome" }, "err-lname": "O sobrenome é obrigatório.",
+    "lbl-nick": "Apelido / Como devemos chamá-lo <span class='optional'>(Opcional)</span>", "nickname": { placeholder: "Como você prefere que o chamemos?" },
+    
+    "step-2-sub": "Passo 2", "step-2-title": "Método de Contato", "step-2-desc": "Selecione como você prefere que nossa equipe entre em contato com você.",
+    "pref-email": "Endereço de E-mail", "pref-phone": "Telefone / Celular",
+    "lbl-contact-email": "Endereço de E-mail<span class='required'>*</span>", "contact-email": { placeholder: "exemplo@email.com" }, "err-email": "Por favor, insira um e-mail válido.",
+    "lbl-contact-phone": "Número de Telefone<span class='required'>*</span>", "err-phone": "Por favor, insira um número de telefone válido.",
+
+    "step-3-sub": "Passo 3", "step-3-title": "Nota", "step-3-desc": "Ajude-nos a categorizar sua solicitação e deixe seus comentários detalhados abaixo.",
+    "lbl-category": "Selecione uma Categoria<span class='required'>*</span>",
+    "cat-btn-1": "Fazer uma Sugestão", "cat-btn-2": "Preocupação", "cat-btn-3": "Manter Contato", "cat-btn-4": "Outro",
+    "lbl-reason": "Motivo do Contato<span class='required'>*</span>", "contact-reason": { placeholder: "Escreva suas perguntas, preocupações ou comentários aqui..." }, "err-reason": "Por favor, escreva o motivo da sua mensagem.",
+    
+    "succ-title": "Formulário Enviado!", "succ-desc": "Sua solicitação foi processada com sucesso. Entraremos em contato em breve.",
+    "prev-btn": "‹ Voltar", "next-btn": "Próximo Passo ›", "submit-btn": "Enviar Formulário",
+},
 };
 
+// ==========================
 // Maps page
+// ==========================
 const translationsMaps = {
-    // =========================
-    // Maps Page Translations
-    // =========================
+
     en: {
         "nav-logo": "BIENVENIDO A MEXICO",
         "nav-fundamentals": "MAPS",
@@ -1385,60 +1372,149 @@ const translationsMaps = {
         "nav-donations": "CLIMATE",
         "nav-contact": "REFERENCES",
 
-        "hero-title-part1": "<em>Charting Mexico: </em>",
-        "hero-title-part2": "Ancient Trails and",
-        "hero-title-part3": "Modern Maps",
+        "hero-title-part1":
+            "<em>Charting Mexico: </em>",
 
-        "geo-overview-title": "Geographic and Historical Location Overview",
-        "geo-overview-p1": "<strong>Continental Position and Area:</strong> Mexico is situated on the North American continent, occupying the southern portion of the landmass and serving as a geographic bridge connecting North and Central America. It is bounded by the United States to the north, the Gulf of Mexico and the Caribbean Sea to the east, the Pacific Ocean to the west and south, and Guatemala and Belize to the southeast.",
-        "geo-overview-p2": "<strong>Latitudinal Range:</strong> The country spans a latitudinal range from approximately 14°32' N at its southernmost border along the Suchiate River to 32°43' N at its northernmost boundary in Baja California.",
-        "geo-overview-p3": "<strong>Historical Existence and Timeline:</strong> As an independent sovereign nation, Mexico has existed from 1821 to the present, building upon thousands of years of pre-Columbian indigenous civilizations and the 300-year colonial period of the Viceroyalty of New Spain (1521–1821). Today, it operates as a federal constitutional republic supporting over 129 million citizens.",
+        "hero-title-part2":
+            "Ancient Trails and",
 
-        "map1-badge-title": "The Foundation of Tenochtitlan (Codex Mendoza)",
-        "map1-badge-sub": "1541–1542 (Depicting events from 1325)",
-        "map1-label": "MAP 01",
-        "map1-title": "Ancient Pre-Columbian Cartography",
-        "map1-desc": "This indigenous pictorial document maps the foundational layout, canal systems, and territorial conquests of the Aztec capital of Tenochtitlan. It provides crucial insight into pre-Hispanic urban planning and spatial organization before European contact.",
-        "map1-tag1": "Aztec Codex",
-        "map1-tag2": "Tenochtitlan",
-        "map1-tag3": "Urban Planning",
+        "hero-title-part3":
+            "Modern Maps",
 
-        "map2-badge-title": "Carta Geográfica de la República Mexicana (Pre-1848 Extent)",
-        "map2-badge-sub": "1847",
-        "map2-label": "MAP 02",
-        "map2-title": "Historical Boundary Changes",
-        "map2-desc": "This historical map illustrates Mexico's expansive mid-19th-century borders prior to the Mexican-American War and the Treaty of Guadalupe Hidalgo. It outlines the vast northern territories that historically encompassed modern-day California, Nevada, Utah, Arizona, New Mexico, and parts of Colorado and Wyoming.",
-        "map2-tag1": "Boundary Changes",
-        "map2-tag2": "Treaty of Guadalupe Hidalgo",
-        "map2-tag3": "Northern Frontier",
+        "geo-overview-title":
+            "Geographic and Historical Location Overview",
 
-        "map3-badge-title": "Camino Real",
-        "map3-badge-sub": "16TH–19TH CENTURY",
-        "map3-label": "MAP 03",
-        "map3-title": "Colonial Trade & Maritime Routes",
-        "map3-desc": "This archival route map highlights the interior royal roads (<em>Camino Real</em>) and critical transoceanic sea voyage routes established during the Spanish colonial era. It traces the historic flow of global commerce linking the Atlantic port of Veracruz to the Pacific port of Acapulco.",
-        "map3-tag1": "Veracruz",
-        "map3-tag2": "Acapulco",
-        "map3-tag3": "Maritime Trade",
+        "geo-overview-p1":
+            "<strong>Continental Position and Area:</strong> Mexico is situated on the North American continent, occupying the southern portion of the landmass and serving as a geographic bridge connecting North and Central America. It is bounded by the United States to the north, the Gulf of Mexico and the Caribbean Sea to the east, the Pacific Ocean to the west and south, and Guatemala and Belize to the southeast.",
 
-        "map4-badge-title": "Polyconic Projection",
-        "map4-badge-sub": "31 STATES + CDMX",
-        "map4-label": "MAP 04",
-        "map4-title": "Modern Topographic & Political Map",
-        "map4-desc": "Utilizing a standard conformal Polyconic projection, this modern map details Mexico's contemporary political boundaries across 31 states and Mexico City. It illustrates major elevation profiles, mountain ranges, and national transportation networks to serve as an accurate baseline for spatial analysis.",
-        "map4-tag1": "Topography",
-        "map4-tag2": "Polyconic Grid",
-        "map4-tag3": "31 States",
+        "geo-overview-p2":
+            "<strong>Latitudinal Range:</strong> The country spans a latitudinal range from approximately 14°32' N at its southernmost border along the Suchiate River to 32°43' N at its northernmost boundary in Baja California.",
 
-        "cart-badge-title": "Antonio García Cubas",
-        "cart-badge-sub": "1832–1912",
-        "cart-label": "Prominent Influence",
-        "cart-title": "Antonio García Cubas",
-        "cart-bio": "Antonio García Cubas (1832–1912) was Mexico's preeminent 19th-century geographer, historian, and cartographer. Born in Mexico City, he overcame early childhood orphanhood to study geography at the Colegio de San Gregorio and the College of Engineers, graduating with honors as a professional geographer. He became a foundational member of the Mexican Society of Geography and Statistics and revolutionized Latin American mapmaking by introducing rigorous scientific surveying data and advanced chromolithography printing.",
-        "cart-acc-title": "Biggest Cartographic Accomplishments:",
-        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> A groundbreaking national atlas that merged detailed state maps with comprehensive statistical and historical data, establishing a unified cartographic identity for the young republic.",
-        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> A comprehensive general map of the country that corrected widespread topographical inaccuracies found in earlier colonial and foreign maps.",
-        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> An acclaimed chromolithographic masterwork featuring vibrant cultural, historical, and topographical maps that earned widespread acclaim from international geographical societies."
+        "geo-overview-p3":
+            "<strong>Historical Existence and Timeline:</strong> As an independent sovereign nation, Mexico has existed from 1821 to the present, building upon thousands of years of pre-Columbian indigenous civilizations and the 300-year colonial period of the Viceroyalty of New Spain (1521–1821). Today, it operates as a federal constitutional republic supporting over 129 million citizens.",
+
+        "map1-badge-title":
+            "The Foundation of Tenochtitlan (Codex Mendoza)",
+
+        "map1-badge-sub":
+            "1541–1542 (Depicting events from 1325)",
+
+        "map1-label":
+            "MAP 01",
+
+        "map1-title":
+            "Ancient Pre-Columbian Cartography",
+
+        "map1-desc":
+            "This indigenous pictorial document maps the foundational layout, canal systems, and territorial conquests of the Aztec capital of Tenochtitlan. It provides crucial insight into pre-Hispanic urban planning and spatial organization before European contact.",
+
+        "map1-tag1":
+            "Aztec Codex",
+
+        "map1-tag2":
+            "Tenochtitlan",
+
+        "map1-tag3":
+            "Urban Planning",
+
+        "map2-badge-title":
+            "Carta Geográfica de la República Mexicana (Pre-1848 Extent)",
+
+        "map2-badge-sub":
+            "1847",
+
+        "map2-label":
+            "MAP 02",
+
+        "map2-title":
+            "Historical Boundary Changes",
+
+        "map2-desc":
+            "This historical map illustrates Mexico's expansive mid-19th-century borders prior to the Mexican-American War and the Treaty of Guadalupe Hidalgo. It outlines the vast northern territories that historically encompassed modern-day California, Nevada, Utah, Arizona, New Mexico, and parts of Colorado and Wyoming.",
+
+        "map2-tag1":
+            "Boundary Changes",
+
+        "map2-tag2":
+            "Treaty of Guadalupe Hidalgo",
+
+        "map2-tag3":
+            "Northern Frontier",
+
+        "map3-badge-title":
+            "Camino Real",
+
+        "map3-badge-sub":
+            "16TH–19TH CENTURY",
+
+        "map3-label":
+            "MAP 03",
+
+        "map3-title":
+            "Colonial Trade & Maritime Routes",
+
+        "map3-desc":
+            "This archival route map highlights the interior royal roads (<em>Camino Real</em>) and critical transoceanic sea voyage routes established during the Spanish colonial era. It traces the historic flow of global commerce linking the Atlantic port of Veracruz to the Pacific port of Acapulco.",
+
+        "map3-tag1":
+            "Veracruz",
+
+        "map3-tag2":
+            "Acapulco",
+
+        "map3-tag3":
+            "Maritime Trade",
+
+        "map4-badge-title":
+            "Polyconic Projection",
+
+        "map4-badge-sub":
+            "31 STATES + CDMX",
+
+        "map4-label":
+            "MAP 04",
+
+        "map4-title":
+            "Modern Topographic & Political Map",
+
+        "map4-desc":
+            "Utilizing a standard conformal Polyconic projection, this modern map details Mexico's contemporary political boundaries across 31 states and Mexico City. It illustrates major elevation profiles, mountain ranges, and national transportation networks to serve as an accurate baseline for spatial analysis.",
+
+        "map4-tag1":
+            "Topography",
+
+        "map4-tag2":
+            "Polyconic Grid",
+
+        "map4-tag3":
+            "31 States",
+
+        "cart-badge-title":
+            "Antonio García Cubas",
+
+        "cart-badge-sub":
+            "1832–1912",
+
+        "cart-label":
+            "Prominent Influence",
+
+        "cart-title":
+            "Antonio García Cubas",
+
+        "cart-bio":
+            "Antonio García Cubas (1832–1912) was Mexico's preeminent 19th-century geographer, historian, and cartographer. Born in Mexico City, he overcame early childhood orphanhood to study geography at the Colegio de San Gregorio and the College of Engineers, graduating with honors as a professional geographer. He became a foundational member of the Mexican Society of Geography and Statistics and revolutionized Latin American mapmaking by introducing rigorous scientific surveying data and advanced chromolithography printing.",
+
+        "cart-acc-title":
+            "Biggest Cartographic Accomplishments:",
+
+        "cart-acc-1":
+            "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> A groundbreaking national atlas that merged detailed state maps with comprehensive statistical and historical data, establishing a unified cartographic identity for the young republic.",
+
+        "cart-acc-2":
+            "<strong>Carta General de la República Mexicana (1863):</strong> A comprehensive general map of the country that corrected widespread topographical inaccuracies found in earlier colonial and foreign maps.",
+
+        "cart-acc-3":
+            "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> An acclaimed chromolithographic masterwork featuring vibrant cultural, historical, and topographical maps that earned widespread acclaim from international geographical societies."
     },
 
     es: {
@@ -1451,60 +1527,149 @@ const translationsMaps = {
         "nav-donations": "CLIMA",
         "nav-contact": "REFERENCIAS",
 
-        "hero-title-part1": "<em>Mapeando México: </em>",
-        "hero-title-part2": "Senderos Antiguos y",
-        "hero-title-part3": "Mapas Modernos",
+        "hero-title-part1":
+            "<em>Mapeando México: </em>",
 
-        "geo-overview-title": "Resumen de Ubicación Geográfica e Histórica",
-        "geo-overview-p1": "<strong>Posición Continental y Área:</strong> México se encuentra situado en el continente norteamericano, ocupando la porción sur de la masa terrestre y sirviendo como puente geográfico entre América del Norte y América Central. Limita con los Estados Unidos al norte, el Golfo de México y el Mar Caribe al este, el Océano Pacífico al oeste y sur, y Guatemala y Belice al sureste.",
-        "geo-overview-p2": "<strong>Rango Latitudinal:</strong> El país abarca un rango latitudinal desde aproximadamente 14°32' N en su frontera más meridional a lo largo del Río Suchiate hasta 32°43' N en su límite más septentrional en Baja California.",
-        "geo-overview-p3": "<strong>Existencia Histórica y Cronología:</strong> Como nación soberana independiente, México ha existido desde 1821 hasta el presente, construyendo sobre miles de años de civilizaciones indígenas precolombinas y el período colonial de 300 años del Virreinato de la Nueva España (1521–1821). Hoy opera como una república constitucional federal que alberga a más de 129 millones de ciudadanos.",
+        "hero-title-part2":
+            "Senderos Antiguos y",
 
-        "map1-badge-title": "La Fundación de Tenochtitlan (Códice Mendoza)",
-        "map1-badge-sub": "1541–1542 (Representando eventos de 1325)",
-        "map1-label": "MAPA 01",
-        "map1-title": "Cartografía Precolombina Antigua",
-        "map1-desc": "Este documento pictórico indígena cartografía la distribución fundacional, los sistemas de canales y las conquistas territoriales de la capital azteca de Tenochtitlan. Proporciona información crucial sobre la planificación urbana prehispánica y la organización espacial antes del contacto europeo.",
-        "map1-tag1": "Códice Azteca",
-        "map1-tag2": "Tenochtitlan",
-        "map1-tag3": "Planificación Urbana",
+        "hero-title-part3":
+            "Mapas Modernos",
 
-        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extensión pre-1848)",
-        "map2-badge-sub": "1847",
-        "map2-label": "MAPA 02",
-        "map2-title": "Cambios de Límites Históricos",
-        "map2-desc": "Este mapa histórico ilustra las expansivas fronteras de México a mediados del siglo XIX antes de la Intervención Estadounidense y el Tratado de Guadalupe Hidalgo. Describe los vastos territorios del norte que históricamente abarcaban los actuales estados de California, Nevada, Utah, Arizona, Nuevo México y partes de Colorado y Wyoming.",
-        "map2-tag1": "Cambios Fronterizos",
-        "map2-tag2": "Tratado de Guadalupe Hidalgo",
-        "map2-tag3": "Frontera Norte",
+        "geo-overview-title":
+            "Resumen de Ubicación Geográfica e Histórica",
 
-        "map3-badge-title": "Camino Real",
-        "map3-badge-sub": "SIGLOS XVI–XIX",
-        "map3-label": "MAPA 03",
-        "map3-title": "Rutas Marítimas y Comerciales Coloniales",
-        "map3-desc": "Este mapa de rutas de archivo destaca los caminos reales interiores (<em>Camino Real</em>) y las rutas de viajes marítimos transoceánicos fundamentales establecidas durante la época colonial española. Rastrea el flujo histórico del comercio global que unía el puerto atlántico de Veracruz con el puerto pacífico de Acapulco.",
-        "map3-tag1": "Veracruz",
-        "map3-tag2": "Acapulco",
-        "map3-tag3": "Comercio Marítimo",
+        "geo-overview-p1":
+            "<strong>Posición Continental y Área:</strong> México se encuentra situado en el continente norteamericano, ocupando la porción sur de la masa terrestre y sirviendo como puente geográfico entre América del Norte y América Central. Limita con los Estados Unidos al norte, el Golfo de México y el Mar Caribe al este, el Océano Pacífico al oeste y sur, y Guatemala y Belice al sureste.",
 
-        "map4-badge-title": "Proyección Policónica",
-        "map4-badge-sub": "31 ESTADOS + CDMX",
-        "map4-label": "MAPA 04",
-        "map4-title": "Mapa Topográfico y Político Moderno",
-        "map4-desc": "Utilizando una proyección Policónica conforme estándar, este mapa moderno detalla los límites políticos contemporáneos de México a lo largo de 31 estados y la Ciudad de México. Ilustra los principales perfiles de elevación, cadenas montañosas y redes de transporte nacional para servir como base precisa en el análisis espacial.",
-        "map4-tag1": "Topografía",
-        "map4-tag2": "Red Policónica",
-        "map4-tag3": "31 Estados",
+        "geo-overview-p2":
+            "<strong>Rango Latitudinal:</strong> El país abarca un rango latitudinal desde aproximadamente 14°32' N en su frontera más meridional a lo largo del Río Suchiate hasta 32°43' N en su límite más septentrional en Baja California.",
 
-        "cart-badge-title": "Antonio García Cubas",
-        "cart-badge-sub": "1832–1912",
-        "cart-label": "Influencia Prominente",
-        "cart-title": "Antonio García Cubas",
-        "cart-bio": "Antonio García Cubas (1832–1912) fue el geógrafo, historiador y cartógrafo más relevante del siglo XIX en México. Nacido en la Ciudad de México, superó la orfandad a temprana edad para estudiar geografía en el Colegio de San Gregorio y el Colegio de Minería, graduándose con honores como geógrafo profesional. Se convirtió en miembro fundador de la Sociedad Mexicana de Geografía y Estadística y revolucionó la cartografía latinoamericana al introducir datos topográficos científicos rigurosos e impresión cromolitográfica avanzada.",
-        "cart-acc-title": "Mayores Logros Cartográficos:",
-        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Un atlas nacional innovador que fusionó mapas estatales detallados con datos estadísticos e históricos integrales, estableciendo una identidad cartográfica unificada para la joven república.",
-        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> Un mapa general exhaustivo del país que corrigió imprecisiones topográficas generalizadas presentes en mapas coloniales y extranjeros anteriores.",
-        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Una aclamada obra maestra cromolitográfica con vibrantes mapas culturales, históricos y topográficos que obtuvo un reconocimiento generalizado por parte de sociedades geográficas internacionales."
+        "geo-overview-p3":
+            "<strong>Existencia Histórica y Cronología:</strong> Como nación soberana independiente, México ha existido desde 1821 hasta el presente, construyendo sobre miles de años de civilizaciones indígenas precolombinas y el período colonial de 300 años del Virreinato de la Nueva España (1521–1821). Hoy opera como una república constitucional federal que alberga a más de 129 millones de ciudadanos.",
+
+        "map1-badge-title":
+            "La Fundación de Tenochtitlan (Códice Mendoza)",
+
+        "map1-badge-sub":
+            "1541–1542 (Representando eventos de 1325)",
+
+        "map1-label":
+            "MAPA 01",
+
+        "map1-title":
+            "Cartografía Precolombina Antigua",
+
+        "map1-desc":
+            "Este documento pictórico indígena cartografía la distribución fundacional, los sistemas de canales y las conquistas territoriales de la capital azteca de Tenochtitlan. Proporciona información crucial sobre la planificación urbana prehispánica y la organización espacial antes del contacto europeo.",
+
+        "map1-tag1":
+            "Códice Azteca",
+
+        "map1-tag2":
+            "Tenochtitlan",
+
+        "map1-tag3":
+            "Planificación Urbana",
+
+        "map2-badge-title":
+            "Carta Geográfica de la República Mexicana (Extensión pre-1848)",
+
+        "map2-badge-sub":
+            "1847",
+
+        "map2-label":
+            "MAPA 02",
+
+        "map2-title":
+            "Cambios de Límites Históricos",
+
+        "map2-desc":
+            "Este mapa histórico ilustra las expansivas fronteras de México a mediados del siglo XIX antes de la Intervención Estadounidense y el Tratado de Guadalupe Hidalgo. Describe los vastos territorios del norte que históricamente abarcaban los actuales estados de California, Nevada, Utah, Arizona, Nuevo México y partes de Colorado y Wyoming.",
+
+        "map2-tag1":
+            "Cambios Fronterizos",
+
+        "map2-tag2":
+            "Tratado de Guadalupe Hidalgo",
+
+        "map2-tag3":
+            "Frontera Norte",
+
+        "map3-badge-title":
+            "Camino Real",
+
+        "map3-badge-sub":
+            "SIGLOS XVI–XIX",
+
+        "map3-label":
+            "MAPA 03",
+
+        "map3-title":
+            "Rutas Marítimas y Comerciales Coloniales",
+
+        "map3-desc":
+            "Este mapa de rutas de archivo destaca los caminos reales interiores (<em>Camino Real</em>) y las rutas de viajes marítimos transoceánicos fundamentales establecidas durante la época colonial española. Rastrea el flujo histórico del comercio global que unía el puerto atlántico de Veracruz con el puerto pacífico de Acapulco.",
+
+        "map3-tag1":
+            "Veracruz",
+
+        "map3-tag2":
+            "Acapulco",
+
+        "map3-tag3":
+            "Comercio Marítimo",
+
+        "map4-badge-title":
+            "Proyección Policónica",
+
+        "map4-badge-sub":
+            "31 ESTADOS + CDMX",
+
+        "map4-label":
+            "MAPA 04",
+
+        "map4-title":
+            "Mapa Topográfico y Político Moderno",
+
+        "map4-desc":
+            "Utilizando una proyección Policónica conforme estándar, este mapa moderno detalla los límites políticos contemporáneos de México a lo largo de 31 estados y la Ciudad de México. Ilustra los principales perfiles de elevación, cadenas montañosas y redes de transporte nacional para servir como base precisa en el análisis espacial.",
+
+        "map4-tag1":
+            "Topografía",
+
+        "map4-tag2":
+            "Red Policónica",
+
+        "map4-tag3":
+            "31 Estados",
+
+        "cart-badge-title":
+            "Antonio García Cubas",
+
+        "cart-badge-sub":
+            "1832–1912",
+
+        "cart-label":
+            "Influencia Prominente",
+
+        "cart-title":
+            "Antonio García Cubas",
+
+        "cart-bio":
+            "Antonio García Cubas (1832–1912) fue el geógrafo, historiador y cartógrafo más relevante del siglo XIX en México. Nacido en la Ciudad de México, superó la orfandad a temprana edad para estudiar geografía en el Colegio de San Gregorio y el Colegio de Minería, graduándose con honores como geógrafo profesional. Se convirtió en miembro fundador de la Sociedad Mexicana de Geografía y Estadística y revolucionó la cartografía latinoamericana al introducir datos topográficos científicos rigurosos e impresión cromolitográfica avanzada.",
+
+        "cart-acc-title":
+            "Mayores Logros Cartográficos:",
+
+        "cart-acc-1":
+            "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Un atlas nacional innovador que fusionó mapas estatales detallados con datos estadísticos e históricos integrales, estableciendo una identidad cartográfica unificada para la joven república.",
+
+        "cart-acc-2":
+            "<strong>Carta General de la República Mexicana (1863):</strong> Un mapa general exhaustivo del país que corrigió imprecisiones topográficas generalizadas presentes en mapas coloniales y extranjeros anteriores.",
+
+        "cart-acc-3":
+            "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Una aclamada obra maestra cromolitográfica con vibrantes mapas culturales, históricos y topográficos que obtuvo un reconocimiento generalizado por parte de sociedades geográficas internacionales."
     },
 
     fr: {
@@ -1517,60 +1682,149 @@ const translationsMaps = {
         "nav-donations": "CLIMAT",
         "nav-contact": "RÉFÉRENCES",
 
-        "hero-title-part1": "<em>Cartographier le Mexique : </em>",
-        "hero-title-part2": "Sentiers Anciens et",
-        "hero-title-part3": "Cartes Modernes",
+        "hero-title-part1":
+            "<em>Cartographier le Mexique : </em>",
 
-        "geo-overview-title": "Aperçu de la Situation Géographique et Historique",
-        "geo-overview-p1": "<strong>Position Continentale et Superficie :</strong> Le Mexique est situé sur le continent nord-américain, occupant la partie sud de la masse terrestre et servant de pont géographique reliant l'Amérique du Nord et l'Amérique centrale. Il est bordé par les États-Unis au nord, le golfe du Mexique et la mer des Caraïbes à l'est, l'océan Pacifique à l'ouest et au sud, ainsi que le Guatemala et le Belize au sud-est.",
-        "geo-overview-p2": "<strong>Étendue Latitudinale :</strong> Le pays s'étend sur une plage latitudinale allant d'environ 14°32' N à sa frontière la plus méridionale le long du fleuve Suchiate jusqu'à 32°43' N à sa frontière la plus septentrionale en Basse-Californie.",
-        "geo-overview-p3": "<strong>Existence Historique et Chronologie :</strong> En tant que nation souveraine indépendante, le Mexique existe de 1821 à nos jours, s'appuyant sur des milliers d'années de civilisations indigènes précolombiennes et sur la période coloniale de 300 ans de la vice-royauté de Nouvelle-Espagne (1521-1821). Aujourd'hui, il fonctionne comme une république constitutionnelle fédérale abritant plus de 129 millions de citoyens.",
+        "hero-title-part2":
+            "Sentiers Anciens et",
 
-        "map1-badge-title": "La Fondation de Tenochtitlan (Codex Mendoza)",
-        "map1-badge-sub": "1541–1542 (Représentant des événements de 1325)",
-        "map1-label": "CARTE 01",
-        "map1-title": "Cartographie Ancienne Précolombienne",
-        "map1-desc": "Ce document pictural indigène cartographie l'aménagement fondateur, les systèmes de canaux et les conquêtes territoriales de la capitale aztèque de Tenochtitlan. Il offre un aperçu essentiel de l'urbanisme et de l'organisation spatiale préhispaniques avant le contact européen.",
-        "map1-tag1": "Codex Aztèque",
-        "map1-tag2": "Tenochtitlan",
-        "map1-tag3": "Urbanisme",
+        "hero-title-part3":
+            "Cartes Modernes",
 
-        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extension pré-1848)",
-        "map2-badge-sub": "1847",
-        "map2-label": "CARTE 02",
-        "map2-title": "Évolution des Frontières Historiques",
-        "map2-desc": "Cette carte historique illustre les vastes frontières du Mexique au milieu du XIXe siècle avant la guerre américain-mexicaine et le traité de Guadalupe Hidalgo. Elle décrit les immenses territoires du nord qui englobaient historiquement la Californie, le Nevada, l'Utah, l'Arizona, le Nouveau-Mexique modernes ainsi que des parties du Colorado et du Wyoming.",
-        "map2-tag1": "Évolution des Frontières",
-        "map2-tag2": "Traité de Guadalupe Hidalgo",
-        "map2-tag3": "Frontière du Nord",
+        "geo-overview-title":
+            "Aperçu de la Situation Géographique et Historique",
 
-        "map3-badge-title": "Camino Real",
-        "map3-badge-sub": "XVIe–XIXe SIÈCLE",
-        "map3-label": "CARTE 03",
-        "map3-title": "Routes Commerciales et Maritimes Coloniales",
-        "map3-desc": "Cette carte routière d'archives met en évidence les chemins royaux intérieurs (<em>Camino Real</em>) et les routes de voyages maritimes transocéaniques essentielles établies à l'époque coloniale espagnole. Elle retrace le flux historique du commerce mondial reliant le port atlantique de Veracruz au port pacifique d'Acapulco.",
-        "map3-tag1": "Veracruz",
-        "map3-tag2": "Acapulco",
-        "map3-tag3": "Commerce Maritime",
+        "geo-overview-p1":
+            "<strong>Position Continentale et Superficie :</strong> Le Mexique est situé sur le continent nord-américain, occupant la partie sud de la masse terrestre et servant de pont géographique reliant l'Amérique du Nord et l'Amérique centrale. Il est bordé par les États-Unis au nord, le golfe du Mexique et la mer des Caraïbes à l'est, l'océan Pacifique à l'ouest et au sud, ainsi que le Guatemala et le Belize au sud-est.",
 
-        "map4-badge-title": "Projection Polyconique",
-        "map4-badge-sub": "31 ÉTATS + CDMX",
-        "map4-label": "CARTE 04",
-        "map4-title": "Carte Topographique et Politique Moderne",
-        "map4-desc": "Utilisant une projection polyconique conforme standard, cette carte moderne détaille les limites politiques contemporaines du Mexique à travers 31 États et la ville de Mexico. Elle illustre les principaux profils d'altitude, les chaînes de montagnes et les réseaux de transport nationaux afin de servir de base précise pour l'analyse spatiale.",
-        "map4-tag1": "Topographie",
-        "map4-tag2": "Grille Polyconique",
-        "map4-tag3": "31 États",
+        "geo-overview-p2":
+            "<strong>Étendue Latitudinale :</strong> Le pays s'étend sur une plage latitudinale allant d'environ 14°32' N à sa frontière la plus méridionale le long du fleuve Suchiate jusqu'à 32°43' N à sa frontière la plus septentrionale en Basse-Californie.",
 
-        "cart-badge-title": "Antonio García Cubas",
-        "cart-badge-sub": "1832–1912",
-        "cart-label": "Influence Majeure",
-        "cart-title": "Antonio García Cubas",
-        "cart-bio": "Antonio García Cubas (1832–1912) était le géographe, historien et cartographe mexicain le plus éminent du XIXe siècle. Né à Mexico, il a surmonté son orphelinat précoce pour étudier la géographie au Colegio de San Gregorio et au Collège des Ingénieurs, obtenant son diplôme avec honneurs en tant que géographe professionnel. Il est devenu un membre fondateur de la Société mexicaine de géographie et de statistique et a révolutionné la cartographie sud-américaine en introduisant des données de levé scientifique rigoureuses et l'impression chromolithographique avancée.",
-        "cart-acc-title": "Plus Grandes Réalisations Cartographiques :",
-        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858) :</strong> Un atlas national novateur qui combinait des cartes d'États détaillées avec des données statistiques et historiques complètes, établissant une identité cartographique unifiée pour la jeune république.",
-        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863) :</strong> Une carte générale complète du pays qui a corrigé les inexactitudes topographiques fréquentes dans les cartes coloniales et étrangères antérieures.",
-        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885) :</strong> Chef-d'œuvre chromolithographique salué proposant des cartes culturelles, historiques et topographiques vibrantes qui lui ont valu une reconnaissance internationale auprès des sociétés de géographie."
+        "geo-overview-p3":
+            "<strong>Existence Historique et Chronologie :</strong> En tant que nation souveraine indépendante, le Mexique existe de 1821 à nos jours, s'appuyant sur des milliers d'années de civilisations indigènes précolombiennes et sur la période coloniale de 300 ans de la vice-royauté de Nouvelle-Espagne (1521-1821). Aujourd'hui, il fonctionne comme une république constitutionnelle fédérale abritant plus de 129 millions de citoyens.",
+
+        "map1-badge-title":
+            "La Fondation de Tenochtitlan (Codex Mendoza)",
+
+        "map1-badge-sub":
+            "1541–1542 (Représentant des événements de 1325)",
+
+        "map1-label":
+            "CARTE 01",
+
+        "map1-title":
+            "Cartographie Ancienne Précolombienne",
+
+        "map1-desc":
+            "Ce document pictural indigène cartographie l'aménagement fondateur, les systèmes de canaux et les conquêtes territoriales de la capitale aztèque de Tenochtitlan. Il offre un aperçu essentiel de l'urbanisme et de l'organisation spatiale préhispaniques avant le contact européen.",
+
+        "map1-tag1":
+            "Codex Aztèque",
+
+        "map1-tag2":
+            "Tenochtitlan",
+
+        "map1-tag3":
+            "Urbanisme",
+
+        "map2-badge-title":
+            "Carta Geográfica de la República Mexicana (Extension pré-1848)",
+
+        "map2-badge-sub":
+            "1847",
+
+        "map2-label":
+            "CARTE 02",
+
+        "map2-title":
+            "Évolution des Frontières Historiques",
+
+        "map2-desc":
+            "Cette carte historique illustre les vastes frontières du Mexique au milieu du XIXe siècle avant la guerre américain-mexicaine et le traité de Guadalupe Hidalgo. Elle décrit les immenses territoires du nord qui englobaient historiquement la Californie, le Nevada, l'Utah, l'Arizona, le Nouveau-Mexique modernes ainsi que des parties du Colorado et du Wyoming.",
+
+        "map2-tag1":
+            "Évolution des Frontières",
+
+        "map2-tag2":
+            "Traité de Guadalupe Hidalgo",
+
+        "map2-tag3":
+            "Frontière du Nord",
+
+        "map3-badge-title":
+            "Camino Real",
+
+        "map3-badge-sub":
+            "XVIe–XIXe SIÈCLE",
+
+        "map3-label":
+            "CARTE 03",
+
+        "map3-title":
+            "Routes Commerciales et Maritimes Coloniales",
+
+        "map3-desc":
+            "Cette carte routière d'archives met en évidence les chemins royaux intérieurs (<em>Camino Real</em>) et les routes de voyages maritimes transocéaniques essentielles établies à l'époque coloniale espagnole. Elle retrace le flux historique du commerce mondial reliant le port atlantique de Veracruz au port pacifique d'Acapulco.",
+
+        "map3-tag1":
+            "Veracruz",
+
+        "map3-tag2":
+            "Acapulco",
+
+        "map3-tag3":
+            "Commerce Maritime",
+
+        "map4-badge-title":
+            "Projection Polyconique",
+
+        "map4-badge-sub":
+            "31 ÉTATS + CDMX",
+
+        "map4-label":
+            "CARTE 04",
+
+        "map4-title":
+            "Carte Topographique et Politique Moderne",
+
+        "map4-desc":
+            "Utilisant une projection polyconique conforme standard, cette carte moderne détaille les limites politiques contemporaines du Mexique à travers 31 États et la ville de Mexico. Elle illustre les principaux profils d'altitude, les chaînes de montagnes et les réseaux de transport nationaux afin de servir de base précise pour l'analyse spatiale.",
+
+        "map4-tag1":
+            "Topographie",
+
+        "map4-tag2":
+            "Grille Polyconique",
+
+        "map4-tag3":
+            "31 États",
+
+        "cart-badge-title":
+            "Antonio García Cubas",
+
+        "cart-badge-sub":
+            "1832–1912",
+
+        "cart-label":
+            "Influence Majeure",
+
+        "cart-title":
+            "Antonio García Cubas",
+
+        "cart-bio":
+            "Antonio García Cubas (1832–1912) était le géographe, historien et cartographe mexicain le plus éminent du XIXe siècle. Né à Mexico, il a surmonté son orphelinat précoce pour étudier la géographie au Colegio de San Gregorio et au Collège des Ingénieurs, obtenant son diplôme avec honneurs en tant que géographe professionnel. Il est devenu un membre fondateur de la Société mexicaine de géographie et de statistique et a révolutionné la cartographie sud-américaine en introduisant des données de levé scientifique rigoureuses et l'impression chromolithographique avancée.",
+
+        "cart-acc-title":
+            "Plus Grandes Réalisations Cartographiques :",
+
+        "cart-acc-1":
+            "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858) :</strong> Un atlas national novateur qui combinait des cartes d'États détaillées avec des données statistiques et historiques complètes, établissant une identité cartographique unifiée pour la jeune république.",
+
+        "cart-acc-2":
+            "<strong>Carta General de la República Mexicana (1863) :</strong> Une carte générale complète du pays qui a corrigé les inexactitudes topographiques fréquentes dans les cartes coloniales et étrangères antérieures.",
+
+        "cart-acc-3":
+            "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885) :</strong> Chef-d'œuvre chromolithographique salué proposant des cartes culturelles, historiques et topographiques vibrantes qui lui ont valu une reconnaissance internationale auprès des sociétés de géographie."
     },
 
     pt: {
@@ -1583,358 +1837,1769 @@ const translationsMaps = {
         "nav-donations": "CLIMA",
         "nav-contact": "REFERÊNCIAS",
 
-        "hero-title-part1": "<em>Mapeando o México: </em>",
-        "hero-title-part2": "Trilhas Antigas e",
-        "hero-title-part3": "Mapas Modernos",
+        "hero-title-part1":
+            "<em>Mapeando o México: </em>",
 
-        "geo-overview-title": "Visão Geral da Localização Geográfica e Histórica",
-        "geo-overview-p1": "<strong>Posição Continental e Área:</strong> O México está situado no continente norte-americano, ocupando a porção sul da massa terrestre e servindo como uma ponte geográfica que conecta a América do Norte e a América Central. É limitado pelos Estados Unidos ao norte, pelo Golfo do México e pelo Mar do Caribe a leste, pelo Oceano Pacífico a oeste e ao sul, e pela Guatemala e Belize ao sudeste.",
-        "geo-overview-p2": "<strong>Alcance Latitudinal:</strong> O país abrange uma faixa latitudinal que vai de aproximadamente 14°32' N em sua fronteira mais ao sul ao longo do Rio Suchiate até 32°43' N em seu limite mais ao norte na Baixa Califórnia.",
-        "geo-overview-p3": "<strong>Existência Histórica e Cronologia:</strong> Como uma nação soberana independente, o México existe de 1821 até o presente, desenvolvendo-se sobre milhares de anos de civilizações indígenas pré-colombianas e o período colonial de 300 anos do Vice-Reino da Nova Espanha (1521–1821). Hoje, opera como uma república constitucional federal com mais de 129 milhões de cidadãos.",
+        "hero-title-part2":
+            "Trilhas Antigas e",
 
-        "map1-badge-title": "A Fundação de Tenochtitlan (Códice Mendoza)",
-        "map1-badge-sub": "1541–1542 (Retratando eventos de 1325)",
-        "map1-label": "MAPA 01",
-        "map1-title": "Cartografia Antiga Pré-Colombiana",
-        "map1-desc": "Este documento pictórico indígena mapeia o layout fundador, os sistemas de canais e as conquistas territoriais da capital asteca de Tenochtitlan. Ele fornece informações cruciais sobre o planejamento urbano pré-hispânico e a organização espacial antes do contato europeu.",
-        "map1-tag1": "Códice Asteca",
-        "map1-tag2": "Tenochtitlan",
-        "map1-tag3": "Planejamento Urbano",
+        "hero-title-part3":
+            "Mapas Modernos",
 
-        "map2-badge-title": "Carta Geográfica de la República Mexicana (Extensão pré-1848)",
-        "map2-badge-sub": "1847",
-        "map2-label": "MAPA 02",
-        "map2-title": "Mudanças nas Fronteiras Históricas",
-        "map2-desc": "Este mapa histórico ilustra as expansivas fronteiras do México em meados do século XIX, antes da Guerra Mexicano-Americana e do Tratado de Guadalupe Hidalgo. Ele descreve os vastos territórios do norte que historicamente abrangiam os atuais estados de Califórnia, Nevada, Utah, Arizona, Novo México e partes do Colorado e Wyoming.",
-        "map2-tag1": "Mudanças de Fronteira",
-        "map2-tag2": "Tratado de Guadalupe Hidalgo",
-        "map2-tag3": "Fronteira Norte",
+        "geo-overview-title":
+            "Visão Geral da Localização Geográfica e Histórica",
 
-        "map3-badge-title": "Camino Real",
-        "map3-badge-sub": "SÉCULOS XVI–XIX",
-        "map3-label": "MAPA 03",
-        "map3-title": "Rotas Comerciais e Marítimas Coloniais",
-        "map3-desc": "Este mapa de rotas de arquivo destaca as estradas reais interiores (<em>Camino Real</em>) e as rotas de viagens marítimas transoceânicas essenciais estabelecidas durante a era colonial espanhola. Ele traça o fluxo histórico do comércio global ligando o porto atlântico de Veracruz ao porto pacífico de Acapulco.",
-        "map3-tag1": "Veracruz",
-        "map3-tag2": "Acapulco",
-        "map3-tag3": "Comércio Marítimo",
+        "geo-overview-p1":
+            "<strong>Posição Continental e Área:</strong> O México está situado no continente norte-americano, ocupando a porção sul da massa terrestre e servindo como uma ponte geográfica que conecta a América do Norte e a América Central. É limitado pelos Estados Unidos ao norte, pelo Golfo do México e pelo Mar do Caribe a leste, pelo Oceano Pacífico a oeste e ao sul, e pela Guatemala e Belize ao sudeste.",
 
-        "map4-badge-title": "Projeção Policônica",
-        "map4-badge-sub": "31 ESTADOS + CDMX",
-        "map4-label": "MAPA 04",
-        "map4-title": "Mapa Topográfico e Político Moderno",
-        "map4-desc": "Utilizando uma projeção Policônica conforme padrão, este mapa moderno detalha as fronteiras políticas contemporâneas do México em 31 estados e na Cidade do México. Ele ilustra os principais perfis de elevação, cadeias de montanhas e redes de transporte nacional para servir como uma base precisa para análise espacial.",
-        "map4-tag1": "Topografia",
-        "map4-tag2": "Grade Policônica",
-        "map4-tag3": "31 Estados",
+        "geo-overview-p2":
+            "<strong>Alcance Latitudinal:</strong> O país abrange uma faixa latitudinal que vai de aproximadamente 14°32' N em sua fronteira mais ao sul ao longo do Rio Suchiate até 32°43' N em seu limite mais ao norte na Baixa Califórnia.",
 
-        "cart-badge-title": "Antonio García Cubas",
-        "cart-badge-sub": "1832–1912",
-        "cart-label": "Influência Proeminente",
-        "cart-title": "Antonio García Cubas",
-        "cart-bio": "Antonio García Cubas (1832–1912) foi o geógrafo, historiador e cartógrafo mais proeminente do México no século XIX. Nascido na Cidade do México, ele superou a orfandade precoce para estudar geografia no Colegio de San Gregorio e na Escola de Engenheiros, graduando-se com honras como geógrafo profissional. Tornou-se membro fundador da Sociedade Mexicana de Geografia e Estatística e revolucionou a cartografia latino-americana ao introduzir dados rigorosos de levantamento científico e impressão cromolitográfica avançada.",
-        "cart-acc-title": "Maiores Realizações Cartográficas:",
-        "cart-acc-1": "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Um atlas nacional inovador que fundiu mapas estaduais detalhados com dados estatísticos e históricos abrangentes, estabelecendo uma identidade cartográfica unificada para a jovem república.",
-        "cart-acc-2": "<strong>Carta General de la República Mexicana (1863):</strong> Um mapa geral abrangente do país que corrigiu imprecisões topográficas amplamente difundidas encontradas em mapas coloniais e estrangeiros anteriores.",
-        "cart-acc-3": "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Uma aclamada obra-prima cromolitográfica apresentando mapas culturais, históricos e topográficos vibrantes que conquistaram amplo reconhecimento de sociedades geográficas internacionais."
-    },
+        "geo-overview-p3":
+            "<strong>Existência Histórica e Cronologia:</strong> Como uma nação soberana independente, o México existe de 1821 até o presente, desenvolvendo-se sobre milhares de anos de civilizações indígenas pré-colombianas e o período colonial de 300 anos do Vice-Reino da Nova Espanha (1521–1821). Hoje, opera como uma república constitucional federal com mais de 129 milhões de cidadãos.",
 
-};
+        "map1-badge-title":
+            "A Fundação de Tenochtitlan (Códice Mendoza)",
 
-// Tectonics page
-const translationsTectonics = {
-// ==============================================
-// Tectonics Page
-// ==============================================
-    en: {
-        "page-title": "Bienvenido a México",
-        "logo-text": "BIENVENIDO A MEXICO",
-        "nav-fundamentals": "MAPS",
-        "nav-stats": "TECTONICS",
-        "nav-real-cases": "EROSION",
-        "nav-about": "ABOUT",
-        "nav-take-action": "OCEANS",
-        "nav-donations": "CLIMATE",
-        "nav-contact": "REFERENCES",
+        "map1-badge-sub":
+            "1541–1542 (Retratando eventos de 1325)",
 
-        "hero-title": "Mexico’s Dynamic Earth:<br/><em>Plates, Peaks, and Power</em>",
-        "hero-sub": "Explore how subduction zones, volcanic arcs, and rich mineral deposits have shaped the geology, culture, and economy of Mexico.",
+        "map1-label":
+            "MAPA 01",
 
-        "sidebar-title": "Learn More Here!",
-        "sidebar-desc": "Mexico’s landscape is a direct reflection of intense geological activity occurring beneath the surface. Positioned at the collision point of five tectonic plates, the region is characterized by active volcanoes, high-magnitude seismic zones, and towering mountain ranges that act as natural walls across the country. These same tectonic forces created rich mineral veins that make Mexico a global leader in silver mining, while volcanic ash continues to enrich the soil feeding millions. This page explores the interconnections between Mexico's deep earth dynamics, natural hazards, economic resources, and everyday life.",
-        "sidebar-link": "Learn About the Mexican's Maps",
+        "map1-title":
+            "Cartografia Antiga Pré-Colombiana",
 
-        "vert-title-1": "Tectonic Plates and Natural Disasters",
-        "exp-title-1": "Tectonic Plates and Natural Disasters",
-        "exp-desc-1": "Discover how five shifting tectonic plates drive Mexico’s dynamic landscape, triggering megathrust earthquakes, active stratovolcanoes, and coastal tsunamis.",
-        "read-more-1": "Read More",
-        "tpl-1-p1": "<strong>Overview:</strong> Mexico sits on five tectonic plates: the North American, Cocos, Rivera, Pacific, and Caribbean plates. The oceanic Cocos and Rivera plates actively subduct beneath the continental North American Plate along the Middle America Trench off the Pacific coast at 5 to 6 cm per year. Meanwhile, the Gulf of California acts as a transform rift zone sliding northern Baja California northwest.",
-        "tpl-1-li1": "<strong>Earthquakes:</strong> Megathrust subduction events along the Pacific coast generate major shaking across central and southern states.",
-        "tpl-1-li2": "<strong>Volcanism:</strong> Subducting oceanic crust melts at depth, fueling active stratovolcanoes across the central belt.",
-        "tpl-1-li3": "<strong>Tsunamis:</strong> Localized tsunamis threaten coastal settlements following off-shore subduction quakes, such as the 1995 Colima tsunami.",
+        "map1-desc":
+            "Este documento pictórico indígena mapeia o layout fundador, os sistemas de canais e as conquistas territoriais da capital asteca de Tenochtitlan. Ele fornece informações cruciais sobre o planejamento urbano pré-hispânico e a organização espacial antes do contato europeu.",
 
-        "vert-title-2": "Rock and Mineral Resources",
-        "exp-title-2": "Rock and Mineral Resources",
-        "exp-desc-2": "Uncover Mexico's rich geological history, yielding over 20% of the world's silver alongside vital copper, gold, and zinc reserves.",
-        "read-more-2": "Read More",
-        "tpl-2-p1": "<strong>Overview:</strong> A complex tectonic history yields diverse rock formations: Cretaceous limestone in the east, Tertiary volcanic ignimbrites and rhyolites across western plateaus, and ancient metamorphic rocks in the south.",
-        "tpl-2-li1": "<strong>Global Silver Leader:</strong> Mexico produces over 20% of the world's silver, alongside substantial reserves of copper, gold, lead, and zinc.",
-        "tpl-2-li2": "<strong>Jobs & Exports:</strong> Mining contributes ~2.4% to national GDP and directly employs over 400,000 workers. Major exports go to the United States, China, Japan, and Canada.",
-        "tpl-2-li3": "<strong>Challenges:</strong> Mining in arid regions strains local groundwater supplies and creates risks of acid mine drainage, leaving mining-dependent towns vulnerable to global commodity price swings.",
+        "map1-tag1":
+            "Códice Asteca",
 
-        "vert-title-3": "Earthquakes and Seismic Preparedness",
-        "exp-title-3": "Earthquakes and Seismic Preparedness",
-        "exp-desc-3": "Explore historic seismic events that reshaped central Mexico and the cutting-edge early warning systems saving lives today.",
-        "read-more-3": "Read More",
-        "tpl-3-p1": "<strong>Overview:</strong> Mexico has experienced severe seismic events, notably the September 19, 1985 (M8.0) earthquake where ancient lakebed sediments beneath Mexico City amplified seismic waves, leading to widespread building collapses and over 10,000 casualties. On the same day in 2017, an M7.1 intraplate event within the subducting Cocos slab caused significant structural damage in Puebla, Morelos, and Mexico City.",
-        "tpl-3-li1": "<strong>SASMEX (Early Warning System):</strong> Coastal sensors detect fast-moving primary seismic waves (P-waves) and broadcast radio alerts, granting urban residents 60 to 120 seconds of advance warning before destructive secondary waves (S-waves) arrive.",
-        "tpl-3-li2": "<strong>Safety Protocols:</strong> Annual nationwide evacuation drills (Simulacro Nacional) every September 19th and strict, continuously updated structural building codes tailored for soft lakebed soils.",
+        "map1-tag2":
+            "Tenochtitlan",
 
-        "vert-title-4": "Major Mountain Ranges",
-        "exp-title-4": "Major Mountain Ranges",
-        "exp-desc-4": "Journey across Mexico’s rugged ranges, from Copper Canyon to high volcanic peaks, shaping unique climates, cultures, and trade routes.",
-        "read-more-4": "Read More",
-        "tpl-4-p1": "<strong>Overview:</strong> The mountain ranges create rain-shadow effects, keeping the central northern plateau dry while trapping moisture on coastal slopes. Historically, these steep ranges acted as barriers to trade and military conquest, preserving isolated indigenous cultures like the Rarámuri in the north and Zapotec in the south. Today, trade requires complex mountain highways and bridges connecting inner cities to coastal ports.",
-        "tpl-4-li1": "<strong>Sierra Madre Occidental:</strong> High volcanic plateau composed of rhyolite and ignimbrite, cut by deep canyons like Copper Canyon (Barrancas del Cobre).",
-        "tpl-4-li2": "<strong>Sierra Madre Oriental:</strong> Folded sedimentary limestone range running down the eastern side of the country.",
-        "tpl-4-li3": "<strong>Trans-Mexican Volcanic Belt:</strong> An active east-west volcanic chain holding Mexico's highest peaks, including Pico de Orizaba (5,636 m) and Popocatépetl (5,426 m).",
-        "tpl-4-li4": "<strong>Sierra Madre del Sur:</strong> Metamorphic mountain terrain lining the southern Pacific coast.",
+        "map1-tag3":
+            "Planejamento Urbano",
 
-        "vert-title-5": "Volcanoes of Mexico",
-        "exp-title-5": "Volcanoes of Mexico",
-        "exp-desc-5": "Explore iconic peaks like Popocatépetl and Parícutin, where volcanic power enriches soils for agriculture while posing constant eruptive hazards.",
-        "read-more-5": "Read More",
-        "tpl-5-p1": "<strong>Overview:</strong> Volcanic ash degrades into rich volcanic soil (Andisols), creating fertile land for crops like blue agave, avocado, and coffee. While active volcanoes support agricultural economies and geotourism, they pose constant threats of pyroclastic flows, mudflows (lahars), and aviation-disrupting ash clouds.",
-        "tpl-5-li1": "<strong>Popocatépetl:</strong> Active composite stratovolcano (~70 km from Mexico City) known for ash plumes and explosive pyroclastic activity.",
-        "tpl-5-li2": "<strong>Parícutin:</strong> Monogenetic cinder cone in Michoacán that famously emerged in a cornfield in 1943, growing 424 meters high and burying nearby villages under lava.",
-        "tpl-5-li3": "<strong>Pico de Orizaba:</strong> Dormant stratovolcano and Mexico's highest peak, topped by high-altitude glaciers.",
-        "tpl-5-li4": "<strong>Volcán de Colima:</strong> Highly active lava dome and stratovolcano complex near the Pacific coast.",
+        "map2-badge-title":
+            "Carta Geográfica de la República Mexicana (Extensão pré-1848)",
 
-        "overlay-close-top": "✕ Exit Article",
-        "overlay-title-fallback": "Article Title",
-        "overlay-footer-text": "Thank you for exploring this Article.",
-        "overlay-close-bottom": "Exit Article"
-    },
+        "map2-badge-sub":
+            "1847",
 
-    es: {
-        "page-title": "Bienvenido a México",
-        "logo-text": "BIENVENIDO A MÉXICO",
-        "nav-fundamentals": "MAPAS",
-        "nav-stats": "TECTÓNICA",
-        "nav-real-cases": "EROSIÓN",
-        "nav-about": "ACERCA DE",
-        "nav-take-action": "OCÉANOS",
-        "nav-donations": "CLIMA",
-        "nav-contact": "REFERENCIAS",
+        "map2-label":
+            "MAPA 02",
 
-        "hero-title": "La Tierra Dinámica de México:<br/><em>Placas, Picos y Poder</em>",
-        "hero-sub": "Explora cómo las zonas de subducción, los arcos volcánicos y los ricos depósitos minerales han dado forma a la geología, la cultura y la economía de México.",
+        "map2-title":
+            "Mudanças nas Fronteiras Históricas",
 
-        "sidebar-title": "¡Aprende Más Aquí!",
-        "sidebar-desc": "El paisaje de México es un reflejo directo de la intensa actividad geológica que ocurre bajo la superficie. Posicionada en el punto de colisión de cinco placas tectónicas, la región se caracteriza por volcanes activos, zonas sísmicas de alta magnitud y cadenas montañosas imponentes que actúan como muros naturales en todo el país. Estas mismas fuerzas tectónicas crearon ricas vetas minerales que hacen de México un líder mundial en la minería de plata, mientras que las cenizas volcánicas continúan enriqueciendo el suelo que alimenta a millones. Esta página explora las interconexiones entre la dinámica profunda de la tierra, los peligros naturales, los recursos económicos y la vida cotidiana en México.",
-        "sidebar-link": "Aprende Sobre los Mapas de México",
+        "map2-desc":
+            "Este mapa histórico ilustra as expansivas fronteiras do México em meados do século XIX, antes da Guerra Mexicano-Americana e do Tratado de Guadalupe Hidalgo. Ele descreve os vastos territórios do norte que historicamente abrangiam os atuais estados de Califórnia, Nevada, Utah, Arizona, Novo México e partes do Colorado e Wyoming.",
 
-        "vert-title-1": "Placas Tectónicas y Desastres Naturales",
-        "exp-title-1": "Placas Tectónicas y Desastres Naturales",
-        "exp-desc-1": "Descubre cómo cinco placas tectónicas en movimiento impulsan el dinámico paisaje de México, desencadenando sismos de megacabalgamiento, estratovolcanes activos y tsunamis costeros.",
-        "read-more-1": "Leer Más",
-        "tpl-1-p1": "<strong>Descripción General:</strong> México se asienta sobre cinco placas tectónicas: Norteamericana, Cocos, Rivera, Pacífica y del Caribe. Las placas oceánicas de Cocos y Rivera se subducen activamente bajo la Placa continental Norteamericana a lo largo de la Fosa Mesoamericana en la costa del Pacífico a una velocidad de 5 a 6 cm por año. Mientras tanto, el Golfo de California actúa como una zona de falla transformante deslizando el norte de Baja California hacia el noroeste.",
-        "tpl-1-li1": "<strong>Terremotos:</strong> Los eventos de subducción de megacabalgamiento a lo largo de la costa del Pacífico generan grandes sacudidas en los estados centrales y del sur.",
-        "tpl-1-li2": "<strong>Vulcanismo:</strong> La corteza oceánica en subducción se derrite en las profundidades, alimentando estratovolcanes activos a lo largo del cinturón central.",
-        "tpl-1-li3": "<strong>Tsunamis:</strong> Tsunamis localizados amenazan los asentamientos costeros tras sismos de subducción en alta mar, como el tsunami de Colima en 1995.",
+        "map2-tag1":
+            "Mudanças de Fronteira",
 
-        "vert-title-2": "Recursos Rocosos y Minerales",
-        "exp-title-2": "Recursos Rocosos y Minerales",
-        "exp-desc-2": "Descubre la rica historia geológica de México, que produce más del 20% de la plata del mundo junto con reservas vitales de cobre, oro y zinc.",
-        "read-more-2": "Leer Más",
-        "tpl-2-p1": "<strong>Descripción General:</strong> Una compleja historia tectónica produce diversas formaciones rocosas: piedra caliza del Cretácico en el este, ignimbritas y riolitas volcánicas del Terciario en las mesetas occidentales, y antiguas rocas metamórficas en el sur.",
-        "tpl-2-li1": "<strong>Líder Mundial en Plata:</strong> México produce más del 20% de la plata del mundo, junto con importantes reservas de cobre, oro, plomo y zinc.",
-        "tpl-2-li2": "<strong>Empleos y Exportaciones:</strong> La minería aporta ~2.4% al PIB nacional y emplea directamente a más de 400,000 trabajadores. Las principales exportaciones se dirigen a Estados Unidos, China, Japón y Canadá.",
-        "tpl-2-li3": "<strong>Desafíos:</strong> La minería en regiones áridas agota los suministros locales de agua subterránea y crea riesgos de drenaje ácido de minas, dejando a las ciudades dependientes de la minería vulnerables a las fluctuaciones mundiales de los precios de las materias primas.",
+        "map2-tag2":
+            "Tratado de Guadalupe Hidalgo",
 
-        "vert-title-3": "Terremotos y Preparación Sísmica",
-        "exp-title-3": "Terremotos y Preparación Sísmica",
-        "exp-desc-3": "Explora eventos sísmicos históricos que remodelaron el centro de México y los sistemas de alerta temprana de vanguardia que salvan vidas hoy en día.",
-        "read-more-3": "Leer Más",
-        "tpl-3-p1": "<strong>Descripción General:</strong> México ha experimentado eventos sísmicos severos, notablemente el terremoto del 19 de septiembre de 1985 (M8.0), donde los antiguos sedimentos del lecho del lago debajo de la Ciudad de México amplificaron las ondas sísmicas, provocando colapsos generalizados de edificios y más de 10,000 víctimas. El mismo día en 2017, un evento intraplaca M7.1 dentro de la placa de Cocos en subducción causó daños estructurales significativos en Puebla, Morelos y la Ciudad de México.",
-        "tpl-3-li1": "<strong>SASMEX (Sistema de Alerta Temprana):</strong> Sensores costeros detectan ondas sísmicas primarias (Ondas P) de rápido movimiento y transmiten alertas de radio, otorgando a los residentes urbanos de 60 a 120 segundos de advertencia previa antes de que lleguen las destructivas ondas secundarias (Ondas S).",
-        "tpl-3-li2": "<strong>Protocolos de Seguridad:</strong> Simulacros anuales de evacuación a nivel nacional (Simulacro Nacional) cada 19 de septiembre y estrictos códigos de construcción estructural, continuamente actualizados y adaptados para suelos blandos de lechos de lagos.",
+        "map2-tag3":
+            "Fronteira Norte",
 
-        "vert-title-4": "Principales Cadenas Montañosas",
-        "exp-title-4": "Principales Cadenas Montañosas",
-        "exp-desc-4": "Viaja a través de las escarpadas cadenas de México, desde las Barrancas del Cobre hasta los altos picos volcánicos, dando forma a climas, culturas y rutas comerciales únicos.",
-        "read-more-4": "Leer Más",
-        "tpl-4-p1": "<strong>Descripción General:</strong> Las cadenas montañosas crean efectos de sombra orográfica, manteniendo seca la meseta norte central mientras atrapan la humedad en las laderas costeras. Históricamente, estas cadenas escarpadas actuaron como barreras para el comercio y la conquista militar, preservando culturas indígenas aisladas como los Rarámuri en el norte y los Zapotecas en el sur. Hoy en día, el comercio requiere complejas carreteras de montaña y puentes que conectan las ciudades del interior con los puertos costeros.",
-        "tpl-4-li1": "<strong>Sierra Madre Occidental:</strong> Alta meseta volcánica compuesta de riolita e ignimbrita, cortada por cañones profundos como las Barrancas del Cobre.",
-        "tpl-4-li2": "<strong>Sierra Madre Oriental:</strong> Cadena de piedra caliza sedimentaria plegada que recorre el lado este del país.",
-        "tpl-4-li3": "<strong>Eje Neovolcánico Transversal:</strong> Una cadena volcánica activa de este a oeste que alberga los picos más altos de México, incluidos el Pico de Orizaba (5,636 m) y el Popocatépetl (5,426 m).",
-        "tpl-4-li4": "<strong>Sierra Madre del Sur:</strong> Terreno montañoso metamórfico que bordea la costa sur del Pacífico.",
+        "map3-badge-title":
+            "Camino Real",
 
-        "vert-title-5": "Volcanes de México",
-        "exp-title-5": "Volcanes de México",
-        "exp-desc-5": "Explora picos icónicos como el Popocatépetl y el Parícutin, donde el poder volcánico enriquece los suelos para la agricultura mientras plantea constantes peligros eruptivos.",
-        "read-more-5": "Leer Más",
-        "tpl-5-p1": "<strong>Descripción General:</strong> Las cenizas volcánicas se degradan en suelos volcánicos ricos (Andisoles), creando tierras fértiles para cultivos como el agave azul, el aguacate y el café. Si bien los volcanes activos apoyan las economías agrícolas y el geoturismo, representan amenazas constantes de flujos piroclásticos, flujos de lodo (lahares) y nubes de ceniza que interrumpen la aviación.",
-        "tpl-5-li1": "<strong>Popocatépetl:</strong> Estratovolcán compuesto activo (~70 km de la Ciudad de México) conocido por columnas de ceniza y actividad piroclástica explosiva.",
-        "tpl-5-li2": "<strong>Parícutin:</strong> Cono de ceniza monogenético en Michoacán que emergió famosamente en un campo de maíz en 1943, creciendo 424 metros de altura y enterrando aldeas cercanas bajo la lava.",
-        "tpl-5-li3": "<strong>Pico de Orizaba:</strong> Estratovolcán inactivo y el pico más alto de México, coronado por glaciares de gran altitud.",
-        "tpl-5-li4": "<strong>Volcán de Colima:</strong> Domo de lava altamente activo y complejo de estratovolcán cerca de la costa del Pacífico.",
+        "map3-badge-sub":
+            "SÉCULOS XVI–XIX",
 
-        "overlay-close-top": "✕ Salir del Artículo",
-        "overlay-title-fallback": "Título del Artículo",
-        "overlay-footer-text": "Gracias por explorar este Artículo.",
-        "overlay-close-bottom": "Salir del Artículo"
-    },
+        "map3-label":
+            "MAPA 03",
 
-    fr: {
-        "page-title": "Bienvenue au Mexique",
-        "logo-text": "BIENVENUE AU MEXIQUE",
-        "nav-fundamentals": "CARTES",
-        "nav-stats": "TECTONIQUE",
-        "nav-real-cases": "ÉROSION",
-        "nav-about": "À PROPOS",
-        "nav-take-action": "OCÉANS",
-        "nav-donations": "CLIMAT",
-        "nav-contact": "RÉFÉRENCES",
+        "map3-title":
+            "Rotas Comerciais e Marítimas Coloniais",
 
-        "hero-title": "La Terre Dynamique du Mexique :<br/><em>Plaques, Sommets et Puissance</em>",
-        "hero-sub": "Explorez comment les zones de subduction, les arcs volcaniques et les riches gisements minéraux ont façonné la géologie, la culture et l'économie du Mexique.",
+        "map3-desc":
+            "Este mapa de rotas de arquivo destaca as estradas reais interiores (<em>Camino Real</em>) e as rotas de viagens marítimas transoceânicas essenciais estabelecidas durante a era colonial espanhola. Ele traça o fluxo histórico do comércio global ligando o porto atlântico de Veracruz ao porto pacífico de Acapulco.",
 
-        "sidebar-title": "En Savoir Plus Ici !",
-        "sidebar-desc": "Le paysage du Mexique est le reflet direct d'une activité géologique intense se produisant sous la surface. Positionnée au point de collision de cinq plaques tectoniques, la région est caractérisée par des volcans actifs, des zones sismiques de forte magnitude et de hautes chaînes de montagnes qui agissent comme des murs naturels à travers le pays. Ces mêmes forces tectoniques ont créé de riches veines minérales qui font du Mexique un leader mondial dans l'extraction de l'argent, tandis que les cendres volcaniques continuent d'enrichir le sol nourrissant des millions de personnes. Cette page explore les interconnexions entre la dynamique terrestre profonde, les risques naturels, les ressources économiques et la vie quotidienne du Mexique.",
-        "sidebar-link": "En Savoir Plus sur les Cartes du Mexique",
+        "map3-tag1":
+            "Veracruz",
 
-        "vert-title-1": "Plaques Tectoniques et Catastrophes Naturelles",
-        "exp-title-1": "Plaques Tectoniques et Catastrophes Naturelles",
-        "exp-desc-1": "Découvrez comment cinq plaques tectoniques en mouvement animent le paysage dynamique du Mexique, déclenchant des séismes de mégachevalement, des stratovolcans actifs et des tsunamis côtiers.",
-        "read-more-1": "Lire la Suite",
-        "tpl-1-p1": "<strong>Aperçu :</strong> Le Mexique repose sur cinq plaques tectoniques : les plaques nord-américaine, Cocos, Rivera, pacifique et caraïbe. Les plaques océaniques Cocos et Rivera subductent activement sous la plaque continentale nord-américaine le long de la fosse d'Amérique centrale au large de la côte pacifique à raison de 5 à 6 cm par an. Pendant ce temps, le golfe de Californie agit comme une zone de faille transformante glissant le nord de la Basse-Californie vers le nord-ouest.",
-        "tpl-1-li1": "<strong>Tremblements de terre :</strong> Les événements de subduction de mégachevalement le long de la côte pacifique génèrent des secousses majeures dans les États du centre et du sud.",
-        "tpl-1-li2": "<strong>Volcanisme :</strong> La croûte océanique en subduction fond en profondeur, alimentant les stratovolcans actifs à travers la ceinture centrale.",
-        "tpl-1-li3": "<strong>Tsunamis :</strong> Des tsunamis localisés menacent les établissements côtiers à la suite de séismes de subduction au large, comme le tsunami de Colima en 1995.",
+        "map3-tag2":
+            "Acapulco",
 
-        "vert-title-2": "Ressources Rocheuses et Minérales",
-        "exp-title-2": "Ressources Rocheuses et Minérales",
-        "exp-desc-2": "Découvrez la riche histoire géologique du Mexique, produisant plus de 20 % de l'argent mondial ainsi que des réserves vitales de cuivre, d'or et de zinc.",
-        "read-more-2": "Lire la Suite",
-        "tpl-2-p1": "<strong>Aperçu :</strong> Une histoire tectonique complexe produit diverses formations rocheuses : du calcaire du Crétacé à l'est, des ignimbrites et rhyolites volcaniques du Tertiaire sur les plateaux occidentaux, et d'anciennes roches métamorphiques au sud.",
-        "tpl-2-li1": "<strong>Leader Mondial de l'Argent :</strong> Le Mexique produit plus de 20 % de l'argent mondial, avec des réserves substantielles de cuivre, d'or, de plomb et de zinc.",
-        "tpl-2-li2": "<strong>Emplois et Exportations :</strong> L'exploitation minière contribue à ~2,4 % du PIB national et emploie directement plus de 400 000 travailleurs. Les principales exportations sont destinées aux États-Unis, à la Chine, au Japon et au Canada.",
-        "tpl-2-li3": "<strong>Défis :</strong> L'exploitation minière dans les régions arides épuise les réserves locales d'eaux souterraines et crée des risques de drainage minier acide, laissant les villes dépendantes de l'exploitation minière vulnérables aux fluctuations mondiales des prix des matières premières.",
+        "map3-tag3":
+            "Comércio Marítimo",
 
-        "vert-title-3": "Tremblements de Terre et Préparation Sismique",
-        "exp-title-3": "Tremblements de Terre et Préparation Sismique",
-        "exp-desc-3": "Explorez les événements sismiques historiques qui ont remodelé le centre du Mexique et les systèmes d'alerte précoce de pointe qui sauvent des vies aujourd'hui.",
-        "read-more-3": "Lire la Suite",
-        "tpl-3-p1": "<strong>Aperçu :</strong> Le Mexique a connu de graves événements sismiques, notamment le tremblement de terre du 19 septembre 1985 (M8.0) où d'anciens sédiments de fond de lac sous Mexico ont amplifié les ondes sismiques, entraînant des effondrements de bâtiments généralisés et plus de 10 000 victimes. Le même jour en 2017, un événement intraplaque de M7.1 dans la plaque de subduction Cocos a causé d'importants dommages structurels à Puebla, Morelos et Mexico.",
-        "tpl-3-li1": "<strong>SASMEX (Système d'Alerte Précoce) :</strong> Des capteurs côtiers détectent les ondes sismiques primaires à déplacement rapide (Ondes P) et diffusent des alertes radio, accordant aux citadins 60 à 120 secondes d'avertissement avant l'arrivée des ondes secondaires destructrices (Ondes S).",
-        "tpl-3-li2": "<strong>Protocoles de Sécurité :</strong> Des exercices d'évacuation annuels à l'échelle nationale (Simulacro Nacional) chaque 19 septembre et des codes de construction stricts, continuellement mis à jour et adaptés aux sols mous des fonds de lacs.",
+        "map4-badge-title":
+            "Projeção Policônica",
 
-        "vert-title-4": "Principales Chaînes de Montagnes",
-        "exp-title-4": "Principales Chaînes de Montagnes",
-        "exp-desc-4": "Parcourez les chaînes accidentées du Mexique, de la Barranca del Cobre aux hauts sommets volcaniques, façonnant des climats, des cultures et des routes commerciales uniques.",
-        "read-more-4": "Lire la Suite",
-        "tpl-4-p1": "<strong>Aperçu :</strong> Les chaînes de montagnes créent des effets d'ombre pluviométrique, gardant le plateau du centre-nord sec tout en piégeant l'humidité sur les pentes côtières. Historiquement, ces chaînes abruptes ont agi comme des barrières au commerce et à la conquête militaire, préservant des cultures indigènes isolées comme les Rarámuri au nord et les Zapotèques au sud. Aujourd'hui, le commerce nécessite des autoroutes de montagne complexes et des ponts reliant le centre des villes aux ports côtiers.",
-        "tpl-4-li1": "<strong>Sierra Madre Occidentale :</strong> Haut plateau volcanique composé de rhyolite et d'ignimbrite, coupé par de profonds canyons comme la Barranca del Cobre.",
-        "tpl-4-li2": "<strong>Sierra Madre Orientale :</strong> Chaîne de roches sédimentaires calcaires plissées descendant le long de la côte est du pays.",
-        "tpl-4-li3": "<strong>Axe Volcanique Transversal :</strong> Une chaîne volcanique active d'est en ouest abritant les plus hauts sommets du Mexique, dont le Pico de Orizaba (5 636 m) et le Popocatépetl (5 426 m).",
-        "tpl-4-li4": "<strong>Sierra Madre del Sur :</strong> Terrain montagneux métamorphique bordant la côte sud du Pacifique.",
+        "map4-badge-sub":
+            "31 ESTADOS + CDMX",
 
-        "vert-title-5": "Volcans du Mexique",
-        "exp-title-5": "Volcans du Mexique",
-        "exp-desc-5": "Explorez des sommets emblématiques comme le Popocatépetl et le Parícutin, où l'énergie volcanique enrichit les sols pour l'agriculture tout en posant des risques éruptifs constants.",
-        "read-more-5": "Lire la Suite",
-        "tpl-5-p1": "<strong>Aperçu :</strong> Les cendres volcaniques se dégradent en sols volcaniques riches (Andisols), créant des terres fertiles pour des cultures comme l'agave bleu, l'avocat et le café. Bien que les volcans actifs soutiennent les économies agricoles et le géotourisme, ils présentent des menaces constantes de coulées pyroclastiques, de coulées de boue (lahars) et de nuages de cendres perturbant l'aviation.",
-        "tpl-5-li1": "<strong>Popocatépetl :</strong> Stratovolcan composite actif (~70 km de Mexico) connu pour ses panaches de cendres et son activité pyroclastique explosive.",
-        "tpl-5-li2": "<strong>Parícutin :</strong> Cône de scories monogénique au Michoacán qui a émergé de façon célèbre dans un champ de maïs en 1943, atteignant 424 mètres de haut et enterrant les villages voisins sous la lave.",
-        "tpl-5-li3": "<strong>Pico de Orizaba :</strong> Stratovolcan endormi et le plus haut sommet du Mexique, surmonté de glaciers d'haute altitude.",
-        "tpl-5-li4": "<strong>Volcán de Colima :</strong> Dôme de lave très actif et complexe de stratovolcans près de la côte pacifique.",
+        "map4-label":
+            "MAPA 04",
 
-        "overlay-close-top": "✕ Quitter l'Article",
-        "overlay-title-fallback": "Titre de l'Article",
-        "overlay-footer-text": "Merci d'avoir exploré cet Article.",
-        "overlay-close-bottom": "Quitter l'Article"
-    },
+        "map4-title":
+            "Mapa Topográfico e Político Moderno",
 
-    pt: {
-        "page-title": "Bem-vindo ao México",
-        "logo-text": "BEM-VINDO AO MÉXICO",
-        "nav-fundamentals": "MAPAS",
-        "nav-stats": "TECTÔNICA",
-        "nav-real-cases": "EROSÃO",
-        "nav-about": "SOBRE",
-        "nav-take-action": "OCEANOS",
-        "nav-donations": "CLIMA",
-        "nav-contact": "REFERÊNCIAS",
+        "map4-desc":
+            "Utilizando uma projeção Policônica conforme padrão, este mapa moderno detalha as fronteiras políticas contemporâneas do México em 31 estados e na Cidade do México. Ele ilustra os principais perfis de elevação, cadeias de montanhas e redes de transporte nacional para servir como uma base precisa para análise espacial.",
 
-        "hero-title": "A Terra Dinâmica do México:<br/><em>Placas, Picos e Poder</em>",
-        "hero-sub": "Explore como as zonas de subducção, os arcos vulcânicos e os ricos depósitos minerais moldaram a geologia, a cultura e a economia do México.",
+        "map4-tag1":
+            "Topografia",
 
-        "sidebar-title": "Saiba Mais Aqui!",
-        "sidebar-desc": "A paisagem do México é um reflexo direto da intensa atividade geológica que ocorre abaixo da superfície. Posicionada no ponto de colisão de cinco placas tectônicas, a região é caracterizada por vulcões ativos, zonas sísmicas de alta magnitude e imponentes cadeias de montanhas que atuam como paredes naturais em todo o país. Essas mesmas forças tectônicas criaram veios minerais ricos que fazem do México um líder mundial na mineração de prata, enquanto as cinzas vulcânicas continuam a enriquecer o solo que alimenta milhões. Esta página explora as interconexões entre a dinâmica profunda da terra, os riscos naturais, os recursos econômicos e a vida cotidiana do México.",
-        "sidebar-link": "Saiba Mais Sobre os Mapas do México",
+        "map4-tag2":
+            "Grade Policônica",
 
-        "vert-title-1": "Placas Tectônicas e Desastres Naturais",
-        "exp-title-1": "Placas Tectônicas e Desastres Naturais",
-        "exp-desc-1": "Descubra como cinco placas tectônicas em movimento impulsionam a paisagem dinâmica do México, desencadeando terremotos de megacavalgamento, estratovulcões ativos e tsunamis costeiros.",
-        "read-more-1": "Leia Mais",
-        "tpl-1-p1": "<strong>Visão Geral:</strong> O México está localizado sobre cinco placas tectônicas: Norte-Americana, Cocos, Rivera, Pacífico e do Caribe. As placas oceânicas de Cocos e Rivera subduzem ativamente sob a placa continental Norte-Americana ao longo da Fossa Mesoamericana na costa do Pacífico a 5 a 6 cm por ano. Enquanto isso, o Golfo da Califórnia atua como uma zona de falha transformante deslizando o norte da Baixa Califórnia para o noroeste.",
-        "tpl-1-li1": "<strong>Terremotos:</strong> Eventos de subducção de megacavalgamento ao longo da costa do Pacífico geram grandes tremores nos estados centrais e do sul.",
-        "tpl-1-li2": "<strong>Vulcanismo:</strong> A crosta oceânica em subducção derrete em profundidade, alimentando estratovulcões ativos em todo o cinturão central.",
-        "tpl-1-li3": "<strong>Tsunamis:</strong> Tsunamis localizados ameaçam assentamentos costeiros após terremotos de subducção em alto mar, como o tsunami de Colima em 1995.",
+        "map4-tag3":
+            "31 Estados",
 
-        "vert-title-2": "Recursos Rochosos e Minerais",
-        "exp-title-2": "Recursos Rochosos e Minerais",
-        "exp-desc-2": "Descubra a rica história geológica do México, que produz mais de 20% da prata do mundo, além de reservas vitais de cobre, ouro e zinco.",
-        "read-more-2": "Leia Mais",
-        "tpl-2-p1": "<strong>Visão Geral:</strong> Uma complexa história tectônica produz diversas formações rochosas: calcário do Cretáceo no leste, ignimbritos e riólitos vulcânicos do Terciário nos planaltos ocidentais e antigas rochas metamórficas no sul.",
-        "tpl-2-li1": "<strong>Líder Mundial em Prata:</strong> O México produz mais de 20% da prata do mundo, junto com reservas substanciais de cobre, ouro, chumbo e zinco.",
-        "tpl-2-li2": "<strong>Empregos e Exportações:</strong> A mineração contribui com ~2,4% do PIB nacional e emprega diretamente mais de 400.000 trabalhadores. As principais exportações vão para os Estados Unidos, China, Japão e Canadá.",
-        "tpl-2-li3": "<strong>Desafios:</strong> A mineração em regiões áridas sobrecarrega o suprimento local de águas subterrâneas e cria riscos de drenagem ácida de minas, deixando as cidades dependentes da mineração vulneráveis às oscilações globais dos preços das commodities.",
+        "cart-badge-title":
+            "Antonio García Cubas",
 
-        "vert-title-3": "Terremotos e Preparação Sísmica",
-        "exp-title-3": "Terremotos e Preparação Sísmica",
-        "exp-desc-3": "Explore os eventos sísmicos históricos que remodelaram a região central do México e os modernos sistemas de alerta precoce que salvam vidas hoje.",
-        "read-more-3": "Leia Mais",
-        "tpl-3-p1": "<strong>Visão Geral:</strong> O México sofreu eventos sísmicos severos, principalmente o terremoto de 19 de setembro de 1985 (M8.0), onde sedimentos antigos do leito do lago sob a Cidade do México amplificaram as ondas sísmicas, levando ao colapso generalizado de edifícios e a mais de 10.000 vítimas. No mesmo dia em 2017, um evento intraplaca M7.1 dentro da placa de subducção Cocos causou danos estruturais significativos em Puebla, Morelos e na Cidade do México.",
-        "tpl-3-li1": "<strong>SASMEX (Sistema de Alerta Precoce):</strong> Sensores costeiros detectam ondas sísmicas primárias (Ondas P) de movimento rápido e transmitem alertas de rádio, concedendo aos residentes urbanos 60 a 120 segundos de aviso prévio antes da chegada de ondas secundárias destrutivas (Ondas S).",
-        "tpl-3-li2": "<strong>Protocolos de Segurança:</strong> Exercícios anuais de evacuação nacional (Simulacro Nacional) a cada 19 de setembro e rigorosos códigos de construção estrutural continuamente atualizados e adaptados para solos de leito de lago macios.",
+        "cart-badge-sub":
+            "1832–1912",
 
-        "vert-title-4": "Principais Cadeias de Montanhas",
-        "exp-title-4": "Principales Cadeias de Montanhas",
-        "exp-desc-4": "Viaje pelas escarpadas cadeias do México, de Barrancas del Cobre aos altos picos vulcânicos, moldando climas, culturas e rotas comerciais únicos.",
-        "read-more-4": "Leia Mais",
-        "tpl-4-p1": "<strong>Visão Geral:</strong> As cadeias de montanhas criam efeitos de sombra orográfica, mantendo seco o planalto centro-norte, enquanto retêm a umidade nas encostas costeiras. Historicamente, essas cordilheiras íngremes atuaram como barreiras ao comércio e à conquista militar, preservando culturas indígenas isoladas como os Rarámuri no norte e os Zapotecas no sul. Hoje, o comércio exige complexas rodovias nas montanhas e pontes conectando as cidades do interior aos portos costeiros.",
-        "tpl-4-li1": "<strong>Sierra Madre Ocidental:</strong> Alto planalto vulcânico composto por riólito e ignimbrito, cortado por desfiladeiros profundos como as Barrancas del Cobre.",
-        "tpl-4-li2": "<strong>Sierra Madre Oriental:</strong> Cadeia calcária sedimentar dobrada que desce ao longo da costa leste do país.",
-        "tpl-4-li3": "<strong>Eixo Vulcânico Transversal:</strong> Uma cadeia vulcânica ativa de leste a oeste que abriga os picos mais altos do México, incluindo o Pico de Orizaba (5.636 m) e Popocatépetl (5.426 m).",
-        "tpl-4-li4": "<strong>Sierra Madre del Sur:</strong> Terreno montanhoso metamórfico que margeia a costa sul do Pacífico.",
+        "cart-label":
+            "Influência Proeminente",
 
-        "vert-title-5": "Vulcões do México",
-        "exp-title-5": "Vulcões do México",
-        "exp-desc-5": "Explore picos icônicos como Popocatépetl e Parícutin, onde o poder vulcânico enriquece o solo para a agricultura, ao mesmo tempo que apresenta constantes perigos eruptivos.",
-        "read-more-5": "Leia Mais",
-        "tpl-5-p1": "<strong>Visão Geral:</strong> As cinzas vulcânicas degradam-se em solos vulcânicos ricos (Andisols), criando terras férteis para culturas como o agave azul, o abacate e o café. Embora os vulcões ativos apoiem as economias agrícolas e o geoturismo, eles representam ameaças constantes de fluxos piroclásticos, fluxos de lama (lahars) e nuvens de cinzas que perturbam a aviação.",
-        "tpl-5-li1": "<strong>Popocatépetl:</strong> Estratovulcão composto ativo (~70 km da Cidade do México) conhecido por plumas de cinzas e atividade piroclástica explosiva.",
-        "tpl-5-li2": "<strong>Parícutin:</strong> Cone de cinzas monogenético em Michoacán que emergiu de forma famosa num campo de milho em 1943, crescendo 424 metros de altura e enterrando aldeias próximas sob a lava.",
-        "tpl-5-li3": "<strong>Pico de Orizaba:</strong> Estratovulcão adormecido e o pico mais alto do México, coberto por geleiras de grande altitude.",
-        "tpl-5-li4": "<strong>Vulcán de Colima:</strong> Cúpula de lava altamente ativa e complexo de estratovulcão próximo à costa do Pacífico.",
+        "cart-title":
+            "Antonio García Cubas",
 
-        "overlay-close-top": "✕ Sair do Artigo",
-        "overlay-title-fallback": "Título do Artigo",
-        "overlay-footer-text": "Obrigado por explorar este Artigo.",
-        "overlay-close-bottom": "Sair do Artigo"
+        "cart-bio":
+            "Antonio García Cubas (1832–1912) foi o geógrafo, historiador e cartógrafo mais proeminente do México no século XIX. Nascido na Cidade do México, ele superou a orfandade precoce para estudar geografia no Colegio de San Gregorio e na Escola de Engenheiros, graduando-se com honras como geógrafo profissional. Tornou-se membro fundador da Sociedade Mexicana de Geografia e Estatística e revolucionou a cartografia latino-americana ao introduzir dados rigorosos de levantamento científico e impressão cromolitográfica avançada.",
+
+        "cart-acc-title":
+            "Maiores Realizações Cartográficas:",
+
+        "cart-acc-1":
+            "<strong>Atlas Geográfico, Estadístico e Histórico de la República Mexicana (1858):</strong> Um atlas nacional inovador que fundiu mapas estaduais detalhados com dados estatísticos e históricos abrangentes, estabelecendo uma identidade cartográfica unificada para a jovem república.",
+
+        "cart-acc-2":
+            "<strong>Carta General de la República Mexicana (1863):</strong> Um mapa geral abrangente do país que corrigiu imprecisões topográficas amplamente difundidas encontradas em mapas coloniais e estrangeiros anteriores.",
+
+        "cart-acc-3":
+            "<strong>Atlas Pintoresco e Histórico de los Estados Unidos Mexicanos (1885):</strong> Uma aclamada obra-prima cromolitográfica apresentando mapas culturais, históricos e topográficos vibrantes que conquistaram amplo reconhecimento de sociedades geográficas internacionais."
     }
 };
 
-// --------------------------------------------------------------------------
-// Merge the per-page dictionaries into ONE dictionary per language.
-// (They used to be three `en/es/fr/pt` blocks inside a single object literal:
-//  duplicate keys overwrite each other, so only the last block survived and the
-//  index page had no translations at all.)
-// Each page only contains its own element IDs, so merging is collision-free;
-// changeLanguage() silently skips IDs that don't exist on the current page.
-// --------------------------------------------------------------------------
+// ======================================================
+// Tectonics page translations
+// ======================================================
+const translationsTectonics = {
+en: {
+
+    "page-title":
+        "Bienvenido a México - Tectonics",
+
+    "logo-text":
+        "BIENVENIDO A MEXICO",
+
+    "nav-fundamentals":
+        "MAPS",
+
+    "nav-stats":
+        "TECTONICS",
+
+    "nav-real-cases":
+        "EROSION",
+
+    "nav-about":
+        "ABOUT",
+
+    "nav-take-action":
+        "OCEANS",
+
+    "nav-donations":
+        "CLIMATE",
+
+    "nav-contact":
+        "REFERENCES",
+
+    "hero-title":
+        "Mexico’s Dynamic Earth:<br/><em>Plates, Peaks, and Power</em>",
+
+    "hero-sub":
+        "Explore how subduction zones, volcanic arcs, and rich mineral deposits have shaped the geology, culture, and economy of Mexico.",
+
+    "sidebar-title":
+        "Learn More Here!",
+
+    "sidebar-desc":
+        "Mexico’s landscape is a direct reflection of intense geological activity occurring beneath the surface (USGS, 2020). Positioned at the collision point of five tectonic plates, the region is characterized by active volcanoes, high-magnitude seismic zones, and towering mountain ranges that act as natural walls across the country (Ferrari et al., 2012; USGS, 2020). These same tectonic forces created rich mineral veins that make Mexico a global leader in silver mining, while volcanic ash continues to enrich the soil feeding millions (CAMIMEX, 2021). This page explores the interconnections between Mexico's deep earth dynamics, natural hazards, economic resources, and everyday life (Ferrari et al., 2012).",
+
+    "sidebar-link":
+        "Learn About the Mexican's Maps",
+
+    "vert-title-1":
+        "Tectonic Plates and Natural Disasters",
+
+    "exp-title-1":
+        "Tectonic Plates and Natural Disasters",
+
+    "exp-desc-1":
+        "Discover how five shifting tectonic plates drive Mexico’s dynamic landscape, triggering megathrust earthquakes, active stratovolcanoes, and coastal tsunamis (Ferrari et al., 2012; USGS, 2020).",
+
+    "read-more-1":
+        "Read More",
+
+    "tpl-1-p1":
+        "<strong>Overview:</strong> Mexico sits on five tectonic plates: the North American, Cocos, Rivera, Pacific, and Caribbean plates (USGS, 2020). The oceanic Cocos and Rivera plates actively subduct beneath the continental North American Plate along the Middle America Trench off the Pacific coast at 5 to 6 cm per year (Ferrari et al., 2012; USGS, 2020). Meanwhile, the Gulf of California acts as a transform rift zone sliding northern Baja California northwest (Ferrari et al., 2012).",
+
+    "tpl-1-li1":
+        "<strong>Earthquakes:</strong> Megathrust subduction events along the Pacific coast generate major shaking across central and southern states (SSN, 2020).",
+
+    "tpl-1-li2":
+        "<strong>Volcanism:</strong> Subducting oceanic crust melts at depth, fueling active stratovolcanoes across the central belt (Ferrari et al., 2012).",
+
+    "tpl-1-li3":
+        "<strong>Tsunamis:</strong> Localized tsunamis threaten coastal settlements following off-shore subduction quakes, such as the 1995 Colima tsunami (SSN, 2020).",
+
+    "vert-title-2":
+        "Rock and Mineral Resources",
+
+    "exp-title-2":
+        "Rock and Mineral Resources",
+
+    "exp-desc-2":
+        "Uncover Mexico's rich geological history, yielding over 20% of the world's silver alongside vital copper, gold, and zinc reserves (CAMIMEX, 2021).",
+
+    "read-more-2":
+        "Read More",
+
+    "tpl-2-p1":
+        "<strong>Overview:</strong> A complex tectonic history yields diverse rock formations: Cretaceous limestone in the east, Tertiary volcanic ignimbrites and rhyolites across western plateaus, and ancient metamorphic rocks in the south (Ferrari et al., 2012).",
+
+    "tpl-2-li1":
+        "<strong>Global Silver Leader:</strong> Mexico produces over 20% of the world's silver, alongside substantial reserves of copper, gold, lead, and zinc (CAMIMEX, 2021).",
+
+    "tpl-2-li2":
+        "<strong>Jobs & Exports:</strong> Mining contributes ~2.4% to national GDP and directly employs over 400,000 workers (CAMIMEX, 2021). Major exports go to the United States, China, Japan, and Canada (CAMIMEX, 2021).",
+
+    "tpl-2-li3":
+        "<strong>Challenges:</strong> Mining in arid regions strains local groundwater supplies and creates risks of acid mine drainage, leaving mining-dependent towns vulnerable to global commodity price swings (CAMIMEX, 2021).",
+
+    "vert-title-3":
+        "Earthquakes and Seismic Preparedness",
+
+    "exp-title-3":
+        "Earthquakes and Seismic Preparedness",
+
+    "exp-desc-3":
+        "Explore historic seismic events that reshaped central Mexico and the cutting-edge early warning systems saving lives today (SSN, 2020; Suárez et al., 2018).",
+
+    "read-more-3":
+        "Read More",
+
+    "tpl-3-p1":
+        "<strong>Overview:</strong> Mexico has experienced severe seismic events, notably the September 19, 1985 (M8.0) earthquake where ancient lakebed sediments beneath Mexico City amplified seismic waves, leading to widespread building collapses and over 10,000 casualties (SSN, 2020). On the same day in 2017, an M7.1 intraplate event within the subducting Cocos slab caused significant structural damage in Puebla, Morelos, and Mexico City (SSN, 2020).",
+
+    "tpl-3-li1":
+        "<strong>SASMEX (Early Warning System):</strong> Coastal sensors detect fast-moving primary seismic waves (P-waves) and broadcast radio alerts, granting urban residents 60 to 120 seconds of advance warning before destructive secondary waves (S-waves) arrive (Suárez et al., 2018).",
+
+    "tpl-3-li2":
+        "<strong>Safety Protocols:</strong> Annual nationwide evacuation drills (Simulacro Nacional) every September 19th and strict, continuously updated structural building codes tailored for soft lakebed soils (CENAPRED, 2020; SSN, 2020).",
+
+    "vert-title-4":
+        "Major Mountain Ranges",
+
+    "exp-title-4":
+        "Major Mountain Ranges",
+
+    "exp-desc-4":
+        "Journey across Mexico’s rugged ranges, from Copper Canyon to high volcanic peaks, shaping unique climates, cultures, and trade routes (Ferrari et al., 2012; Lugo-Hubp, 2011).",
+
+    "read-more-4":
+        "Read More",
+
+    "tpl-4-p1":
+        "<strong>Overview:</strong> The mountain ranges create rain-shadow effects, keeping the central northern plateau dry while trapping moisture on coastal slopes (Lugo-Hubp, 2011). Historically, these steep ranges acted as barriers to trade and military conquest, preserving isolated indigenous cultures like the Rarámuri in the north and Zapotec in the south (Lugo-Hubp, 2011). Today, trade requires complex mountain highways and bridges connecting inner cities to coastal ports (INEGI, 2020).",
+
+    "tpl-4-li1":
+        "<strong>Sierra Madre Occidental:</strong> High volcanic plateau composed of rhyolite and ignimbrite, cut by deep canyons like Copper Canyon (Barrancas del Cobre) (Ferrari et al., 2012).",
+
+    "tpl-4-li2":
+        "<strong>Sierra Madre Oriental:</strong> Folded sedimentary limestone range running down the eastern side of the country (Ferrari et al., 2012).",
+
+    "tpl-4-li3":
+        "<strong>Trans-Mexican Volcanic Belt:</strong> An active east-west volcanic chain holding Mexico's highest peaks, including Pico de Orizaba (5,636 m) and Popocatépetl (5,426 m) (Ferrari et al., 2012).",
+
+    "tpl-4-li4":
+        "<strong>Sierra Madre del Sur:</strong> Metamorphic mountain terrain lining the southern Pacific coast (Ferrari et al., 2012).",
+
+    "vert-title-5":
+        "Volcanoes of Mexico",
+
+    "exp-title-5":
+        "Volcanoes of Mexico",
+
+    "exp-desc-5":
+        "Explore iconic peaks like Popocatépetl and Parícutin, where volcanic power enriches soils for agriculture while posing constant eruptive hazards (CENAPRED, 2020; Macías, 2007).",
+
+    "read-more-5":
+        "Read More",
+
+    "tpl-5-p1":
+        "<strong>Overview:</strong> Volcanic ash degrades into rich volcanic soil (Andisols), creating fertile land for crops like blue agave, avocado, and coffee (Macías, 2007). While active volcanoes support agricultural economies and geotourism, they pose constant threats of pyroclastic flows, mudflows (lahars), and aviation-disrupting ash clouds (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li1":
+        "<strong>Popocatépetl:</strong> Active composite stratovolcano (~70 km from Mexico City) known for ash plumes and explosive pyroclastic activity (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li2":
+        "<strong>Parícutin:</strong> Monogenetic cinder cone in Michoacán that famously emerged in a cornfield in 1943, growing 424 meters high and burying nearby villages under lava (Macías, 2007).",
+
+    "tpl-5-li3":
+        "<strong>Pico de Orizaba:</strong> Dormant stratovolcano and Mexico's highest peak, topped by high-altitude glaciers (Cortés & Delgado-Granados, 2015; Macías, 2007).",
+
+    "tpl-5-li4":
+        "<strong>Volcán de Colima:</strong> Highly active lava dome and stratovolcano complex near the Pacific coast (CENAPRED, 2020; Macías, 2007).",
+
+    "overlay-close-top":
+        "✕ Exit Article",
+
+    "overlay-title-fallback":
+        "Article Title",
+
+    "overlay-footer-text":
+        "Thank you for exploring this Article.",
+
+    "overlay-close-bottom":
+        "Exit Article"
+},
+
+es: {
+
+    "page-title":
+        "Bienvenido a México - Tectónica",
+
+    "logo-text":
+        "BIENVENIDO A MEXICO",
+
+    "nav-fundamentals":
+        "MAPAS",
+
+    "nav-stats":
+        "TECTÓNICA",
+
+    "nav-real-cases":
+        "EROSIÓN",
+
+    "nav-about":
+        "ACERCA DE",
+
+    "nav-take-action":
+        "OCÉANOS",
+
+    "nav-donations":
+        "CLIMA",
+
+    "nav-contact":
+        "REFERENCIAS",
+
+    "hero-title":
+        "La Tierra Dinámica de México:<br/><em>Placas, Cumbres y Poder</em>",
+
+    "hero-sub":
+        "Explora cómo las zonas de subducción, los arcos volcánicos y los ricos depósitos minerales han dado forma a la geología, la cultura y la economía de México.",
+
+    "sidebar-title":
+        "¡Aprende Más Aquí!",
+
+    "sidebar-desc":
+        "El paisaje de México es un reflejo directo de la intensa actividad geológica que ocurre debajo de la superficie (USGS, 2020). Situada en el punto de colisión de cinco placas tectónicas, la región se caracteriza por volcanes activos, zonas sísmicas de gran magnitud y enormes cadenas montañosas que actúan como paredes naturales a lo largo del país (Ferrari et al., 2012; USGS, 2020). Estas mismas fuerzas tectónicas crearon ricos depósitos minerales que hacen de México un líder mundial en la minería de plata, mientras que la ceniza volcánica continúa enriqueciendo el suelo que alimenta a millones de personas (CAMIMEX, 2021). Esta página explora las conexiones entre la dinámica profunda de la Tierra en México, los peligros naturales, los recursos económicos y la vida cotidiana (Ferrari et al., 2012).",
+
+    "sidebar-link":
+        "Conoce los Mapas de México",
+
+    "vert-title-1":
+        "Placas Tectónicas y Desastres Naturales",
+
+    "exp-title-1":
+        "Placas Tectónicas y Desastres Naturales",
+
+    "exp-desc-1":
+        "Descubre cómo cinco placas tectónicas en movimiento impulsan el paisaje dinámico de México, provocando terremotos de subducción, estratovolcanes activos y tsunamis costeros (Ferrari et al., 2012; USGS, 2020).",
+
+    "read-more-1":
+        "Leer Más",
+
+    "tpl-1-p1":
+        "<strong>Descripción General:</strong> México se encuentra sobre cinco placas tectónicas: la Norteamericana, Cocos, Rivera, Pacífica y del Caribe (USGS, 2020). Las placas oceánicas de Cocos y Rivera se subducen activamente debajo de la placa continental Norteamericana a lo largo de la Fosa Mesoamericana frente a la costa del Pacífico a una velocidad de 5 a 6 cm por año (Ferrari et al., 2012; USGS, 2020). Mientras tanto, el Golfo de California funciona como una zona de falla transformante que desplaza el norte de Baja California hacia el noroeste (Ferrari et al., 2012).",
+
+    "tpl-1-li1":
+        "<strong>Terremotos:</strong> Los grandes eventos de subducción a lo largo de la costa del Pacífico generan fuertes movimientos del suelo en los estados centrales y del sur (SSN, 2020).",
+
+    "tpl-1-li2":
+        "<strong>Vulcanismo:</strong> La corteza oceánica que se subduce se derrite en profundidad, alimentando volcanes estratovolcánicos activos a lo largo del cinturón central (Ferrari et al., 2012).",
+
+    "tpl-1-li3":
+        "<strong>Tsunamis:</strong> Los tsunamis localizados amenazan a las comunidades costeras después de terremotos de subducción mar adentro, como el tsunami de Colima de 1995 (SSN, 2020).",
+
+    "vert-title-2":
+        "Recursos de Rocas y Minerales",
+
+    "exp-title-2":
+        "Recursos de Rocas y Minerales",
+
+    "exp-desc-2":
+        "Descubre la rica historia geológica de México, que produce más del 20% de la plata mundial junto con importantes reservas de cobre, oro y zinc (CAMIMEX, 2021).",
+
+    "read-more-2":
+        "Leer Más",
+
+    "tpl-2-p1":
+        "<strong>Descripción General:</strong> Una compleja historia tectónica produce diversas formaciones rocosas: caliza del Cretácico en el este, ignimbritas y riolitas volcánicas del Terciario en las mesetas occidentales y antiguas rocas metamórficas en el sur (Ferrari et al., 2012).",
+
+    "tpl-2-li1":
+        "<strong>Líder Mundial en Plata:</strong> México produce más del 20% de la plata mundial, junto con importantes reservas de cobre, oro, plomo y zinc (CAMIMEX, 2021).",
+
+    "tpl-2-li2":
+        "<strong>Empleo y Exportaciones:</strong> La minería contribuye aproximadamente al 2.4% del PIB nacional y emplea directamente a más de 400,000 trabajadores (CAMIMEX, 2021). Las principales exportaciones se dirigen a Estados Unidos, China, Japón y Canadá (CAMIMEX, 2021).",
+
+    "tpl-2-li3":
+        "<strong>Desafíos:</strong> La minería en regiones áridas ejerce presión sobre los suministros locales de agua subterránea y crea riesgos de drenaje ácido de minas, dejando vulnerables a las poblaciones dependientes de la minería ante los cambios en los precios mundiales de las materias primas (CAMIMEX, 2021).",
+
+    "vert-title-3":
+        "Terremotos y Preparación Sísmica",
+
+    "exp-title-3":
+        "Terremotos y Preparación Sísmica",
+
+    "exp-desc-3":
+        "Explora los eventos sísmicos históricos que transformaron el centro de México y los modernos sistemas de alerta temprana que ayudan a salvar vidas actualmente (SSN, 2020; Suárez et al., 2018).",
+
+    "read-more-3":
+        "Leer Más",
+
+    "tpl-3-p1":
+        "<strong>Descripción General:</strong> México ha experimentado fuertes eventos sísmicos, especialmente el terremoto del 19 de septiembre de 1985 (M8.0), cuando los antiguos sedimentos del lecho lacustre bajo la Ciudad de México amplificaron las ondas sísmicas, provocando el colapso generalizado de edificios y más de 10,000 víctimas (SSN, 2020). Ese mismo día de 2017, un evento intraplaca de M7.1 dentro de la placa de Cocos en subducción causó daños estructurales importantes en Puebla, Morelos y la Ciudad de México (SSN, 2020).",
+
+    "tpl-3-li1":
+        "<strong>SASMEX (Sistema de Alerta Temprana):</strong> Sensores costeros detectan las ondas sísmicas primarias de rápido movimiento (ondas P) y transmiten alertas por radio, proporcionando a los residentes urbanos entre 60 y 120 segundos de advertencia antes de que lleguen las destructivas ondas secundarias (ondas S) (Suárez et al., 2018).",
+
+    "tpl-3-li2":
+        "<strong>Protocolos de Seguridad:</strong> Simulacros nacionales de evacuación cada 19 de septiembre y códigos estructurales de construcción estrictos y continuamente actualizados, adaptados a los suelos blandos de antiguos lechos lacustres (CENAPRED, 2020; SSN, 2020).",
+
+    "vert-title-4":
+        "Principales Cadenas Montañosas",
+
+    "exp-title-4":
+        "Principales Cadenas Montañosas",
+
+    "exp-desc-4":
+        "Recorre las escarpadas cadenas montañosas de México, desde las Barrancas del Cobre hasta las altas cumbres volcánicas, que dan forma a climas, culturas y rutas comerciales únicas (Ferrari et al., 2012; Lugo-Hubp, 2011).",
+
+    "read-more-4":
+        "Leer Más",
+
+    "tpl-4-p1":
+        "<strong>Descripción General:</strong> Las cadenas montañosas crean efectos de sombra orográfica, manteniendo seca la meseta central del norte mientras atrapan la humedad en las laderas costeras (Lugo-Hubp, 2011). Históricamente, estas montañas escarpadas actuaron como barreras para el comercio y la conquista militar, preservando culturas indígenas aisladas como los rarámuri en el norte y los zapotecas en el sur (Lugo-Hubp, 2011). Actualmente, el comercio requiere carreteras y puentes de montaña complejos que conectan las ciudades interiores con los puertos costeros (INEGI, 2020).",
+
+    "tpl-4-li1":
+        "<strong>Sierra Madre Occidental:</strong> Meseta volcánica elevada compuesta de riolita e ignimbrita, atravesada por profundos cañones como las Barrancas del Cobre (Ferrari et al., 2012).",
+
+    "tpl-4-li2":
+        "<strong>Sierra Madre Oriental:</strong> Cadena de piedra caliza sedimentaria plegada que recorre el lado oriental del país (Ferrari et al., 2012).",
+
+    "tpl-4-li3":
+        "<strong>Faja Volcánica Transmexicana:</strong> Cadena volcánica activa de este a oeste que alberga las cumbres más altas de México, incluido el Pico de Orizaba (5,636 m) y el Popocatépetl (5,426 m) (Ferrari et al., 2012).",
+
+    "tpl-4-li4":
+        "<strong>Sierra Madre del Sur:</strong> Terreno montañoso metamórfico que bordea la costa sur del Pacífico (Ferrari et al., 2012).",
+
+    "vert-title-5":
+        "Volcanes de México",
+
+    "exp-title-5":
+        "Volcanes de México",
+
+    "exp-desc-5":
+        "Explora cumbres emblemáticas como el Popocatépetl y el Parícutin, donde la actividad volcánica enriquece los suelos para la agricultura mientras representa peligros eruptivos constantes (CENAPRED, 2020; Macías, 2007).",
+
+    "read-more-5":
+        "Leer Más",
+
+    "tpl-5-p1":
+        "<strong>Descripción General:</strong> La ceniza volcánica se degrada y se convierte en suelo volcánico rico (Andisoles), creando tierras fértiles para cultivos como agave azul, aguacate y café (Macías, 2007). Aunque los volcanes activos sostienen las economías agrícolas y el geoturismo, representan amenazas constantes de flujos piroclásticos, lahares y nubes de ceniza que afectan la aviación (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li1":
+        "<strong>Popocatépetl:</strong> Estratovolcán compuesto activo, ubicado aproximadamente a 70 km de la Ciudad de México, conocido por sus columnas de ceniza y actividad piroclástica explosiva (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li2":
+        "<strong>Parícutin:</strong> Cono de ceniza monogenético en Michoacán que apareció de manera famosa en un campo de maíz en 1943, creciendo hasta 424 metros de altura y sepultando pueblos cercanos bajo lava (Macías, 2007).",
+
+    "tpl-5-li3":
+        "<strong>Pico de Orizaba:</strong> Estratovolcán inactivo y la cumbre más alta de México, coronada por glaciares de gran altitud (Cortés & Delgado-Granados, 2015; Macías, 2007).",
+
+    "tpl-5-li4":
+        "<strong>Volcán de Colima:</strong> Complejo de domo de lava y estratovolcán altamente activo cerca de la costa del Pacífico (CENAPRED, 2020; Macías, 2007).",
+
+    "overlay-close-top":
+        "✕ Salir del Artículo",
+
+    "overlay-title-fallback":
+        "Título del Artículo",
+
+    "overlay-footer-text":
+        "Gracias por explorar este artículo.",
+
+    "overlay-close-bottom":
+        "Salir del Artículo"
+},
+
+fr: {
+
+    "page-title":
+        "Bienvenido a México - Tectonique",
+
+    "logo-text":
+        "BIENVENIDO A MEXICO",
+
+    "nav-fundamentals":
+        "CARTES",
+
+    "nav-stats":
+        "TECTONIQUE",
+
+    "nav-real-cases":
+        "ÉROSION",
+
+    "nav-about":
+        "À PROPOS",
+
+    "nav-take-action":
+        "OCÉANS",
+
+    "nav-donations":
+        "CLIMAT",
+
+    "nav-contact":
+        "RÉFÉRENCES",
+
+    "hero-title":
+        "La Terre Dynamique du Mexique :<br/><em>Plaques, Sommets et Puissance</em>",
+
+    "hero-sub":
+        "Explorez comment les zones de subduction, les arcs volcaniques et les riches gisements minéraux ont façonné la géologie, la culture et l’économie du Mexique.",
+
+    "sidebar-title":
+        "Apprenez-en Plus Ici !",
+
+    "sidebar-desc":
+        "Le paysage du Mexique est le reflet direct de l’intense activité géologique qui se déroule sous la surface (USGS, 2020). Située au point de collision de cinq plaques tectoniques, la région se caractérise par des volcans actifs, des zones sismiques de forte magnitude et d’imposantes chaînes de montagnes qui agissent comme des murs naturels à travers le pays (Ferrari et al., 2012 ; USGS, 2020). Ces mêmes forces tectoniques ont créé de riches filons minéraux qui font du Mexique un leader mondial de l’exploitation de l’argent, tandis que les cendres volcaniques continuent d’enrichir les sols qui nourrissent des millions de personnes (CAMIMEX, 2021). Cette page explore les liens entre la dynamique profonde de la Terre au Mexique, les risques naturels, les ressources économiques et la vie quotidienne (Ferrari et al., 2012).",
+
+    "sidebar-link":
+        "Découvrez les Cartes du Mexique",
+
+    "vert-title-1":
+        "Plaques Tectoniques et Catastrophes Naturelles",
+
+    "exp-title-1":
+        "Plaques Tectoniques et Catastrophes Naturelles",
+
+    "exp-desc-1":
+        "Découvrez comment cinq plaques tectoniques en mouvement façonnent le paysage dynamique du Mexique, provoquant des séismes de subduction, des stratovolcans actifs et des tsunamis côtiers (Ferrari et al., 2012 ; USGS, 2020).",
+
+    "read-more-1":
+        "Lire Plus",
+
+    "tpl-1-p1":
+        "<strong>Vue d’ensemble :</strong> Le Mexique repose sur cinq plaques tectoniques : nord-américaine, Cocos, Rivera, pacifique et caraïbe (USGS, 2020). Les plaques océaniques de Cocos et Rivera plongent activement sous la plaque continentale nord-américaine le long de la fosse méso-américaine au large de la côte pacifique à raison de 5 à 6 cm par an (Ferrari et al., 2012 ; USGS, 2020). Pendant ce temps, le golfe de Californie agit comme une zone de rift transformante faisant glisser le nord de la Basse-Californie vers le nord-ouest (Ferrari et al., 2012).",
+
+    "tpl-1-li1":
+        "<strong>Séismes :</strong> Les grands événements de subduction le long de la côte pacifique génèrent de fortes secousses dans les États du centre et du sud (SSN, 2020).",
+
+    "tpl-1-li2":
+        "<strong>Volcanisme :</strong> La croûte océanique en subduction fond en profondeur, alimentant des stratovolcans actifs à travers la ceinture centrale (Ferrari et al., 2012).",
+
+    "tpl-1-li3":
+        "<strong>Tsunamis :</strong> Des tsunamis localisés menacent les communautés côtières après des séismes de subduction au large, comme le tsunami de Colima de 1995 (SSN, 2020).",
+
+    "vert-title-2":
+        "Ressources en Roches et Minéraux",
+
+    "exp-title-2":
+        "Ressources en Roches et Minéraux",
+
+    "exp-desc-2":
+        "Découvrez la riche histoire géologique du Mexique, qui produit plus de 20 % de l’argent mondial ainsi que d’importantes réserves de cuivre, d’or et de zinc (CAMIMEX, 2021).",
+
+    "read-more-2":
+        "Lire Plus",
+
+    "tpl-2-p1":
+        "<strong>Vue d’ensemble :</strong> Une histoire tectonique complexe produit diverses formations rocheuses : calcaires du Crétacé à l’est, ignimbrites et rhyolites volcaniques du Tertiaire sur les plateaux occidentaux et roches métamorphiques anciennes au sud (Ferrari et al., 2012).",
+
+    "tpl-2-li1":
+        "<strong>Leader Mondial de l’Argent :</strong> Le Mexique produit plus de 20 % de l’argent mondial, ainsi que d’importantes réserves de cuivre, d’or, de plomb et de zinc (CAMIMEX, 2021).",
+
+    "tpl-2-li2":
+        "<strong>Emplois et Exportations :</strong> L’exploitation minière contribue à environ 2,4 % du PIB national et emploie directement plus de 400 000 travailleurs (CAMIMEX, 2021). Les principales exportations sont destinées aux États-Unis, à la Chine, au Japon et au Canada (CAMIMEX, 2021).",
+
+    "tpl-2-li3":
+        "<strong>Défis :</strong> L’exploitation minière dans les régions arides exerce une pression sur les réserves locales d’eaux souterraines et crée des risques de drainage minier acide, rendant les villes dépendantes de l’exploitation minière vulnérables aux fluctuations mondiales des prix des matières premières (CAMIMEX, 2021).",
+
+    "vert-title-3":
+        "Séismes et Préparation Sismique",
+
+    "exp-title-3":
+        "Séismes et Préparation Sismique",
+
+    "exp-desc-3":
+        "Explorez les événements sismiques historiques qui ont remodelé le centre du Mexique et les systèmes modernes d’alerte précoce qui sauvent des vies aujourd’hui (SSN, 2020 ; Suárez et al., 2018).",
+
+    "read-more-3":
+        "Lire Plus",
+
+    "tpl-3-p1":
+        "<strong>Vue d’ensemble :</strong> Le Mexique a connu de graves événements sismiques, notamment le séisme du 19 septembre 1985 (M8,0), lorsque les anciens sédiments lacustres sous Mexico ont amplifié les ondes sismiques, provoquant l’effondrement de nombreux bâtiments et plus de 10 000 victimes (SSN, 2020). Le même jour en 2017, un événement intraplaque de M7,1 au sein de la plaque de Cocos en subduction a causé d’importants dommages structurels à Puebla, Morelos et Mexico (SSN, 2020).",
+
+    "tpl-3-li1":
+        "<strong>SASMEX (Système d’Alerte Précoce) :</strong> Des capteurs côtiers détectent les ondes sismiques primaires rapides (ondes P) et diffusent des alertes radio, accordant aux habitants urbains 60 à 120 secondes d’avertissement avant l’arrivée des ondes secondaires destructrices (ondes S) (Suárez et al., 2018).",
+
+    "tpl-3-li2":
+        "<strong>Protocoles de Sécurité :</strong> Des exercices nationaux d’évacuation chaque 19 septembre et des codes de construction structurelle stricts et continuellement mis à jour, adaptés aux sols meubles des anciens bassins lacustres (CENAPRED, 2020 ; SSN, 2020).",
+
+    "vert-title-4":
+        "Principales Chaînes de Montagnes",
+
+    "exp-title-4":
+        "Principales Chaînes de Montagnes",
+
+    "exp-desc-4":
+        "Parcourez les chaînes montagneuses accidentées du Mexique, du Copper Canyon aux hauts sommets volcaniques, qui façonnent des climats, des cultures et des routes commerciales uniques (Ferrari et al., 2012 ; Lugo-Hubp, 2011).",
+
+    "read-more-4":
+        "Lire Plus",
+
+    "tpl-4-p1":
+        "<strong>Vue d’ensemble :</strong> Les chaînes de montagnes créent des effets d’ombre pluviométrique, maintenant sec le plateau central nord tout en retenant l’humidité sur les pentes côtières (Lugo-Hubp, 2011). Historiquement, ces chaînes escarpées ont constitué des barrières au commerce et aux conquêtes militaires, préservant des cultures autochtones isolées comme les Rarámuri au nord et les Zapotèques au sud (Lugo-Hubp, 2011). Aujourd’hui, le commerce nécessite des autoroutes et des ponts de montagne complexes reliant les villes intérieures aux ports côtiers (INEGI, 2020).",
+
+    "tpl-4-li1":
+        "<strong>Sierra Madre Occidental :</strong> Haut plateau volcanique composé de rhyolite et d’ignimbrite, entaillé de profonds canyons comme le Copper Canyon (Barrancas del Cobre) (Ferrari et al., 2012).",
+
+    "tpl-4-li2":
+        "<strong>Sierra Madre Oriental :</strong> Chaîne de calcaires sédimentaires plissés longeant la partie orientale du pays (Ferrari et al., 2012).",
+
+    "tpl-4-li3":
+        "<strong>Ceinture Volcanique Transmexicaine :</strong> Chaîne volcanique active d’est en ouest abritant les plus hauts sommets du Mexique, notamment le Pico de Orizaba (5 636 m) et le Popocatépetl (5 426 m) (Ferrari et al., 2012).",
+
+    "tpl-4-li4":
+        "<strong>Sierra Madre del Sur :</strong> Terrain montagneux métamorphique longeant la côte sud du Pacifique (Ferrari et al., 2012).",
+
+    "vert-title-5":
+        "Volcans du Mexique",
+
+    "exp-title-5":
+        "Volcans du Mexique",
+
+    "exp-desc-5":
+        "Explorez des sommets emblématiques comme le Popocatépetl et le Parícutin, où la puissance volcanique enrichit les sols agricoles tout en présentant des dangers éruptifs constants (CENAPRED, 2020 ; Macías, 2007).",
+
+    "read-more-5":
+        "Lire Plus",
+
+    "tpl-5-p1":
+        "<strong>Vue d’ensemble :</strong> Les cendres volcaniques se dégradent en sols volcaniques riches (Andisols), créant des terres fertiles pour des cultures comme l’agave bleu, l’avocat et le café (Macías, 2007). Bien que les volcans actifs soutiennent les économies agricoles et le géotourisme, ils présentent des menaces constantes de coulées pyroclastiques, de lahars et de nuages de cendres perturbant l’aviation (CENAPRED, 2020 ; Macías, 2007).",
+
+    "tpl-5-li1":
+        "<strong>Popocatépetl :</strong> Stratovolcan composite actif situé à environ 70 km de Mexico, connu pour ses panaches de cendres et son activité pyroclastique explosive (CENAPRED, 2020 ; Macías, 2007).",
+
+    "tpl-5-li2":
+        "<strong>Parícutin :</strong> Cône de scories monogénétique dans le Michoacán qui est célèbre pour être apparu dans un champ de maïs en 1943, atteignant 424 mètres de hauteur et ensevelissant des villages voisins sous la lave (Macías, 2007).",
+
+    "tpl-5-li3":
+        "<strong>Pico de Orizaba :</strong> Stratovolcan dormant et plus haut sommet du Mexique, couronné de glaciers d’altitude (Cortés & Delgado-Granados, 2015 ; Macías, 2007).",
+
+    "tpl-5-li4":
+        "<strong>Volcán de Colima :</strong> Complexe de dôme de lave et de stratovolcan très actif près de la côte pacifique (CENAPRED, 2020 ; Macías, 2007).",
+
+    "overlay-close-top":
+        "✕ Quitter l’Article",
+
+    "overlay-title-fallback":
+        "Titre de l’Article",
+
+    "overlay-footer-text":
+        "Merci d’avoir exploré cet article.",
+
+    "overlay-close-bottom":
+        "Quitter l’Article"
+},
+
+pt: {
+
+    "page-title":
+        "Bienvenido a México - Tectônica",
+
+    "logo-text":
+        "BIENVENIDO A MEXICO",
+
+    "nav-fundamentals":
+        "MAPAS",
+
+    "nav-stats":
+        "TECTÔNICA",
+
+    "nav-real-cases":
+        "EROSÃO",
+
+    "nav-about":
+        "SOBRE",
+
+    "nav-take-action":
+        "OCEANOS",
+
+    "nav-donations":
+        "CLIMA",
+
+    "nav-contact":
+        "REFERÊNCIAS",
+
+    "hero-title":
+        "A Terra Dinâmica do México:<br/><em>Placas, Picos e Poder</em>",
+
+    "hero-sub":
+        "Explore como as zonas de subducção, os arcos vulcânicos e os ricos depósitos minerais moldaram a geologia, a cultura e a economia do México.",
+
+    "sidebar-title":
+        "Aprenda Mais Aqui!",
+
+    "sidebar-desc":
+        "A paisagem do México é um reflexo direto da intensa atividade geológica que ocorre abaixo da superfície (USGS, 2020). Localizada no ponto de colisão de cinco placas tectônicas, a região é caracterizada por vulcões ativos, zonas sísmicas de alta magnitude e imensas cadeias montanhosas que funcionam como paredes naturais ao longo do país (Ferrari et al., 2012; USGS, 2020). Essas mesmas forças tectônicas criaram ricos veios minerais que fazem do México um líder mundial na mineração de prata, enquanto as cinzas vulcânicas continuam enriquecendo o solo que alimenta milhões de pessoas (CAMIMEX, 2021). Esta página explora as conexões entre a dinâmica profunda da Terra no México, os riscos naturais, os recursos econômicos e a vida cotidiana (Ferrari et al., 2012).",
+
+    "sidebar-link":
+        "Conheça os Mapas do México",
+
+    "vert-title-1":
+        "Placas Tectônicas e Desastres Naturais",
+
+    "exp-title-1":
+        "Placas Tectônicas e Desastres Naturais",
+
+    "exp-desc-1":
+        "Descubra como cinco placas tectônicas em movimento impulsionam a paisagem dinâmica do México, provocando terremotos de megassubducção, estratovulcões ativos e tsunamis costeiros (Ferrari et al., 2012; USGS, 2020).",
+
+    "read-more-1":
+        "Ler Mais",
+
+    "tpl-1-p1":
+        "<strong>Visão Geral:</strong> O México está sobre cinco placas tectônicas: Norte-Americana, Cocos, Rivera, Pacífica e Caribenha (USGS, 2020). As placas oceânicas de Cocos e Rivera sofrem subducção ativa sob a placa continental Norte-Americana ao longo da Fossa Mesoamericana, na costa do Pacífico, a uma velocidade de 5 a 6 cm por ano (Ferrari et al., 2012; USGS, 2020). Enquanto isso, o Golfo da Califórnia funciona como uma zona de rifte transformante que desloca o norte da Baixa Califórnia para noroeste (Ferrari et al., 2012).",
+
+    "tpl-1-li1":
+        "<strong>Terremotos:</strong> Grandes eventos de subducção ao longo da costa do Pacífico geram fortes tremores nos estados centrais e do sul (SSN, 2020).",
+
+    "tpl-1-li2":
+        "<strong>Vulcanismo:</strong> A crosta oceânica em subducção derrete em profundidade, alimentando estratovulcões ativos ao longo do cinturão central (Ferrari et al., 2012).",
+
+    "tpl-1-li3":
+        "<strong>Tsunamis:</strong> Tsunamis localizados ameaçam comunidades costeiras após terremotos de subducção offshore, como o tsunami de Colima de 1995 (SSN, 2020).",
+
+    "vert-title-2":
+        "Recursos de Rochas e Minerais",
+
+    "exp-title-2":
+        "Recursos de Rochas e Minerais",
+
+    "exp-desc-2":
+        "Descubra a rica história geológica do México, que produz mais de 20% da prata mundial, além de importantes reservas de cobre, ouro e zinco (CAMIMEX, 2021).",
+
+    "read-more-2":
+        "Ler Mais",
+
+    "tpl-2-p1":
+        "<strong>Visão Geral:</strong> Uma história tectônica complexa produz diversas formações rochosas: calcário do Cretáceo no leste, ignimbritos e riolitos vulcânicos do Terciário nos planaltos ocidentais e antigas rochas metamórficas no sul (Ferrari et al., 2012).",
+
+    "tpl-2-li1":
+        "<strong>Líder Mundial em Prata:</strong> O México produz mais de 20% da prata mundial, juntamente com reservas significativas de cobre, ouro, chumbo e zinco (CAMIMEX, 2021).",
+
+    "tpl-2-li2":
+        "<strong>Empregos e Exportações:</strong> A mineração contribui com aproximadamente 2,4% do PIB nacional e emprega diretamente mais de 400.000 trabalhadores (CAMIMEX, 2021). As principais exportações vão para os Estados Unidos, China, Japão e Canadá (CAMIMEX, 2021).",
+
+    "tpl-2-li3":
+        "<strong>Desafios:</strong> A mineração em regiões áridas sobrecarrega os recursos locais de águas subterrâneas e cria riscos de drenagem ácida de minas, deixando cidades dependentes da mineração vulneráveis às oscilações dos preços globais das commodities (CAMIMEX, 2021).",
+
+    "vert-title-3":
+        "Terremotos e Preparação Sísmica",
+
+    "exp-title-3":
+        "Terremotos e Preparação Sísmica",
+
+    "exp-desc-3":
+        "Explore eventos sísmicos históricos que transformaram o centro do México e os modernos sistemas de alerta precoce que salvam vidas atualmente (SSN, 2020; Suárez et al., 2018).",
+
+    "read-more-3":
+        "Ler Mais",
+
+    "tpl-3-p1":
+        "<strong>Visão Geral:</strong> O México passou por graves eventos sísmicos, especialmente o terremoto de 19 de setembro de 1985 (M8,0), quando antigos sedimentos do leito lacustre sob a Cidade do México amplificaram as ondas sísmicas, provocando o colapso generalizado de edifícios e mais de 10.000 vítimas (SSN, 2020). No mesmo dia de 2017, um evento intraplaca de M7,1 dentro da placa de Cocos em subducção causou danos estruturais significativos em Puebla, Morelos e Cidade do México (SSN, 2020).",
+
+    "tpl-3-li1":
+        "<strong>SASMEX (Sistema de Alerta Antecipado):</strong> Sensores costeiros detectam ondas sísmicas primárias rápidas (ondas P) e transmitem alertas por rádio, concedendo aos moradores urbanos de 60 a 120 segundos de aviso antes da chegada das ondas secundárias destrutivas (ondas S) (Suárez et al., 2018).",
+
+    "tpl-3-li2":
+        "<strong>Protocolos de Segurança:</strong> Simulados nacionais de evacuação realizados todos os anos em 19 de setembro e códigos estruturais de construção rigorosos e continuamente atualizados, adaptados aos solos moles dos antigos leitos lacustres (CENAPRED, 2020; SSN, 2020).",
+
+    "vert-title-4":
+        "Principais Cadeias Montanhosas",
+
+    "exp-title-4":
+        "Principais Cadeias Montanhosas",
+
+    "exp-desc-4":
+        "Viaje pelas acidentadas cadeias montanhosas do México, desde o Copper Canyon até os altos picos vulcânicos, moldando climas, culturas e rotas comerciais únicas (Ferrari et al., 2012; Lugo-Hubp, 2011).",
+
+    "read-more-4":
+        "Ler Mais",
+
+    "tpl-4-p1":
+        "<strong>Visão Geral:</strong> As cadeias montanhosas criam efeitos de sombra de chuva, mantendo seco o planalto central do norte enquanto retêm umidade nas encostas costeiras (Lugo-Hubp, 2011). Historicamente, essas cadeias íngremes funcionaram como barreiras ao comércio e à conquista militar, preservando culturas indígenas isoladas como os Rarámuri no norte e os Zapotecas no sul (Lugo-Hubp, 2011). Hoje, o comércio exige rodovias e pontes montanhosas complexas conectando cidades do interior aos portos costeiros (INEGI, 2020).",
+
+    "tpl-4-li1":
+        "<strong>Sierra Madre Occidental:</strong> Alto planalto vulcânico composto por riolito e ignimbrito, cortado por profundos cânions como o Copper Canyon (Barrancas del Cobre) (Ferrari et al., 2012).",
+
+    "tpl-4-li2":
+        "<strong>Sierra Madre Oriental:</strong> Cadeia de calcário sedimentar dobrado que percorre o lado oriental do país (Ferrari et al., 2012).",
+
+    "tpl-4-li3":
+        "<strong>Cinturão Vulcânico Transmexicano:</strong> Cadeia vulcânica ativa de leste a oeste que abriga os picos mais altos do México, incluindo o Pico de Orizaba (5.636 m) e o Popocatépetl (5.426 m) (Ferrari et al., 2012).",
+
+    "tpl-4-li4":
+        "<strong>Sierra Madre del Sur:</strong> Terreno montanhoso metamórfico que acompanha a costa sul do Pacífico (Ferrari et al., 2012).",
+
+    "vert-title-5":
+        "Vulcões do México",
+
+    "exp-title-5":
+        "Vulcões do México",
+
+    "exp-desc-5":
+        "Explore picos icônicos como Popocatépetl e Parícutin, onde o poder vulcânico enriquece os solos agrícolas enquanto representa perigos eruptivos constantes (CENAPRED, 2020; Macías, 2007).",
+
+    "read-more-5":
+        "Ler Mais",
+
+    "tpl-5-p1":
+        "<strong>Visão Geral:</strong> As cinzas vulcânicas se degradam em solo vulcânico rico (Andissolos), criando terras férteis para culturas como agave azul, abacate e café (Macías, 2007). Embora os vulcões ativos apoiem economias agrícolas e o geoturismo, eles apresentam ameaças constantes de fluxos piroclásticos, lahars e nuvens de cinzas que prejudicam a aviação (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li1":
+        "<strong>Popocatépetl:</strong> Estratovulcão composto ativo localizado a aproximadamente 70 km da Cidade do México, conhecido por suas plumas de cinzas e atividade piroclástica explosiva (CENAPRED, 2020; Macías, 2007).",
+
+    "tpl-5-li2":
+        "<strong>Parícutin:</strong> Cone de escórias monogenético em Michoacán que surgiu de forma famosa em um campo de milho em 1943, crescendo 424 metros de altura e soterrando vilas próximas sob lava (Macías, 2007).",
+
+    "tpl-5-li3":
+        "<strong>Pico de Orizaba:</strong> Estratovulcão dormente e pico mais alto do México, coberto por geleiras de alta altitude (Cortés & Delgado-Granados, 2015; Macías, 2007).",
+
+    "tpl-5-li4":
+        "<strong>Volcán de Colima:</strong> Complexo altamente ativo de domo de lava e estratovulcão próximo à costa do Pacífico (CENAPRED, 2020; Macías, 2007).",
+
+    "overlay-close-top":
+        "✕ Sair do Artigo",
+
+    "overlay-title-fallback":
+        "Título do Artigo",
+
+    "overlay-footer-text":
+        "Obrigado por explorar este artigo.",
+
+    "overlay-close-bottom":
+        "Sair do Artigo"
+}
+};
+
+const translationsErosion = {
+    en: {
+        pageTitle: "Erosion & Earth Processes - Bienvenido a México",
+
+        navLogo: "BIENVENIDO A MEXICO",
+        navFundamentals: "MAPS",
+        navStats: "TECTONICS",
+        navRealCases: "EROSION",
+        navAbout: "ABOUT",
+        navTakeAction: "OCEANS",
+        navDonations: "CLIMATE",
+        navContact: "REFERENCES",
+
+        languageButton: "Toggle Language",
+        languageImageAlt: "Language Selector",
+
+        themeLight: "Switch to Light Mode",
+        themeDark: "Switch to Dark Mode",
+        themeIconAlt: "Toggle Theme Layout",
+
+        musicIconAlt: "Music Icon",
+        audioFallback: "Your browser does not support the audio element.",
+        heroTitlePart1: "<em>Sculpting Mexico: </em>",
+        heroTitlePart2: "Erosion, Weathering,",
+        heroTitlePart3: "and Deserts",
+        introTitle: "A Land Shaped by Elements",
+
+        introText:
+            "Mexico’s dramatically diverse topography is a masterpiece carved by relentless exogenous processes (Lugo-Hubp, 2011). From the arid deserts of the north to the humid, tropical jungles of the south, the forces of weathering, mass wasting, and erosion continuously redefine the nation's economic, social, and physical landscapes (Lugo-Hubp, 2011).",
+
+        introVideoTitle:
+            "YouTube video player",
+
+        introVideoDescription:
+            "<em>Video: Exploring the physical geography, climate zones, and dramatic topography of Mexico.</em>",
+        section1BadgeTitle:
+            "Carbonation & Landslides",
+
+        section1BadgeSubtitle:
+            "Yucatán & Puebla",
+
+        section1Label:
+            "GEOLOGIC HAZARDS",
+
+        section1Title:
+            "Weathering & Mass Wasting",
+
+        section1Paragraph1:
+            "<strong>Chemical Weathering:</strong> In the Yucatán Peninsula, extensive limestone bedrock experiences intense <em>carbonation</em>, a chemical weathering process where acidic rainwater dissolves the rock (Lugo-Hubp, 2011). This creates a vast karst topography featuring underground rivers and iconic sinkholes known as <em>cenotes</em> (Lugo-Hubp, 2011).",
+
+        section1Paragraph2:
+            "<strong>Mass Wasting:</strong> The steep, mountainous terrains of the Sierra Madre and heavy seasonal rains make Mexico highly susceptible to landslides (CENAPRED, 2020). A tragic example is the <strong>1999 Teziutlán landslide</strong> in Puebla, triggered by extreme rainfall, which buried neighborhoods and claimed over 250 lives (CENAPRED, 2020).",
+
+        section1Paragraph3:
+            "<strong>Government Action:</strong> To mitigate these risks, the Mexican government utilizes <strong>CENAPRED</strong> (National Center for Disaster Prevention) (CENAPRED, 2020). They developed the <em>National Risk Atlas</em> to map vulnerable slopes and implement early warning systems to evacuate communities before heavy storms hit (CENAPRED, 2020).",
+
+        section1Tag1: "Carbonation",
+        section1Tag2: "Landslides",
+        section1Tag3: "CENAPRED",
+        section2BadgeTitle:
+            "Usumacinta River",
+
+        section2BadgeSubtitle:
+            "Tabasco / Guatemala Border",
+
+        section2Label:
+            "HYDROLOGY",
+
+        section2Title:
+            "Water Erosion: The Mighty Rivers",
+
+        section2Paragraph1:
+            "While local splash or sheet erosion impacts localized farming, major river systems severely impact regional economies (CONAGUA, 2021). The <strong>Usumacinta River</strong> is Mexico's largest by discharge volume (CONAGUA, 2021).",
+
+        section2List1:
+            "<strong>Source & Length:</strong> Originating in the Guatemalan Highlands, it flows roughly 1,000 km (CONAGUA, 2021).",
+
+        section2List2:
+            "<strong>Discharge & Estuary:</strong> Discharging around 1,700 m³/s, it eventually merges with the Grijalva River, forming a massive delta that empties into the Gulf of Mexico (CONAGUA, 2021).",
+
+        section2List3:
+            "<strong>Channel Type:</strong> As it reaches the flat plains of Tabasco, it features a highly <strong>meandering channel</strong> (CONAGUA, 2021).",
+
+        section2Paragraph2:
+            "<strong>Socio-Economic Impacts:</strong> The meandering and lateral erosion constantly shifts property boundaries, destroys fertile agricultural land along the cut banks, and poses severe flood risks to communities in Tabasco (CONAGUA, 2021).",
+
+        section2Paragraph3:
+            "<strong>Government Action:</strong> <strong>CONAGUA</strong> (National Water Commission) combats streambank erosion and flooding by dredging the riverbeds, constructing levees, and installing riprap (rock armor) to stabilize vulnerable outer meander bends (CONAGUA, 2021).",
+        section3BadgeTitle:
+            "Arid Landscapes",
+
+        section3BadgeSubtitle:
+            "Sonoran & Chihuahuan",
+
+        section3Label:
+            "ARID CLIMATES",
+
+        section3Title:
+            "Wind Erosion & Desertification",
+
+        section3Paragraph1:
+            "<strong>Wind Erosion:</strong> Mexico experiences severe wind erosion, particularly in its arid northern states, stripping valuable topsoil and reducing agricultural productivity (UNCCD, 2019). The government agency <strong>CONAFOR</strong> (National Forestry Commission) mitigates this by planting windbreaks and supporting reforestation initiatives (UNCCD, 2019).",
+
+        section3Paragraph2:
+            "<strong>Major Deserts:</strong> Deserts drastically limit water availability and dictate agriculture in the north (UNCCD, 2019).",
+
+        section3List1:
+            "<strong>Sonoran Desert:</strong> Features sprawling sand seas known as <em>ergs</em> (like the Gran Desierto de Altar) alongside iconic Saguaro cacti (Lugo-Hubp, 2011).",
+
+        section3List2:
+            "<strong>Chihuahuan Desert:</strong> The largest in North America, dominated by a <em>reg</em> landscape (gravel-covered plains) and rocky plateaus (<em>hamadas</em>), covered in tough scrubland (Lugo-Hubp, 2011).",
+
+        section3Paragraph3:
+            "<strong>Desertification:</strong> Yes, desertification is a severe and growing problem (UNCCD, 2019). Over 60% of Mexico's land is considered degraded due to overgrazing, deforestation, and climate change, threatening food security and pushing rural populations toward urban migration (UNCCD, 2019).",
+        section4BadgeTitle:
+            "Pico de Orizaba",
+
+        section4BadgeSubtitle:
+            "Jamapa Glacier",
+
+        section4Label:
+            "CRYOSPHERE",
+
+        section4Title:
+            "The Last Glaciers of Mexico",
+
+        section4Paragraph1:
+            "Though associated with warm climates, Mexico's highest volcanic peaks were historically heavily glaciated (Cortés & Delgado-Granados, 2015). Today, they are retreating at alarming rates (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph2:
+            "<strong>Current & Ancient Influence:</strong> Ancient Pleistocene glaciers carved distinct features like U-shaped valleys, moraines, and cirques into peaks like Iztaccíhuatl and Popocatépetl (Cortés & Delgado-Granados, 2015). Today, the only significant surviving glacier is the <strong>Jamapa Glacier</strong> on Pico de Orizaba (Citlaltépetl) (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph3:
+            "<strong>Impact of Remaining Features:</strong> These glaciers serve as vital freshwater reservoirs during dry seasons for downstream communities and agricultural sectors in Veracruz and Puebla (Cortés & Delgado-Granados, 2015). However, due to global climate change and recent volcanic activity (which eradicated Popocatépetl's glaciers in the early 2000s), their rapid disappearance presents a looming crisis for regional water security (Cortés & Delgado-Granados, 2015).",
+
+        section4Tag1:
+            "Pico de Orizaba",
+
+        section4Tag2:
+            "Jamapa Glacier",
+
+        section4Tag3:
+            "Freshwater Supply"
+    },
+
+    es: {
+        pageTitle:
+            "Erosión y Procesos de la Tierra - Bienvenido a México",
+
+        navLogo:
+            "BIENVENIDO A MEXICO",
+
+        navFundamentals:
+            "MAPAS",
+
+        navStats:
+            "TECTÓNICA",
+
+        navRealCases:
+            "EROSIÓN",
+
+        navAbout:
+            "ACERCA DE",
+
+        navTakeAction:
+            "OCÉANOS",
+
+        navDonations:
+            "CLIMA",
+
+        navContact:
+            "REFERENCIAS",
+
+        languageButton:
+            "Cambiar Idioma",
+
+        languageImageAlt:
+            "Selector de Idioma",
+
+        themeLight:
+            "Cambiar al Modo Claro",
+
+        themeDark:
+            "Cambiar al Modo Oscuro",
+
+        themeIconAlt:
+            "Cambiar Tema",
+
+        musicIconAlt:
+            "Icono de Música",
+
+        audioFallback:
+            "Tu navegador no soporta el elemento de audio.",
+
+        heroTitlePart1:
+            "<em>Moldeando México: </em>",
+
+        heroTitlePart2:
+            "Erosión, Meteorización",
+
+        heroTitlePart3:
+            "y Desiertos",
+
+        introTitle:
+            "Una Tierra Moldeada por los Elementos",
+
+        introText:
+            "La topografía dramáticamente diversa de México es una obra maestra esculpida por procesos exógenos persistentes (Lugo-Hubp, 2011). Desde los desiertos áridos del norte hasta las selvas tropicales y húmedas del sur, las fuerzas de la meteorización, los movimientos en masa y la erosión redefinen continuamente los paisajes económicos, sociales y físicos de la nación (Lugo-Hubp, 2011).",
+
+        introVideoTitle:
+            "Reproductor de video de YouTube",
+
+        introVideoDescription:
+            "<em>Video: Explorando la geografía física, las zonas climáticas y la espectacular topografía de México.</em>",
+
+        section1BadgeTitle:
+            "Carbonatación y Deslizamientos",
+
+        section1BadgeSubtitle:
+            "Yucatán y Puebla",
+
+        section1Label:
+            "PELIGROS GEOLÓGICOS",
+
+        section1Title:
+            "Meteorización y Movimientos en Masa",
+
+        section1Paragraph1:
+            "<strong>Meteorización Química:</strong> En la Península de Yucatán, el extenso lecho de roca caliza experimenta una intensa <em>carbonatación</em>, un proceso de meteorización química en el que el agua de lluvia ácida disuelve la roca (Lugo-Hubp, 2011). Esto crea una enorme topografía kárstica con ríos subterráneos y sumideros emblemáticos conocidos como <em>cenotes</em> (Lugo-Hubp, 2011).",
+
+        section1Paragraph2:
+            "<strong>Movimientos en Masa:</strong> Los terrenos montañosos y escarpados de la Sierra Madre y las fuertes lluvias estacionales hacen que México sea altamente susceptible a los deslizamientos de tierra (CENAPRED, 2020). Un ejemplo trágico es el <strong>deslizamiento de Teziutlán de 1999</strong> en Puebla, provocado por lluvias extremas, que sepultó barrios y causó más de 250 muertes (CENAPRED, 2020).",
+
+        section1Paragraph3:
+            "<strong>Acción Gubernamental:</strong> Para mitigar estos riesgos, el gobierno mexicano utiliza <strong>CENAPRED</strong> (Centro Nacional de Prevención de Desastres) (CENAPRED, 2020). Desarrollaron el <em>Atlas Nacional de Riesgos</em> para mapear las laderas vulnerables e implementar sistemas de alerta temprana que permitan evacuar comunidades antes de que lleguen las tormentas intensas (CENAPRED, 2020).",
+
+        section1Tag1:
+            "Carbonatación",
+
+        section1Tag2:
+            "Deslizamientos",
+
+        section1Tag3:
+            "CENAPRED",
+
+        section2BadgeTitle:
+            "Río Usumacinta",
+
+        section2BadgeSubtitle:
+            "Frontera Tabasco / Guatemala",
+
+        section2Label:
+            "HIDROLOGÍA",
+
+        section2Title:
+            "Erosión Hídrica: Los Grandes Ríos",
+
+        section2Paragraph1:
+            "Mientras que la erosión local por salpicadura o laminar afecta a la agricultura localizada, los principales sistemas fluviales tienen un impacto considerable en las economías regionales (CONAGUA, 2021). El <strong>río Usumacinta</strong> es el río de México con mayor volumen de descarga (CONAGUA, 2021).",
+
+        section2List1:
+            "<strong>Origen y Longitud:</strong> Nace en las tierras altas de Guatemala y recorre aproximadamente 1,000 km (CONAGUA, 2021).",
+
+        section2List2:
+            "<strong>Descarga y Estuario:</strong> Con una descarga de alrededor de 1,700 m³/s, finalmente se une al río Grijalva, formando un enorme delta que desemboca en el Golfo de México (CONAGUA, 2021).",
+
+        section2List3:
+            "<strong>Tipo de Canal:</strong> Al llegar a las llanuras planas de Tabasco, presenta un <strong>canal altamente meandriforme</strong> (CONAGUA, 2021).",
+
+        section2Paragraph2:
+            "<strong>Impactos Socioeconómicos:</strong> La erosión meandriforme y lateral desplaza constantemente los límites de las propiedades, destruye tierras agrícolas fértiles a lo largo de las orillas erosionadas y genera graves riesgos de inundación para las comunidades de Tabasco (CONAGUA, 2021).",
+
+        section2Paragraph3:
+            "<strong>Acción Gubernamental:</strong> <strong>CONAGUA</strong> (Comisión Nacional del Agua) combate la erosión de las riberas y las inundaciones mediante el dragado de los cauces, la construcción de diques y la instalación de escollera para estabilizar las curvas exteriores vulnerables del río (CONAGUA, 2021).",
+
+        section3BadgeTitle:
+            "Paisajes Áridos",
+
+        section3BadgeSubtitle:
+            "Sonorense y Chihuahuense",
+
+        section3Label:
+            "CLIMAS ÁRIDOS",
+
+        section3Title:
+            "Erosión Eólica y Desertificación",
+
+        section3Paragraph1:
+            "<strong>Erosión Eólica:</strong> México experimenta una fuerte erosión eólica, particularmente en sus estados áridos del norte, eliminando la valiosa capa superficial del suelo y reduciendo la productividad agrícola (UNCCD, 2019). La agencia gubernamental <strong>CONAFOR</strong> (Comisión Nacional Forestal) la mitiga mediante la plantación de cortinas rompevientos y el apoyo a iniciativas de reforestación (UNCCD, 2019).",
+
+        section3Paragraph2:
+            "<strong>Principales Desiertos:</strong> Los desiertos limitan drásticamente la disponibilidad de agua y determinan la agricultura en el norte (UNCCD, 2019).",
+
+        section3List1:
+            "<strong>Desierto de Sonora:</strong> Presenta extensos mares de arena conocidos como <em>ergs</em>, como el Gran Desierto de Altar, junto con los emblemáticos cactus saguaro (Lugo-Hubp, 2011).",
+
+        section3List2:
+            "<strong>Desierto de Chihuahua:</strong> Es el más grande de América del Norte y está dominado por un paisaje de tipo <em>reg</em> (llanuras cubiertas de grava) y mesetas rocosas (<em>hamadas</em>), cubiertas de matorrales resistentes (Lugo-Hubp, 2011).",
+
+        section3Paragraph3:
+            "<strong>Desertificación:</strong> Sí, la desertificación es un problema grave y creciente (UNCCD, 2019). Más del 60% de las tierras de México se consideran degradadas debido al sobrepastoreo, la deforestación y el cambio climático, lo que amenaza la seguridad alimentaria y empuja a las poblaciones rurales hacia la migración urbana (UNCCD, 2019).",
+
+        section4BadgeTitle:
+            "Pico de Orizaba",
+
+        section4BadgeSubtitle:
+            "Glaciar Jamapa",
+
+        section4Label:
+            "CRIOSFERA",
+
+        section4Title:
+            "Los Últimos Glaciares de México",
+
+        section4Paragraph1:
+            "Aunque se asocian con climas cálidos, los picos volcánicos más altos de México estuvieron históricamente fuertemente glaciados (Cortés & Delgado-Granados, 2015). Hoy, están retrocediendo a tasas alarmantes (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph2:
+            "<strong>Influencia Actual y Antigua:</strong> Los antiguos glaciares del Pleistoceno excavaron características distintivas como valles en forma de U, morrenas y circos en picos como el Iztaccíhuatl y el Popocatépetl (Cortés & Delgado-Granados, 2015). Hoy, el único glaciar significativo que sobrevive es el <strong>Glaciar Jamapa</strong> en el Pico de Orizaba (Citlaltépetl) (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph3:
+            "<strong>Impacto de las Características Restantes:</strong> Estos glaciares sirven como reservas vitales de agua dulce durante las estaciones secas para las comunidades aguas abajo y los sectores agrícolas de Veracruz y Puebla (Cortés & Delgado-Granados, 2015). Sin embargo, debido al cambio climático global y a la actividad volcánica reciente (que eliminó los glaciares del Popocatépetl a principios de la década de 2000), su rápida desaparición representa una crisis inminente para la seguridad hídrica regional (Cortés & Delgado-Granados, 2015).",
+
+        section4Tag1:
+            "Pico de Orizaba",
+
+        section4Tag2:
+            "Glaciar Jamapa",
+
+        section4Tag3:
+            "Abastecimiento de Agua Dulce"
+    },
+    fr: {
+        pageTitle:
+            "Érosion et Processus de la Terre - Bienvenido a México",
+
+        navLogo:
+            "BIENVENIDO A MEXICO",
+
+        navFundamentals:
+            "CARTES",
+
+        navStats:
+            "TECTONIQUE",
+
+        navRealCases:
+            "ÉROSION",
+
+        navAbout:
+            "À PROPOS",
+
+        navTakeAction:
+            "OCÉANS",
+
+        navDonations:
+            "CLIMAT",
+
+        navContact:
+            "RÉFÉRENCES",
+
+        languageButton:
+            "Changer de Langue",
+
+        languageImageAlt:
+            "Sélecteur de Langue",
+
+        themeLight:
+            "Passer au Mode Clair",
+
+        themeDark:
+            "Passer au Mode Sombre",
+
+        themeIconAlt:
+            "Changer de Thème",
+
+        musicIconAlt:
+            "Icône de Musique",
+
+        audioFallback:
+            "Votre navigateur ne prend pas en charge l’élément audio.",
+
+        heroTitlePart1:
+            "<em>Façonner le Mexique : </em>",
+
+        heroTitlePart2:
+            "Érosion, Altération",
+
+        heroTitlePart3:
+            "et Déserts",
+
+        introTitle:
+            "Une Terre Façonnée par les Éléments",
+
+        introText:
+            "La topographie remarquablement diverse du Mexique est un chef-d’œuvre sculpté par des processus exogènes incessants (Lugo-Hubp, 2011). Des déserts arides du nord aux jungles tropicales humides du sud, les forces de l’altération, des mouvements de masse et de l’érosion redéfinissent continuellement les paysages économiques, sociaux et physiques du pays (Lugo-Hubp, 2011).",
+
+        introVideoTitle:
+            "Lecteur vidéo YouTube",
+
+        introVideoDescription:
+            "<em>Vidéo : Exploration de la géographie physique, des zones climatiques et de la topographie spectaculaire du Mexique.</em>",
+
+        section1BadgeTitle:
+            "Carbonatation et Glissements de Terrain",
+
+        section1BadgeSubtitle:
+            "Yucatán et Puebla",
+
+        section1Label:
+            "RISQUES GÉOLOGIQUES",
+
+        section1Title:
+            "Altération et Mouvements de Masse",
+
+        section1Paragraph1:
+            "<strong>Altération Chimique :</strong> Dans la péninsule du Yucatán, le substrat rocheux calcaire très étendu subit une intense <em>carbonatation</em>, un processus d’altération chimique au cours duquel l’eau de pluie acide dissout la roche (Lugo-Hubp, 2011). Cela crée une vaste topographie karstique comprenant des rivières souterraines et des dolines emblématiques appelées <em>cenotes</em> (Lugo-Hubp, 2011).",
+
+        section1Paragraph2:
+            "<strong>Mouvements de Masse :</strong> Les terrains escarpés et montagneux de la Sierra Madre ainsi que les fortes pluies saisonnières rendent le Mexique très vulnérable aux glissements de terrain (CENAPRED, 2020). Un exemple tragique est le <strong>glissement de terrain de Teziutlán en 1999</strong> à Puebla, déclenché par des précipitations extrêmes, qui a enseveli des quartiers et causé plus de 250 décès (CENAPRED, 2020).",
+
+        section1Paragraph3:
+            "<strong>Action Gouvernementale :</strong> Pour réduire ces risques, le gouvernement mexicain utilise le <strong>CENAPRED</strong> (Centre National de Prévention des Catastrophes) (CENAPRED, 2020). Il a développé l’<em>Atlas National des Risques</em> afin de cartographier les pentes vulnérables et de mettre en place des systèmes d’alerte précoce pour évacuer les communautés avant l’arrivée des fortes tempêtes (CENAPRED, 2020).",
+
+        section1Tag1:
+            "Carbonatation",
+
+        section1Tag2:
+            "Glissements de Terrain",
+
+        section1Tag3:
+            "CENAPRED",
+
+        section2BadgeTitle:
+            "Fleuve Usumacinta",
+
+        section2BadgeSubtitle:
+            "Frontière Tabasco / Guatemala",
+
+        section2Label:
+            "HYDROLOGIE",
+
+        section2Title:
+            "Érosion Hydrique : Les Grands Fleuves",
+
+        section2Paragraph1:
+            "Alors que l’érosion locale par éclaboussures ou ruissellement en nappe affecte l’agriculture locale, les grands systèmes fluviaux ont un impact considérable sur les économies régionales (CONAGUA, 2021). Le <strong>fleuve Usumacinta</strong> est le plus important du Mexique en volume de débit (CONAGUA, 2021).",
+
+        section2List1:
+            "<strong>Source et Longueur :</strong> Prenant sa source dans les hautes terres du Guatemala, il s’écoule sur environ 1 000 km (CONAGUA, 2021).",
+
+        section2List2:
+            "<strong>Débit et Estuaire :</strong> Avec un débit d’environ 1 700 m³/s, il finit par rejoindre le fleuve Grijalva, formant un immense delta qui se déverse dans le golfe du Mexique (CONAGUA, 2021).",
+
+        section2List3:
+            "<strong>Type de Chenal :</strong> Lorsqu’il atteint les plaines plates du Tabasco, il présente un <strong>chenal fortement méandriforme</strong> (CONAGUA, 2021).",
+
+        section2Paragraph2:
+            "<strong>Impacts Socio-Économiques :</strong> L’érosion latérale et les méandres déplacent constamment les limites des propriétés, détruisent les terres agricoles fertiles le long des berges concaves et présentent de graves risques d’inondation pour les communautés du Tabasco (CONAGUA, 2021).",
+
+        section2Paragraph3:
+            "<strong>Action Gouvernementale :</strong> <strong>CONAGUA</strong> (Commission Nationale de l’Eau) lutte contre l’érosion des berges et les inondations en draguant les lits des rivières, en construisant des digues et en installant des enrochements pour stabiliser les méandres extérieurs vulnérables (CONAGUA, 2021).",
+
+        section3BadgeTitle:
+            "Paysages Arides",
+
+        section3BadgeSubtitle:
+            "Sonorien et Chihuahuien",
+
+        section3Label:
+            "CLIMATS ARIDES",
+
+        section3Title:
+            "Érosion Éolienne et Désertification",
+
+        section3Paragraph1:
+            "<strong>Érosion Éolienne :</strong> Le Mexique connaît une forte érosion éolienne, particulièrement dans ses États arides du nord, ce qui enlève la précieuse couche superficielle du sol et réduit la productivité agricole (UNCCD, 2019). L’agence gouvernementale <strong>CONAFOR</strong> (Commission Nationale des Forêts) atténue ce phénomène en plantant des brise-vent et en soutenant des initiatives de reboisement (UNCCD, 2019).",
+
+        section3Paragraph2:
+            "<strong>Principaux Déserts :</strong> Les déserts limitent fortement la disponibilité de l’eau et déterminent l’agriculture dans le nord (UNCCD, 2019).",
+
+        section3List1:
+            "<strong>Désert de Sonora :</strong> Présente de vastes mers de sable appelées <em>ergs</em>, comme le Gran Desierto de Altar, ainsi que les emblématiques cactus saguaro (Lugo-Hubp, 2011).",
+
+        section3List2:
+            "<strong>Désert de Chihuahua :</strong> Le plus grand d’Amérique du Nord, dominé par un paysage de type <em>reg</em> (plaines couvertes de graviers) et des plateaux rocheux (<em>hamadas</em>), recouverts de broussailles résistantes (Lugo-Hubp, 2011).",
+
+        section3Paragraph3:
+            "<strong>Désertification :</strong> Oui, la désertification est un problème grave et croissant (UNCCD, 2019). Plus de 60 % des terres du Mexique sont considérées comme dégradées en raison du surpâturage, de la déforestation et du changement climatique, menaçant la sécurité alimentaire et poussant les populations rurales vers la migration urbaine (UNCCD, 2019).",
+
+        section4BadgeTitle:
+            "Pico de Orizaba",
+
+        section4BadgeSubtitle:
+            "Glacier de Jamapa",
+
+        section4Label:
+            "CRYOSPHÈRE",
+
+        section4Title:
+            "Les Derniers Glaciers du Mexique",
+
+        section4Paragraph1:
+            "Bien qu’ils soient associés à des climats chauds, les plus hauts sommets volcaniques du Mexique étaient historiquement fortement englacés (Cortés & Delgado-Granados, 2015). Aujourd’hui, ils reculent à des taux alarmants (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph2:
+            "<strong>Influence Actuelle et Ancienne :</strong> Les anciens glaciers du Pléistocène ont sculpté des formes distinctives comme des vallées en U, des moraines et des cirques sur des sommets tels que l’Iztaccíhuatl et le Popocatépetl (Cortés & Delgado-Granados, 2015). Aujourd’hui, le seul glacier important qui subsiste est le <strong>glacier de Jamapa</strong> sur le Pico de Orizaba (Citlaltépetl) (Cortés & Delgado-Granados, 2015).",
+
+        section4Paragraph3:
+            "<strong>Impact des Éléments Restants :</strong> Ces glaciers servent de réserves vitales d’eau douce pendant les saisons sèches pour les communautés en aval et les secteurs agricoles de Veracruz et de Puebla (Cortés & Delgado-Granados, 2015). Cependant, en raison du changement climatique mondial et de l’activité volcanique récente (qui a fait disparaître les glaciers du Popocatépetl au début des années 2000), leur disparition rapide représente une crise imminente pour la sécurité hydrique régionale (Cortés & Delgado-Granados, 2015).",
+
+        section4Tag1:
+            "Pico de Orizaba",
+
+        section4Tag2:
+            "Glacier de Jamapa",
+
+        section4Tag3:
+            "Approvisionnement en Eau Douce"
+    },
+
+    pt: {
+        pageTitle:
+            "Erosão e Processos da Terra - Bienvenido a México",
+
+        navLogo:
+            "BIENVENIDO A MEXICO",
+
+        navFundamentals:
+            "MAPAS",
+
+        navStats:
+            "TECTÔNICA",
+
+        navRealCases:
+            "EROSÃO",
+
+        navAbout:
+            "SOBRE",
+
+        navTakeAction:
+            "OCEANOS",
+
+        navDonations:
+            "CLIMA",
+
+        navContact:
+            "REFERÊNCIAS",
+
+        languageButton:
+            "Alterar Idioma",
+
+        languageImageAlt:
+            "Seletor de Idioma",
+
+        themeLight:
+            "Mudar para o Modo Claro",
+
+        themeDark:
+            "Mudar para o Modo Escuro",
+
+        themeIconAlt:
+            "Alterar Tema",
+
+        musicIconAlt:
+            "Ícone de Música",
+
+        audioFallback:
+            "Seu navegador não suporta o elemento de áudio.",
+
+        heroTitlePart1:
+            "<em>Moldando o México: </em>",
+
+        heroTitlePart2:
+            "Erosão, Intemperismo",
+
+        heroTitlePart3:
+            "e Desertos",
+
+        introTitle:
+            "Uma Terra Moldada pelos Elementos",
+
+        introText:
+            "A topografia dramaticamente diversificada do México é uma obra-prima esculpida por processos exógenos incessantes (Lugo-Hubp, 2011). Dos desertos áridos do norte às selvas tropicais úmidas do sul, as forças do intemperismo, dos movimentos de massa e da erosão redefinem continuamente as paisagens econômicas, sociais e físicas da nação (Lugo-Hubp, 2011).",
+
+        introVideoTitle:
+            "Reprodutor de vídeo do YouTube",
+
+        introVideoDescription:
+            "<em>Vídeo: Explorando a geografia física, as zonas climáticas e a dramática topografia do México.</em>",
+
+        section1BadgeTitle:
+            "Carbonatação e Deslizamentos",
+
+        section1BadgeSubtitle:
+            "Yucatán e Puebla",
+        section1Label:
+            "RISCOS GEOLÓGICOS",
+        section1Title:
+            "Intemperismo e Movimentos de Massa",
+        section1Paragraph1:
+            "<strong>Intemperismo Químico:</strong> Na Península de Yucatán, o extenso leito rochoso de calcário sofre intensa <em>carbonatação</em>, um processo de intemperismo químico no qual a água da chuva ácida dissolve a rocha (Lugo-Hubp, 2011). Isso cria uma vasta topografia cárstica com rios subterrâneos e sumidouros conhecidos como <em>cenotes</em> (Lugo-Hubp, 2011).",
+        section1Paragraph2:
+            "<strong>Movimentos de Massa:</strong> Os terrenos íngremes e montanhosos da Sierra Madre e as fortes chuvas sazonais tornam o México altamente suscetível a deslizamentos de terra (CENAPRED, 2020). Um exemplo trágico é o <strong>deslizamento de Teziutlán de 1999</strong>, em Puebla, provocado por chuvas extremas, que soterrou bairros e causou mais de 250 mortes (CENAPRED, 2020).",
+        section1Paragraph3:
+            "<strong>Ação Governamental:</strong> Para reduzir esses riscos, o governo mexicano utiliza o <strong>CENAPRED</strong> (Centro Nacional de Prevenção de Desastres) (CENAPRED, 2020). O órgão desenvolveu o <em>Atlas Nacional de Riscos</em> para mapear encostas vulneráveis e implementar sistemas de alerta precoce para evacuar comunidades antes da chegada de fortes tempestades (CENAPRED, 2020).",
+        section1Tag1:
+            "Carbonatação",
+        section1Tag2:
+            "Deslizamentos",
+        section1Tag3:
+            "CENAPRED",
+        section2BadgeTitle:
+            "Rio Usumacinta",
+        section2BadgeSubtitle:
+            "Fronteira Tabasco / Guatemala",
+        section2Label:
+            "HIDROLOGIA",
+        section2Title:
+            "Erosão Hídrica: Os Grandes Rios",
+        section2Paragraph1:
+            "Enquanto a erosão local por respingos ou laminar afeta a agricultura localizada, os principais sistemas fluviais têm um forte impacto nas economias regionais (CONAGUA, 2021). O <strong>Rio Usumacinta</strong> é o maior do México em volume de descarga (CONAGUA, 2021).",
+        section2List1:
+            "<strong>Origem e Comprimento:</strong> Nascendo nas terras altas da Guatemala, ele percorre aproximadamente 1.000 km (CONAGUA, 2021).",
+        section2List2:
+            "<strong>Descarga e Estuário:</strong> Com uma descarga de cerca de 1.700 m³/s, ele finalmente se junta ao Rio Grijalva, formando um enorme delta que deságua no Golfo do México (CONAGUA, 2021).",
+        section2List3:
+            "<strong>Tipo de Canal:</strong> Ao alcançar as planícies baixas de Tabasco, apresenta um <strong>canal altamente meandrante</strong> (CONAGUA, 2021).",
+        section2Paragraph2:
+            "<strong>Impactos Socioeconômicos:</strong> A erosão meandrante e lateral desloca constantemente os limites das propriedades, destrói terras agrícolas férteis ao longo das margens de erosão e representa graves riscos de inundação para as comunidades de Tabasco (CONAGUA, 2021).",
+        section2Paragraph3:
+            "<strong>Ação Governamental:</strong> A <strong>CONAGUA</strong> (Comissão Nacional da Água) combate a erosão das margens dos rios e as inundações por meio da dragagem dos leitos, construção de diques e instalação de enrocamentos para estabilizar as curvas externas vulneráveis dos meandros (CONAGUA, 2021).",
+        section3BadgeTitle:
+            "Paisagens Áridas",
+        section3BadgeSubtitle:
+            "Sonora e Chihuahua",
+        section3Label:
+            "CLIMAS ÁRIDOS",
+        section3Title:
+            "Erosão Eólica e Desertificação",
+        section3Paragraph1:
+            "<strong>Erosão Eólica:</strong> O México sofre forte erosão eólica, especialmente em seus estados áridos do norte, removendo o valioso solo superficial e reduzindo a produtividade agrícola (UNCCD, 2019). A agência governamental <strong>CONAFOR</strong> (Comissão Nacional Florestal) reduz esse problema plantando quebra-ventos e apoiando iniciativas de reflorestamento (UNCCD, 2019).",
+        section3Paragraph2:
+            "<strong>Principais Desertos:</strong> Os desertos limitam drasticamente a disponibilidade de água e determinam a agricultura no norte (UNCCD, 2019).",
+        section3List1:
+            "<strong>Deserto de Sonora:</strong> Apresenta extensos mares de areia conhecidos como <em>ergs</em>, como o Gran Desierto de Altar, juntamente com os icônicos cactos saguaro (Lugo-Hubp, 2011).",
+        section3List2:
+            "<strong>Deserto de Chihuahua:</strong> O maior da América do Norte, dominado por uma paisagem do tipo <em>reg</em> (planícies cobertas de cascalho) e planaltos rochosos (<em>hamadas</em>), cobertos por vegetação rasteira resistente (Lugo-Hubp, 2011).",
+        section3Paragraph3:
+            "<strong>Desertificação:</strong> Sim, a desertificação é um problema grave e crescente (UNCCD, 2019). Mais de 60% das terras do México são consideradas degradadas devido ao sobrepastoreio, desmatamento e mudanças climáticas, ameaçando a segurança alimentar e levando populações rurais à migração urbana (UNCCD, 2019).",
+        section4BadgeTitle:
+            "Pico de Orizaba",
+        section4BadgeSubtitle:
+            "Geleira Jamapa",
+        section4Label:
+            "CRIosFERA",
+        section4Title:
+            "As Últimas Geleiras do México",
+        section4Paragraph1:
+            "Embora associado a climas quentes, os picos vulcânicos mais altos do México historicamente eram fortemente cobertos por geleiras (Cortés & Delgado-Granados, 2015). Hoje, elas estão recuando a taxas alarmantes (Cortés & Delgado-Granados, 2015).",
+        section4Paragraph2:
+            "<strong>Influência Atual e Antiga:</strong> Antigas geleiras do Pleistoceno esculpiram características distintas, como vales em forma de U, morainas e circos em picos como Iztaccíhuatl e Popocatépetl (Cortés & Delgado-Granados, 2015). Hoje, a única geleira significativa que sobrevive é a <strong>Geleira Jamapa</strong> no Pico de Orizaba (Citlaltépetl) (Cortés & Delgado-Granados, 2015).",
+        section4Paragraph3:
+            "<strong>Impacto das Características Restantes:</strong> Essas geleiras servem como importantes reservatórios de água doce durante as estações secas para as comunidades a jusante e os setores agrícolas de Veracruz e Puebla (Cortés & Delgado-Granados, 2015). No entanto, devido às mudanças climáticas globais e à atividade vulcânica recente (que eliminou as geleiras do Popocatépetl no início dos anos 2000), seu rápido desaparecimento representa uma crise iminente para a segurança hídrica regional (Cortés & Delgado-Granados, 2015).",
+        section4Tag1:
+            "Pico de Orizaba",
+        section4Tag2:
+            "Geleira Jamapa",
+        section4Tag3:
+            "Abastecimento de Água Doce"
+    }
+};
+
+// --------------------------------------------------
+// ABOUT PAGE
+// --------------------------------------------------
+const translationsAbout = {
+    en: {
+        navLogo: "BIENVENIDO A MEXICO",
+        navFundamentals: "MAPS",
+        navStats: "TECTONICS",
+        navRealCases: "EROSION",
+        navAbout: "ABOUT",
+        navTakeAction: "OCEANS",
+        navDonations: "CLIMATE",
+        navContact: "REFERENCES",
+
+        languageButton: "Toggle Language",
+        languageImageAlt: "Language Selector",
+
+        themeLight: "Switch to Light Mode",
+        themeDark: "Switch to Dark Mode",
+        themeIconAlt: "Toggle Theme Layout",
+
+        musicIconAlt: "Music Icon",
+        audioFallback:
+            "Your browser does not support the audio element.",
+
+        carouselAriaLabel: "Story Carousel",
+
+        slide1Tagline: "2003-2024",
+
+        slide1Title:
+            "A Lifetime Connected to Mexico",
+
+        slide1Description:
+            "Growing up in Tijuana exposed me to a vibrant mix of Mexican and American cultures, but traveling throughout Mexico deepened my appreciation for our rich heritage. From northern border communities to central traditions, I have experienced the Mexican way of life across diverse perspectives. I am deeply inspired by our nation's food, humor, passion, and the dedication of talented people who make our culture extraordinary.",
+
+        slide2Tagline: "2021-2024",
+
+        slide2Title:
+            "Service & Faith: My Mission",
+
+        slide2Description:
+            "Between December 2021 and January 2024, I served a full-time mission in the Mexico City East Mission, spending over two years serving in northeastern Mexico City and the State of Mexico. Serving my community taught me the power of unity as a family in Christ. This transformative experience anchored my sense of identity, instilling in me a profound pride in my origin and a lifelong commitment to serving my people.",
+
+        slide3Tagline: "Future",
+
+        slide3Title:
+            "Looking Ahead: Honor & Contribution",
+
+        slide3Description:
+            "While living abroad and pursuing new goals can make the future feel dynamic, my commitment to Mexico remains steadfast. I am driven to contribute to my homeland—economically, culturally, and spiritually—and to hold Mexico high wherever I go. No matter where life takes me, I will always find ways to honor and give back to the roots that define me.",
+        previousSlide: "Previous Slide",
+        nextSlide: "Next Slide",
+        goToSlide1: "Go to slide 1",
+        goToSlide2: "Go to slide 2",
+        goToSlide3: "Go to slide 3"
+    },
+
+    es: {
+        navLogo: "BIENVENIDO A MEXICO",
+        navFundamentals: "MAPAS",
+        navStats: "TECTÓNICA",
+        navRealCases: "EROSIÓN",
+        navAbout: "ACERCA DE",
+        navTakeAction: "OCÉANOS",
+        navDonations: "CLIMA",
+        navContact: "REFERENCIAS",
+
+        languageButton: "Cambiar Idioma",
+        languageImageAlt: "Selector de Idioma",
+
+        themeLight: "Cambiar al Modo Claro",
+        themeDark: "Cambiar al Modo Oscuro",
+        themeIconAlt: "Cambiar Tema",
+
+        musicIconAlt: "Icono de Música",
+        audioFallback:
+            "Tu navegador no soporta el elemento de audio.",
+
+        carouselAriaLabel: "Carrusel de Historias",
+
+        slide1Tagline: "2003-2024",
+
+        slide1Title:
+            "Toda una Vida Conectada con México",
+
+        slide1Description:
+            "Crecer en Tijuana me permitió conocer una vibrante mezcla de las culturas mexicana y estadounidense, pero viajar por todo México profundizó mi aprecio por nuestra rica herencia. Desde las comunidades de la frontera norte hasta las tradiciones del centro del país, he experimentado la forma de vida mexicana desde diversas perspectivas. Me inspiran profundamente la comida, el humor, la pasión de nuestra nación y la dedicación de las personas talentosas que hacen extraordinaria nuestra cultura.",
+
+        slide2Tagline: "2021-2024",
+
+        slide2Title:
+            "Servicio y Fe: Mi Misión",
+
+        slide2Description:
+            "Entre diciembre de 2021 y enero de 2024, serví como misionero de tiempo completo en la Misión México Ciudad de México Este, pasando más de dos años sirviendo en el noreste de la Ciudad de México y en el Estado de México. Servir a mi comunidad me enseñó el poder de la unidad como familia en Cristo. Esta experiencia transformadora fortaleció mi sentido de identidad, inculcándome un profundo orgullo por mi origen y un compromiso de por vida de servir a mi pueblo.",
+
+        slide3Tagline: "Futuro",
+
+        slide3Title:
+            "Mirando Hacia el Futuro: Honor y Contribución",
+
+        slide3Description:
+            "Aunque vivir en el extranjero y perseguir nuevas metas puede hacer que el futuro parezca dinámico, mi compromiso con México permanece firme. Me impulsa el deseo de contribuir a mi patria—económica, cultural y espiritualmente—y de mantener a México en alto dondequiera que vaya. Sin importar adónde me lleve la vida, siempre encontraré maneras de honrar y devolver algo a las raíces que me definen.",
+
+        previousSlide: "Diapositiva Anterior",
+        nextSlide: "Siguiente Diapositiva",
+        goToSlide1: "Ir a la diapositiva 1",
+        goToSlide2: "Ir a la diapositiva 2",
+        goToSlide3: "Ir a la diapositiva 3"
+    },
+
+    fr: {
+        navLogo: "BIENVENIDO A MEXICO",
+        navFundamentals: "CARTES",
+        navStats: "TECTONIQUE",
+        navRealCases: "ÉROSION",
+        navAbout: "À PROPOS",
+        navTakeAction: "OCÉANS",
+        navDonations: "CLIMAT",
+        navContact: "RÉFÉRENCES",
+
+        languageButton: "Changer de Langue",
+        languageImageAlt: "Sélecteur de Langue",
+
+        themeLight: "Passer au Mode Clair",
+        themeDark: "Passer au Mode Sombre",
+        themeIconAlt: "Changer de Thème",
+
+        musicIconAlt: "Icône de Musique",
+        audioFallback:
+            "Votre navigateur ne prend pas en charge l’élément audio.",
+
+        carouselAriaLabel: "Carrousel d’Histoires",
+
+        slide1Tagline: "2003-2024",
+
+        slide1Title:
+            "Toute une Vie Liée au Mexique",
+
+        slide1Description:
+            "Grandir à Tijuana m’a permis de découvrir un mélange vibrant des cultures mexicaine et américaine, mais voyager à travers le Mexique a approfondi mon appréciation de notre riche patrimoine. Des communautés de la frontière nord aux traditions du centre du pays, j’ai découvert le mode de vie mexicain à travers des perspectives diverses. Je suis profondément inspiré par la cuisine, l’humour, la passion de notre nation et le dévouement des personnes talentueuses qui rendent notre culture extraordinaire.",
+
+        slide2Tagline: "2021-2024",
+
+        slide2Title:
+            "Service et Foi : Ma Mission",
+
+        slide2Description:
+            "Entre décembre 2021 et janvier 2024, j’ai effectué une mission à plein temps dans la mission de Mexico Est, passant plus de deux ans au service du nord-est de Mexico et de l’État de Mexico. Servir ma communauté m’a appris la puissance de l’unité en tant que famille dans le Christ. Cette expérience transformatrice a renforcé mon identité, en m’inculquant une profonde fierté pour mes origines et un engagement de toute une vie à servir mon peuple.",
+
+        slide3Tagline: "Avenir",
+
+        slide3Title:
+            "Vers l’Avenir : Honneur et Contribution",
+
+        slide3Description:
+            "Bien que vivre à l’étranger et poursuivre de nouveaux objectifs puisse rendre l’avenir dynamique, mon engagement envers le Mexique demeure inébranlable. Je suis animé par le désir de contribuer à ma patrie—économiquement, culturellement et spirituellement—et de porter le Mexique avec fierté partout où je vais. Où que la vie me mène, je trouverai toujours des moyens d’honorer et de redonner aux racines qui me définissent.",
+
+        previousSlide: "Diapositive Précédente",
+        nextSlide: "Diapositive Suivante",
+        goToSlide1: "Aller à la diapositive 1",
+        goToSlide2: "Aller à la diapositive 2",
+        goToSlide3: "Aller à la diapositive 3"
+    },
+
+    pt: {
+        navLogo: "BIENVENIDO A MEXICO",
+        navFundamentals: "MAPAS",
+        navStats: "TECTÔNICA",
+        navRealCases: "EROSÃO",
+        navAbout: "SOBRE",
+        navTakeAction: "OCEANOS",
+        navDonations: "CLIMA",
+        navContact: "REFERÊNCIAS",
+
+        languageButton: "Alterar Idioma",
+        languageImageAlt: "Seletor de Idioma",
+
+        themeLight: "Mudar para o Modo Claro",
+        themeDark: "Mudar para o Modo Escuro",
+        themeIconAlt: "Alterar Tema",
+
+        musicIconAlt: "Ícone de Música",
+        audioFallback:
+            "Seu navegador não suporta o elemento de áudio.",
+
+        carouselAriaLabel: "Carrossel de Histórias",
+
+        slide1Tagline: "2003-2024",
+
+        slide1Title:
+            "Uma Vida Inteira Conectada ao México",
+
+        slide1Description:
+            "Crescer em Tijuana me permitiu conhecer uma mistura vibrante das culturas mexicana e americana, mas viajar por todo o México aprofundou minha apreciação por nossa rica herança. Das comunidades da fronteira norte às tradições do centro do país, experimentei o modo de vida mexicano a partir de diversas perspectivas. Sou profundamente inspirado pela comida, pelo humor, pela paixão de nossa nação e pela dedicação das pessoas talentosas que tornam nossa cultura extraordinária.",
+
+        slide2Tagline: "2021-2024",
+
+        slide2Title:
+            "Serviço e Fé: Minha Missão",
+
+        slide2Description:
+            "Entre dezembro de 2021 e janeiro de 2024, servi em uma missão de tempo integral na Missão México Cidade do México Leste, passando mais de dois anos servindo no nordeste da Cidade do México e no Estado do México. Servir à minha comunidade me ensinou o poder da união como uma família em Cristo. Essa experiência transformadora fortaleceu meu senso de identidade, despertando em mim um profundo orgulho de minha origem e um compromisso para toda a vida de servir ao meu povo.",
+
+        slide3Tagline: "Futuro",
+
+        slide3Title:
+            "Olhando para o Futuro: Honra e Contribuição",
+
+        slide3Description:
+            "Embora viver no exterior e buscar novos objetivos possa tornar o futuro dinâmico, meu compromisso com o México permanece firme. Sou motivado a contribuir para minha pátria—economicamente, culturalmente e espiritualmente—e a valorizar o México onde quer que eu vá. Não importa para onde a vida me leve, sempre encontrarei maneiras de honrar e retribuir às raízes que me definem.",
+
+        previousSlide: "Slide Anterior",
+        nextSlide: "Próximo Slide",
+        goToSlide1: "Ir para o slide 1",
+        goToSlide2: "Ir para o slide 2",
+        goToSlide3: "Ir para o slide 3"
+    }
+};
+
 const translations = {};
 ['en', 'es', 'fr', 'pt'].forEach(lang => {
     translations[lang] = Object.assign(
@@ -1944,8 +3609,6 @@ const translations = {};
         translationsTectonics[lang]
     );
 
-    // The timeline modal reads data-author / data-date from each .update-item,
-    // so derive them from the already-translated category and year strings.
     for (let n = 1; n <= 7; n++) {
         const item = translations[lang][`case-${n}`];
         if (item) {
