@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oceans & Coastlines - Bienvenido a México</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        .apa-references {
+            padding: 4rem 10%;
+            background-color: var(--bg-color, #f4f4f4);
+            color: var(--text-color, #333);
+            font-family: 'Montserrat', sans-serif;
+            border-top: 1px solid var(--border-color);
+        }
+        .apa-references h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .apa-item {
+            text-indent: -2em;
+            padding-left: 2em;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .stat-highlight {
+            background-color: var(--extra, #c12c2c);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header" id="top">
+    <div class="header-left">
+        <div class="options-dropdown">
+            <button class="options-btn" aria-label="Toggle Language">
+                <img src="images/language.png" class="nav-icon" alt="Language Selector" />
+            </button>
+            <div class="options">
+                <a href="#" class="lang-switch" data-lang="en">English</a>
+                <a href="#" class="lang-switch" data-lang="es">Español</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="index.html" class="logo" id="nav-logo">BIENVENIDO A MEXICO</a>
+        <nav class="nav-links">
+            <a href="maps.html">MAPS</a>
+            <a href="tectonics.html">TECTONICS</a>
+            <a href="erosion.html">EROSION</a>
+            <a href="about.html">ABOUT</a>
+            <a href="oceans.html" class="active">OCEANS</a>
+            <a href="climate.html">CLIMATE</a>
+            <a href="#references">REFERENCES</a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <div class="cta-buttons">
+            <button class="icon-action-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <img src="images/dark.png" class="nav-icon" id="theme-icon" alt="Toggle Theme Layout" />
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="floating-audio-toggle" id="floating-audio">
+    <div class="toggle-label">
+        <img src="images/sonido.jpg" alt="Music Icon">
+    </div>
+    <div class="toggle-switch">
+        <input type="checkbox" id="audio-toggle">
+        <label for="audio-toggle"></label>
+    </div>
+    <audio id="audioElement">
+        <source src="images/mexicoEnLaPiel.mp3" type="audio/mpeg">
+    </audio>
+</div>
+
+<section id="inicio">
+    <div class="threads-stage" aria-hidden="true">
+        <canvas class="threads" id="threadsCanvas"></canvas>
+    </div>
+    <h1 id="hero-title" data-i18n="hero-title">Dynamic Waters:<br/><em>Oceans, Coastlines, & Fluvial Processes</em></h1>
+    <div class="hero-rule"></div>
+</section>
+
+<!-- Introduction & Media Details -->
+<section class="intro-stacked-section">
+    <div class="intro-header">
+        <h2 class="section-trigger">The Lifeline of a Nation</h2>
+        <p class="highlight-text">
+            Surrounded by the Pacific Ocean, the Gulf of Mexico, and the Caribbean Sea, Mexico's geographic positioning subjects it to powerful oceanic currents, intense fluvial networks, and volatile weather patterns (National Oceanic and Atmospheric Administration [NOAA], 2023). These water systems dictate the nation's climate, dictate its trade logistics, and periodically test its resilience against natural disasters.
+        </p>
+    </div>
+    
+    <div class="intro-media">
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/icsCjj1Ir3c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p class="description-text">
+            <em>Video: An immersive exploration of Mexico's Baja California peninsula, examining how the cold Pacific currents and the warm Sea of Cortez create one of the most biodiverse marine environments on Earth (VoyagersTV, 2026)</em>
+        </p>
+    </div>
+</section>
+
+<!-- SECTION 1: Flooding -->
+<section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/flooding.jpg" alt="Aerial view of flooded plains in Tabasco" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Fluvial Flooding</span>
+                        <span class="map-badge-subtitle">Tabasco & Mexico City</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">FLUVIAL HAZARDS</span>
+                <div class="map-divider"></div>
+                <h2>Flooding Dynamics & Preparation</h2>
+                <p><strong>Frequency and Locations:</strong> Flooding is an annual, high-risk issue in Mexico, heavily concentrated in the low-lying southeastern state of Tabasco and the subsided basin of Mexico City (World Bank, 2021). During the rainy season (June to November), heavy rains cause the Grijalva and Usumacinta rivers to overflow their banks, inundating agriculture and cities.</p>
+                <p><strong>Government Action:</strong> To mitigate these disasters, the National Water Commission (CONAGUA) monitors river levels and operates a network of hydroelectric dams, such as the Peñitas Dam, to control water flow (CONAGUA, 2022). Additionally, the government invests in dredging riverbeds and maintaining the deep drainage system (<em>Emisor Central</em>) in Mexico City to prevent urban flooding.</p>
+                <div class="map-tags">
+                    <span class="map-tag">Tabasco</span>
+                    <span class="map-tag">CONAGUA</span>
+                    <span class="map-tag">Urban Subsidence</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: Trade Routes -->
+<section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/trade.png" alt="Cargo trucks at the US-Mexico border" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">USMCA Corridors</span>
+                        <span class="map-badge-subtitle">Land & Port Logistics</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">COMMERCE & GEOLOGY</span>
+                <div class="map-divider"></div>
+                <h2>Land and River Trade Routes</h2>
+                <p><strong>Major Routes & Geological Impact:</strong> Due to Mexico's rugged, mountainous topography (Sierra Madre ranges), river trade is virtually nonexistent for heavy freight. Consequently, trade is heavily reliant on overland truck and rail routes. The primary trade artery is the <em>Pan-American Highway (Highway 85)</em> and the NAFTA/USMCA corridor linking Central Mexico to Texas (Secretaría de Economía, 2023).</p>
+                <ul style="margin-bottom: 1rem; line-height: 1.6;">
+                    <li><strong>Advantages:</strong> Direct, fast integration into the US market and manufacturing supply chains.</li>
+                    <li><strong>Disadvantages:</strong> High maintenance costs due to mountainous terrain and vulnerability to landslides.</li>
+                </ul>
+                <p><strong>Trading Partners:</strong> The United States is Mexico's dominant trading partner, accounting for roughly <span class="stat-highlight">78% of all exports</span> and 44% of imports (OEC, 2023). China is the second-largest partner for imports, primarily supplying electronics and manufacturing components.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: Oceans & Islands -->
+<section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/cozumel.webp" alt="Clear waters of Cozumel island" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Ocean Currents & Islands</span>
+                        <span class="map-badge-subtitle">Cozumel & Isla Mujeres</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">MARITIME INFLUENCE</span>
+                <div class="map-divider"></div>
+                <h2>Oceans, Currents & Islands</h2>
+                <p><strong>Ocean Currents:</strong> Mexico's climate is profoundly shaped by the cold <em>California Current</em> on the Pacific coast, which creates the arid conditions of Baja California, and the warm <em>Gulf Stream</em> in the east, which brings moisture and tropical humidity to the Gulf Coast (NOAA, 2023).</p>
+                <p><strong>Proximity & Shipping:</strong> Because it is not landlocked, Mexico operates massive deep-water ports. Manzanillo (Pacific) handles Asian trade, while Veracruz (Gulf) connects to European and Atlantic markets (Secretaría de Marina, 2022).</p>
+                <p><strong>Islands:</strong> Mexico possesses numerous islands, most notably <strong>Cozumel</strong> and <strong>Isla Mujeres</strong> in the Caribbean. These islands are critical to the economy, driving billions of dollars in eco-tourism, cruise ship revenue, and cultural preservation centered around the Mesoamerican Barrier Reef (INEGI, 2022).</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: Coastlines -->
+<section class="map-showcase map-showcase--reverse">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/baja_coast.jpeg" alt="Rocky cliffs of Baja California" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Diverse Shorelines</span>
+                        <span class="map-badge-subtitle">Pacific & Gulf Topography</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">GEOMORPHOLOGY</span>
+                <div class="map-divider"></div>
+                <h2>The Anatomy of Mexican Coastlines</h2>
+                <p>Mexico boasts over 9,300 kilometers of coastline, divided sharply into two distinct geological profiles (Lugo-Hubp, 2011).</p>
+                <ul style="margin-bottom: 1rem; line-height: 1.6;">
+                    <li><strong>Pacific Coast (Irregular & Rocky):</strong> Driven by tectonic uplift, the western shoreline features rugged cliffs, deep bays, and rocky inlets. <em>Positive effect:</em> Deep waters allow for massive cargo ports like Lázaro Cárdenas.</li>
+                    <li><strong>Gulf & Caribbean Coast (Regular & Sandy):</strong> A passive margin characterized by wide, sandy beaches, shallow waters, and extensive coastal lagoons. <em>Positive effect:</em> Ideal for tourism and biodiversity (mangroves). <em>Negative effect:</em> Highly susceptible to rapid coastal erosion and storm surges.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: Hurricanes & Tsunamis -->
+<section class="map-showcase">
+    <div class="map-container">
+        <div class="map-grid">
+            <div class="map-img-box">
+                <img src="images/hurricane.jpeg" alt="Satellite view of Hurricane Otis" />
+                <div class="map-badge">
+                    <div class="map-badge-text">
+                        <span class="map-badge-title">Extreme Weather</span>
+                        <span class="map-badge-subtitle">Hurricanes & Seismic Waves</span>
+                    </div>
+                    <div class="map-badge-circle"></div>
+                </div>
+            </div>
+            <div class="map-content">
+                <span class="map-label">NATURAL DISASTERS</span>
+                <div class="map-divider"></div>
+                <h2>Hurricanes and Tsunamis</h2>
+                <p><strong>Hurricanes:</strong> Mexico's ocean proximity makes it a frequent target for intense tropical cyclones from both the Pacific and the Atlantic. In October 2023, <strong>Hurricane Otis</strong> rapidly intensified into a Category 5 storm, making a devastating direct hit on Acapulco, causing catastrophic infrastructure damage (NOAA, 2023). Historically, Hurricane Wilma (2005) caused widespread destruction in the Yucatán Peninsula.</p>
+                <p><strong>Tsunamis:</strong> Due to its location on the volatile Pacific Ring of Fire, the west coast is at risk of tsunamis triggered by subduction zone earthquakes. Following the massive 1985 Michoacán earthquake and the 2017 Chiapas earthquake, localized tsunamis up to 3 meters were recorded, prompting the government to install advanced tidal gauge warning systems along the Pacific coast (CENAPRED, 2021).</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
